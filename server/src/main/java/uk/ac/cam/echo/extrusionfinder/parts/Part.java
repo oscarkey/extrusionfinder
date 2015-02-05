@@ -28,4 +28,10 @@ public class Part {
     public String getImage() {
         return imageLink;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        Part part = (Part) o;
+        return part._id.equals(_id) && part.link.equals(link) && part.imageLink.equals(imageLink);
+    }
 }
