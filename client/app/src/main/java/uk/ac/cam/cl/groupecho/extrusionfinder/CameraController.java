@@ -1,6 +1,6 @@
 package uk.ac.cam.cl.groupecho.extrusionfinder;
 
-import android.view.SurfaceView;
+import android.view.SurfaceHolder;
 
 /**
  * Created by oscar on 05/02/15.
@@ -26,7 +26,14 @@ public interface CameraController {
      * @param previewSurface The surface where the preview from the camera should be displayed
      * @param capturedCallback Called when the image has been fully captured and provides byte data
      */
-    public void setupCamera(SurfaceView previewSurface, ImageCapturedCallback capturedCallback);
+    public void setupCamera(SurfaceHolder previewSurface, ImageCapturedCallback capturedCallback);
+
+    /**
+     * Requests that the camera take a picture.
+     * When this is complete the given callback will be called.
+     * Camera must be setup and then started.
+     */
+    public void requestCapture();
 
     /**
      * Implemented to handle the completion of the image capture event.
