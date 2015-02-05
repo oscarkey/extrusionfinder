@@ -13,6 +13,7 @@ public interface CameraController {
      * Calls the relevant methods to start the camera.
      * The camera must first have been setup with a call to setup()
      * Camera must then be stopped when the activity is paused
+     * @throws java.lang.IllegalStateException Thrown if called before setup.
      */
     public void startCamera();
 
@@ -32,6 +33,7 @@ public interface CameraController {
      * Requests that the camera take a picture.
      * When this is complete the given callback will be called.
      * Camera must be setup and then started.
+     * @throws java.lang.IllegalStateException Thrown if camera not started.
      */
     public void requestCapture();
 
