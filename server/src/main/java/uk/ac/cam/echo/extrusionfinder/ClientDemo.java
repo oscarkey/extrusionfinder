@@ -21,6 +21,8 @@ public class ClientDemo {
         // Initiate the GET request. readEntity(new GenericType...) auto-deserializes the JSON into a list of Java part objects
         List<Part> parts = t.request().get().readEntity(new GenericType<List<Part>>(){});
 
+        c.close();
+
         // Print some data from the returned list of parts to check that things worked
         System.out.println(parts.size());
         System.out.println(parts.get(0).get_id());
