@@ -1,17 +1,21 @@
 package uk.ac.cam.echo.extrusionfinder.parts;
 
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonProperty;
+
 public class Part {
     private String _id;
     private String link;
-    private String image;
+    private String imageLink;
 
-    public Part(String _id, String link, String image) {
+    @JsonCreator
+    public Part(@JsonProperty("_id") String _id,
+                @JsonProperty("link") String link,
+                @JsonProperty("imageLink") String imageLink) {
         this._id = _id;
         this.link = link;
-        this.image = image;
+        this.imageLink = imageLink;
     }
-
-    public Part(){}
 
     public String get_id() {
         return _id;
@@ -22,18 +26,6 @@ public class Part {
     }
 
     public String getImage() {
-        return image;
-    }
-
-    public void set_id(String _id) {
-        this._id = _id;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public void setLink(String link) {
-        this.link = link;
+        return imageLink;
     }
 }
