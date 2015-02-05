@@ -1,7 +1,7 @@
 package uk.ac.cam.echo.extrusionfinder.database;
 
-/**
- * Created by Alexander Simpson on 2015-02-05.
- */
-public class ItemNotFoundException {
+public class ItemNotFoundException extends Exception {
+    public ItemNotFoundException(String msg) {
+        super(msg);
+    }
 }

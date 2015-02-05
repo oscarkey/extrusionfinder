@@ -1,9 +1,10 @@
 package uk.ac.cam.echo.extrusionfinder.parts;
 
-import org.codehaus.jackson.annotate.JsonCreator;
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import uk.ac.cam.echo.extrusionfinder.database.DatabaseItem;
 
-public class Part {
+public class Part implements DatabaseItem {
     private String _id;
     private String link;
     private String imageLink;
@@ -17,6 +18,7 @@ public class Part {
         this.imageLink = imageLink;
     }
 
+    @Override
     public String get_id() {
         return _id;
     }
@@ -25,7 +27,7 @@ public class Part {
         return link;
     }
 
-    public String getImage() {
+    public String getImageLink() {
         return imageLink;
     }
 

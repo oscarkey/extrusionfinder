@@ -7,6 +7,8 @@ import uk.ac.cam.echo.extrusionfinder.database.MongoDBManager;
 import uk.ac.cam.echo.extrusionfinder.database.PartNotFoundException;
 import uk.ac.cam.echo.extrusionfinder.parts.Part;
 
+import java.net.UnknownHostException;
+
 import static org.junit.Assert.*;
 
 /**
@@ -22,7 +24,7 @@ public class MongoDBManagerTester {
     private MongoDBManager dbManager;
 
     @Before
-    public void setUp() {
+    public void setUp() throws UnknownHostException {
         dbManager = new MongoDBManager("test");
     }
 
@@ -38,12 +40,14 @@ public class MongoDBManagerTester {
         }
 
         // create a new part and insert it into the database
-        Part part = new Part("id_test", "link", "imageLink");
+        Part part = new Part("id_test", "link", "imageL");
         dbManager.savePart(part);
 
         // test that the part can now be correctly loaded from the database
         try {
+            System.out.println("yo");
             Part loadedPart = dbManager.loadPart("id_test");
+            System.out.println("hi");
             assertTrue(loadedPart.equals(part));
         } catch (PartNotFoundException e) {
             fail("Part just saved not found in database");

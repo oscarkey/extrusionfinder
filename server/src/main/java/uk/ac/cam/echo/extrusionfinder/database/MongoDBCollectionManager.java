@@ -1,6 +1,9 @@
 package uk.ac.cam.echo.extrusionfinder.database;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+import com.mongodb.DuplicateKeyException;
+import org.mongojack.DBQuery;
 import org.mongojack.JacksonDBCollection;
 
 /**
@@ -9,7 +12,7 @@ import org.mongojack.JacksonDBCollection;
  *
  * @author as2388
  */
-public class MongoDBCollectionManager<T> {
+public class MongoDBCollectionManager<T extends DatabaseItem> {
     private final JacksonDBCollection<T, String> collection;
 
     /**
@@ -24,7 +27,11 @@ public class MongoDBCollectionManager<T> {
      * @param item  Item to save
      */
     public void save(T item) {
-        collection.insert(item);
+        if (contains(item.get_id())) {
+            collection.updateById(item.get_id(), item);
+        } else {
+            collection.insert(item);
+        }
     }
 
     /**
@@ -49,9 +56,18 @@ public class MongoDBCollectionManager<T> {
      */
     public T load(String _id) throws ItemNotFoundException {
         if (contains(_id)) {
+            // The collection only contains one object with property '_id',
+            // so findByOneId here means 'find the only one'
             return collection.findOneById(_id);
         } else {
             throw new ItemNotFoundException("Item with id " + _id + " not found");
         }
+    }
+
+    /**
+     * Removes all documents in the collection from the database
+     */
+    public void clear() {
+        collection.remove(new BasicDBObject());
     }
 }

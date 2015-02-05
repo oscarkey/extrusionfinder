@@ -1,16 +1,27 @@
 package uk.ac.cam.echo.extrusionfinder.database;
 
+import com.mongodb.DB;
+import org.mongojack.JacksonDBCollection;
 import uk.ac.cam.echo.extrusionfinder.parts.Part;
+
+import java.net.UnknownHostException;
 
 /**
  * {@inheritDoc}
  *
  * This implementation uses MongoDB
- * @author as2388
  */
 public class MongoDBManager implements IDBManager {
-    public MongoDBManager(String DBName) {
+    private final MongoDBCollectionManager<Part> partManager;
 
+    public MongoDBManager(String databaseName) throws UnknownHostException {
+        DB database = MongoInstance.getDatabase(databaseName);
+
+        partManager = new MongoDBCollectionManager<>(
+                JacksonDBCollection.wrap(
+                    database.getCollection("parts"), Part.class, String.class
+                )
+        );
     }
 
     /**
@@ -18,7 +29,7 @@ public class MongoDBManager implements IDBManager {
      */
     @Override
     public void savePart(Part part) {
-
+        partManager.save(part);
     }
 
     /**
@@ -26,7 +37,11 @@ public class MongoDBManager implements IDBManager {
      */
     @Override
     public Part loadPart(String _id) throws PartNotFoundException {
-        return null;
+        try {
+            return partManager.load(_id);
+        } catch (ItemNotFoundException e) {
+            throw new PartNotFoundException(_id);
+        }
     }
 
     /**
@@ -34,6 +49,6 @@ public class MongoDBManager implements IDBManager {
      */
     @Override
     public void clearDatabase() {
-
+        partManager.clear();
     }
 }
