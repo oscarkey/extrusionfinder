@@ -8,7 +8,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".ImageCaptureActivity"
+            android:name="uk.ac.cam.cl.echo.extrusionfinder.client.ImageCaptureActivity"
             android:label="@string/title_activity_image_capture"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>

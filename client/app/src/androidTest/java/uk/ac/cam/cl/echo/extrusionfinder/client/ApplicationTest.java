@@ -1,4 +1,4 @@
-package uk.ac.cam.cl.groupecho.extrusionfinder;
+package uk.ac.cam.cl.echo.extrusionfinder.client;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
