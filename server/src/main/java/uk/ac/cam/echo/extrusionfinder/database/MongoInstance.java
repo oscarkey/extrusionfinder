@@ -12,7 +12,7 @@ import java.util.Map;
  *
  * @author as2388
  */
-public class MongoInstance { //TODO: Modify public modifier to whatever it should really be
+class MongoInstance { //TODO: Modify public modifier to whatever it should really be
     private static Map<String, DB> databases = new HashMap<>();
 
     /**

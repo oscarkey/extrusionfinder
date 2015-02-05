@@ -1,9 +1,6 @@
 package uk.ac.cam.echo.extrusionfinder.database;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
-import com.mongodb.DuplicateKeyException;
-import org.mongojack.DBQuery;
 import org.mongojack.JacksonDBCollection;
 
 /**
@@ -12,7 +9,7 @@ import org.mongojack.JacksonDBCollection;
  *
  * @author as2388
  */
-public class MongoDBCollectionManager<T extends DatabaseItem> {
+class MongoDBCollectionManager<T extends DatabaseItem> {
     private final JacksonDBCollection<T, String> collection;
 
     /**
