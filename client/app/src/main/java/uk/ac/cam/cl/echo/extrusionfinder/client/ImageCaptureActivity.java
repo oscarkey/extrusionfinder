@@ -1,9 +1,11 @@
 package uk.ac.cam.cl.echo.extrusionfinder.client;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.SurfaceView;
+import android.view.View;
+import android.widget.Button;
 
 import uk.ac.cam.cl.groupecho.extrusionfinder.R;
 
@@ -17,6 +19,8 @@ public class ImageCaptureActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_capture);
+
+        addEventListeners();
 
         // test code to get the camera working
         // if the API level is >=21 (Lollipop), we can use the new camera api
@@ -46,11 +50,26 @@ public class ImageCaptureActivity extends ActionBarActivity {
         super.onPause();
     }
 
-    private CameraController.ImageCapturedCallback imageCapturedCallback
+    private void addEventListeners() {
+        // capture image button: take a picture
+        Button captureImageButton = (Button) findViewById(R.id.captureImageButton);
+        captureImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View button) {
+                //TODO capture an image from the camera
+                // launch the results activity
+                ResultsActivity.startWithImage(button.getContext(), new byte[]{});
+            }
+        });
+    }
+
+    private final CameraController.ImageCapturedCallback imageCapturedCallback
             = new CameraController.ImageCapturedCallback() {
         @Override
         public void onImageCaptured(byte[] image) {
             Log.v(LOG_TAG, "Image was captured!");
         }
     };
+
+
 }
