@@ -33,7 +33,11 @@ public class Part implements DatabaseItem {
 
     @Override
     public boolean equals(Object o) {
-        Part part = (Part) o;
-        return part._id.equals(_id) && part.link.equals(link) && part.imageLink.equals(imageLink);
+        if (o instanceof Part) {
+            Part part = (Part) o;
+            return part._id.equals(_id) && part.link.equals(link) && part.imageLink.equals(imageLink);
+        } else {
+            return false;
+        }
     }
 }

@@ -45,9 +45,7 @@ public class MongoDBManagerTester {
 
         // test that the part can now be correctly loaded from the database
         try {
-            System.out.println("yo");
             Part loadedPart = dbManager.loadPart("id_test");
-            System.out.println("hi");
             assertTrue(loadedPart.equals(part));
         } catch (PartNotFoundException e) {
             fail("Part just saved not found in database");
