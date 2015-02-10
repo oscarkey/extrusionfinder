@@ -6,14 +6,24 @@ import uk.ac.cam.echo.extrusionfinder.database.DatabaseItem;
 
 public class Part implements DatabaseItem {
     private String _id;
+    private String manufacturerId;
+    private String partId;
     private String link;
     private String imageLink;
 
     @JsonCreator
     public Part(@JsonProperty("_id") String _id,
+                @JsonProperty("manufacturerId") String manufacturerId,
+                @JsonProperty("partId") String partId,
                 @JsonProperty("link") String link,
                 @JsonProperty("imageLink") String imageLink) {
-        this._id = _id;
+        this(manufacturerId, partId, link, imageLink);
+    }
+
+    public Part(String manufacturerId, String partId, String link, String imageLink) {
+        this._id = manufacturerId + partId;
+        this.manufacturerId = manufacturerId;
+        this.partId = partId;
         this.link = link;
         this.imageLink = imageLink;
     }
@@ -29,6 +39,14 @@ public class Part implements DatabaseItem {
 
     public String getImageLink() {
         return imageLink;
+    }
+
+    public String getManufacturerId() {
+        return manufacturerId;
+    }
+
+    public String getPartId() {
+        return partId;
     }
 
     @Override

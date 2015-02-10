@@ -18,8 +18,8 @@ public class Servlet implements IServlet {
         // TODO: Make a call to the actual matcher for results
         List<Part> matches = new LinkedList<>();
 
-        matches.add(new Part("a", "a_l", image));
-        matches.add(new Part("b", "b_l", image));
+        matches.add(new Part("SG00", "SG", "00", "a_l", image));
+        matches.add(new Part("SG01", "SG", "01", "b_l", image));
 
         return matches;
     }
