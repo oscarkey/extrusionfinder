@@ -7,13 +7,19 @@ import uk.ac.cam.echo.extrusionfinder.parts.Part;
 import java.net.UnknownHostException;
 
 /**
- * {@inheritDoc}
+ * A database wrapper which provides APIs for loading and saving parts
+ * and TODO classifiers
  *
- * This implementation uses MongoDB
+ * This implementation uses MongoDB. Many instances of MongoDBManager can be created; all will share the
+ * same connection
  */
 public class MongoDBManager implements IDBManager {
     private final MongoDBCollectionManager<Part> partManager;
 
+    /**
+     * @param databaseName          Name of database to connect to
+     * @throws UnknownHostException Thrown if unable to connect to MongoDB
+     */
     public MongoDBManager(String databaseName) throws UnknownHostException {
         DB database = MongoInstance.getDatabase(databaseName);
 

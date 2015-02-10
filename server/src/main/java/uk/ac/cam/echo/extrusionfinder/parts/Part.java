@@ -17,15 +17,15 @@ public class Part implements DatabaseItem {
                 @JsonProperty("partId") String partId,
                 @JsonProperty("link") String link,
                 @JsonProperty("imageLink") String imageLink) {
-        this(manufacturerId, partId, link, imageLink);
-    }
-
-    public Part(String manufacturerId, String partId, String link, String imageLink) {
-        this._id = manufacturerId + partId;
+        this._id = _id;
         this.manufacturerId = manufacturerId;
         this.partId = partId;
         this.link = link;
         this.imageLink = imageLink;
+    }
+
+    public Part(String manufacturerId, String partId, String link, String imageLink) {
+        this(manufacturerId + partId, manufacturerId, partId, link, imageLink);
     }
 
     @Override
