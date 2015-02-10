@@ -104,7 +104,8 @@ public class Camera1Controller implements CameraController {
 
         // request that the camera takes a picture
         // worth considering which callback we are using here
-        camera.takePicture(null, pictureCallback, null);
+        //FIXME need to use raw and jpg in case one isn't available?
+        camera.takePicture(null, null, pictureCallback);
     }
 
     private final Camera.PictureCallback pictureCallback = new Camera.PictureCallback() {
