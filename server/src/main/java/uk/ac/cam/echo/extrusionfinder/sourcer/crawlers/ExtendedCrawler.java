@@ -5,9 +5,10 @@ import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import java.util.stream.Stream;
 
 /**
- * Extends the crawler4j web crawler with, essentially, non-static information.
+ * Extends the crawler4j web crawler with, essentially, dynamic information
+ * injection for use in a static context ...
  */
-public abstract class ExtendedWebCrawler extends WebCrawler {
+public abstract class ExtendedCrawler extends WebCrawler {
 
     /**
      * Should update subclass with the parts stream such that the subclass puts

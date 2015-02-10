@@ -13,18 +13,20 @@ import java.util.stream.Stream;
 
 /**
  * Seagate Plastics specific crawler (part sourcer).
+ * PERHAPS INCLUDE A NOTION OF A VISITED PAGE, TO AVOID DUPLICATES ??
  */
-public class SeagateCrawler extends ExtendedWebCrawler {
+public class SeagateCrawler extends ExtendedCrawler {
 
     /* This is where we start our search */
-    public static final String[] SEEDS =
-        { "http://seagateplastics.com/" };
+    public static final String[] SEEDS = { "http://seagateplastics.com/" };
 
     /* We are not interested in entering pages with these file endings */
     private final static Pattern FILTERS =
         Pattern.compile(".*(\\.(css|js|gif|jpe?g|png|mp3|mp3|zip|gz|pdf))$");
 
-    /* This is the stream that we manipulate via side effects */
+    /* This is the stream that we manipulate via side effects.
+     * Note that if used, it HAS to be initialised with configure method.
+     */
     private static Stream.Builder<Part> parts;
 
     @Override
@@ -65,7 +67,11 @@ public class SeagateCrawler extends ExtendedWebCrawler {
             for (WebURL webUrl : links) {
                 String internalUrl = webUrl.getURL().toLowerCase();
                 if (internalUrl.endsWith("pdf") && parts != null) {
-                    parts.add(new Part("1", internalUrl, "image"));
+
+                    // note: until we know what the product id is, item id
+                    // is the url, because that is guaranteed unique.
+                    parts.add(new Part("1",internalUrl, internalUrl, "image"));
+
                 }
             }
         }

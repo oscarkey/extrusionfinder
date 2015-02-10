@@ -19,7 +19,7 @@ import java.util.stream.Stream;
  * Controller for any web crawler. Manages configuration and parts stream.
  */
 
-public class Controller<T extends ExtendedWebCrawler> {
+public class Controller<T extends ExtendedCrawler> {
 
     private Class<T> crawlerClass;
     private Stream.Builder<Part> partsStream;

@@ -2,6 +2,8 @@ package uk.ac.cam.echo.extrusionfinder.sourcer;
 
 import uk.ac.cam.echo.extrusionfinder.parts.Part;
 import uk.ac.cam.echo.extrusionfinder.sourcer.crawlers.*;
+import uk.ac.cam.echo.extrusionfinder.database.IDBManager;
+import uk.ac.cam.echo.extrusionfinder.database.MongoDBManager;
 
 import java.util.Collection;
 import java.util.ArrayList;
@@ -19,29 +21,28 @@ public class PartSourcer {
      */
     public static void main(String[] args) throws Exception {
 
-        updateDatabase();
-
+        String dbName = args.length > 0 ? args[0] : "extrusionDB";
+        IDBManager db = new MongoDBManager(dbName);
+        updateDatabase(db);
     }
 
     /**
      * Runs all the controllers (one per site)
-     * TODO: pass IDBManager as argument, instead of printing links, save parts
      */
-    public static void updateDatabase() throws Exception {
+    public static void updateDatabase(IDBManager dbManager) throws Exception {
 
-        Collection<Controller<? extends ExtendedWebCrawler>> crawlers =
-            new ArrayList<Controller<? extends ExtendedWebCrawler>>();
+        Collection<Controller<? extends ExtendedCrawler>> crawlers =
+            new ArrayList<Controller<? extends ExtendedCrawler>>();
 
         // This probably shouldn't be hardcoded in here, but configurable.
         // (mostly relevant if we add more websites to our crawler repertoire)
         crawlers.add(new Controller<SeagateCrawler>(SeagateCrawler.class,
             SeagateCrawler.SEEDS));
 
-        for (Controller<? extends ExtendedWebCrawler> crawler : crawlers) {
+        for (Controller<? extends ExtendedCrawler> crawler : crawlers) {
 
             Stream<Part> stream = crawler.crawl();
-            //stream.forEach(p -> dbManager.savePart(p));
-            stream.forEach(p -> System.out.println(p.getLink()));
+            stream.forEach(p -> dbManager.savePart(p));
 
         }
     }
