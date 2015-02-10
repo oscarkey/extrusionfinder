@@ -1,8 +1,8 @@
 package uk.ac.cam.cl.echo.extrusionfinder.client;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
@@ -13,12 +13,15 @@ public class ImageCaptureActivity extends ActionBarActivity {
 
     private static final String LOG_TAG = "ImageCaptureActivity";
 
+    private Context context;
     private CameraController cameraController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_capture);
+
+        context = this;
 
         addEventListeners();
 
@@ -56,9 +59,9 @@ public class ImageCaptureActivity extends ActionBarActivity {
         captureImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View button) {
-                //TODO capture an image from the camera
-                // launch the results activity
-                ResultsActivity.startWithImage(button.getContext(), new byte[]{});
+                //TODO indicate to the user that the picture has been taken
+                // request that the camera takes an image
+                cameraController.requestCapture();
             }
         });
     }
@@ -67,7 +70,8 @@ public class ImageCaptureActivity extends ActionBarActivity {
             = new CameraController.ImageCapturedCallback() {
         @Override
         public void onImageCaptured(byte[] image) {
-            Log.v(LOG_TAG, "Image was captured!");
+            // launch the results activity with this image
+            ResultsActivity.startWithImage(context, image);
         }
     };
 

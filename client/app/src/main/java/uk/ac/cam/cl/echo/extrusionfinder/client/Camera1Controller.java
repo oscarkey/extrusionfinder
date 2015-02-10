@@ -30,13 +30,15 @@ public class Camera1Controller implements CameraController {
         }
 
         // open the camera, the rear camera is opened by default (we hope, should be)
+        //TODO move this into async task to prevent blocking ui thread
         camera = Camera.open();
 
         // default orientation is landscape, so rotate this to portrait
         camera.setDisplayOrientation(90);
 
-        // change settings to suit image recognition
+        // change settings
         Camera.Parameters parameters = camera.getParameters();
+        parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
         // TODO set parameters to suit the image recognition algorithm
         camera.setParameters(parameters);
 
@@ -100,6 +102,15 @@ public class Camera1Controller implements CameraController {
             throw new IllegalStateException("Camera is not started thus we cannot capture.");
         }
 
-        //TODO capture an image and return the bytes from the camera
+        // request that the camera takes a picture
+        // worth considering which callback we are using here
+        camera.takePicture(null, pictureCallback, null);
     }
+
+    private final Camera.PictureCallback pictureCallback = new Camera.PictureCallback() {
+        @Override
+        public void onPictureTaken(byte[] data, Camera camera) {
+            capturedCallback.onImageCaptured(data);
+        }
+    };
 }
