@@ -3,8 +3,8 @@ package uk.ac.cam.cl.echo.extrusionfinder.server.database.test;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import uk.ac.cam.echo.extrusionfinder.database.ItemNotFoundException;
 import uk.ac.cam.echo.extrusionfinder.database.MongoDBManager;
-import uk.ac.cam.echo.extrusionfinder.database.PartNotFoundException;
 import uk.ac.cam.echo.extrusionfinder.parts.Part;
 
 import java.net.UnknownHostException;
@@ -35,29 +35,29 @@ public class MongoDBManagerTester {
         try {
             dbManager.loadPart("id_test");
             fail("Loading from an empty database did not trigger an exception");
-        } catch (PartNotFoundException e) {
-            assertTrue(e.getMessage().equals("Part with id 'id_test' not found in database"));
+        } catch (ItemNotFoundException e) {
+            assertTrue(e.getMessage().equals("Item with id 'id_test' not found in database"));
         }
 
         // create a new part and insert it into the database
-        Part part = new Part("id_test", "link", "imageL");
+        Part part = new Part("id_test", "", "", "link", "imageL");
         dbManager.savePart(part);
 
         // test that the part can now be correctly loaded from the database
         try {
             Part loadedPart = dbManager.loadPart("id_test");
             assertTrue(loadedPart.equals(part));
-        } catch (PartNotFoundException e) {
+        } catch (ItemNotFoundException e) {
             fail("Part just saved not found in database");
         }
 
         // insert a new part which has the same identifier. This should succeed: test by loading from database
-        part = new Part("id_test", "link2", "imageLink2");
+        part = new Part("id_test", "", "", "link2", "imageLink2");
         dbManager.savePart(part);
         try {
             Part loadedPart = dbManager.loadPart("id_test");
             assertTrue(loadedPart.equals(part));
-        } catch (PartNotFoundException e) {
+        } catch (ItemNotFoundException e) {
             fail("Modified part not saved in DB");
         }
 
@@ -66,8 +66,8 @@ public class MongoDBManagerTester {
         try {
             dbManager.loadPart("id_test");
             fail("Loading from an empty database did not trigger an exception");
-        } catch (PartNotFoundException e) {
-            assertTrue(e.getMessage().equals("Part with id 'id_test' not found in database"));
+        } catch (ItemNotFoundException e) {
+            assertTrue(e.getMessage().equals("Item with id 'id_test' not found in database"));
         }
     }
 

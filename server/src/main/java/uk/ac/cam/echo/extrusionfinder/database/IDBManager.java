@@ -24,7 +24,7 @@ public interface IDBManager {
      * @return      Part with identifier _id
      * @throws PartNotFoundException    Thrown if part with id _id is not found in the database
      */
-    public Part loadPart(String _id) throws PartNotFoundException;
+    public Part loadPart(String _id) throws ItemNotFoundException;
 
     // TODO: Load some sort of classifier
 

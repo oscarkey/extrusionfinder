@@ -42,12 +42,8 @@ public class MongoDBManager implements IDBManager {
      * {@inheritDoc}
      */
     @Override
-    public Part loadPart(String _id) throws PartNotFoundException {
-        try {
+    public Part loadPart(String _id) throws ItemNotFoundException {
             return partManager.load(_id);
-        } catch (ItemNotFoundException e) {
-            throw new PartNotFoundException(_id);
-        }
     }
 
     /**

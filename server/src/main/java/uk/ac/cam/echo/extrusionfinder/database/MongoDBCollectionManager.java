@@ -57,7 +57,7 @@ class MongoDBCollectionManager<T extends DatabaseItem> {
             // so findByOneId here means 'find the only one'
             return collection.findOneById(_id);
         } else {
-            throw new ItemNotFoundException("Item with id " + _id + " not found");
+            throw new ItemNotFoundException("Item with id '" + _id + "' not found in database");
         }
     }
 
