@@ -69,7 +69,7 @@ public class Controller<T extends ExtendedCrawler> {
         try {
 
             // configure the crawler with the parts stream.
-            // guaranteed (?) this method exists due to T subclass constraint.
+            // guaranteed this method exists due to T subclass constraint.
             // we need reflection because crawler4j uses class types not
             // instances.
             Method configure =

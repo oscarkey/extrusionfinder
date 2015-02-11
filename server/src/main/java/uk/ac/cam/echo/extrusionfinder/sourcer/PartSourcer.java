@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.ArrayList;
 import java.util.stream.Stream;
 
+
 /**
  * Program that crawls plastic extrusion vendors for information about the
  * extrusions they sell, in particular links and images.
@@ -23,7 +24,9 @@ public class PartSourcer {
 
         String dbName = args.length > 0 ? args[0] : "extrusionDB";
         IDBManager db = new MongoDBManager(dbName);
+        db.clearDatabase();
         updateDatabase(db);
+
     }
 
     /**

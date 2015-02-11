@@ -11,11 +11,21 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.jsoup.Jsoup;
+
+
+
 /**
  * Seagate Plastics specific crawler (part sourcer).
  * PERHAPS INCLUDE A NOTION OF A VISITED PAGE, TO AVOID DUPLICATES ??
  */
 public class SeagateCrawler extends ExtendedCrawler {
+
+    /* Vendor specific unique id */
+    public static final String VENDOR_ID = "1";
 
     /* This is where we start our search */
     public static final String[] SEEDS = { "http://seagateplastics.com/" };
@@ -59,21 +69,52 @@ public class SeagateCrawler extends ExtendedCrawler {
         if (page.getParseData() instanceof HtmlParseData) {
             HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
 
-            // TODO: read the table data to get metadata
             String html = htmlParseData.getHtml();
+            Document htmlDoc = Jsoup.parse(html, url);
+            extractData(htmlDoc);
+        }
+    }
 
-            Set<WebURL> links = htmlParseData.getOutgoingUrls();
+    /* Extracts metadata from the page.
+     * TODO: generalise this to something that can be used by other vendors
+     */
+    private void extractData(Document htmlDoc) {
 
-            for (WebURL webUrl : links) {
-                String internalUrl = webUrl.getURL().toLowerCase();
-                if (internalUrl.endsWith("pdf") && parts != null) {
+        Elements productNodes = htmlDoc.getElementsByClass("node");
+        for (Element productNode : productNodes) {
 
-                    // note: until we know what the product id is, item id
-                    // is the url, because that is guaranteed unique.
-                    parts.add(new Part("1",internalUrl, internalUrl, "image"));
+            Elements product = productNode.select("div.product-name");;
+            if (product == null || product.size() == 0) {
+                continue;
+            }
+            String productId = product.first().ownText();
 
+            Elements links = productNode.select("a[href]");
+            String link = "";
+            if (!(links == null || links.size() == 0)) {
+
+                link = links.first().attr("abs:href").toLowerCase();
+
+                // regex hack to deal with seagate's bad links
+                // assumption: all seagate's pdf links follow the format
+                // http://seagateplastics.com/stock_plastics_catalog/
+                // images_catalog/XYZ pdf (1).pdf
+                // where XYZ is the product id. Some of the urls on their
+                // website are wrong and don't include the " pdf (1)" at the
+                // end ... This is a temporary solution.
+                Pattern faultyPdf = Pattern.compile(".*[a-zA-Z0-9].pdf");
+                if (faultyPdf.matcher(link).matches()) {
+                    link = link.replaceFirst(".pdf", " pdf (1).pdf");
                 }
             }
+
+            Elements images = productNode.select("img[src]");
+            String image = "";
+            if (!(images == null || images.size() == 0)) {
+                image = images.first().attr("abs:src").toLowerCase();
+            }
+
+            parts.add(new Part(VENDOR_ID, productId, link, image));
         }
     }
 }

@@ -23,8 +23,11 @@ dependencies {
     // MongoJack (used for converting Java objects into MongoDB's format)
     compile 'org.mongojack:mongojack:2.0.0'
 
-    // web crawler and simple logger for crawler
+    // web crawler for part sourcing + simple logger (for debugging)
     compile 'edu.uci.ics:crawler4j:4.1'
     compile 'org.slf4j:slf4j-simple:1.7.9'
+
+    // jsoup for html parsing in the crawler
+    compile 'org.jsoup:jsoup:1.7.2'
 
 }
