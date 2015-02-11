@@ -20,9 +20,9 @@ public interface IDBManager {
 
     /**
      * Loads the part with the specified identifier from the database
-     * @param _id   Identifier of part to be loaded
-     * @return      Part with identifier _id
-     * @throws PartNotFoundException    Thrown if part with id _id is not found in the database
+     * @param _id                    Identifier of part to be loaded
+     * @return                       Part with identifier _id
+     * @throws ItemNotFoundException Thrown if part with id _id is not found in the database
      */
     public Part loadPart(String _id) throws ItemNotFoundException;
 

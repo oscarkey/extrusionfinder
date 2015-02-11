@@ -14,6 +14,7 @@ import java.util.Map;
  * @author as2388
  */
 class MongoInstance {
+
     private static Map<String, DB> databases = new HashMap<>();
 
     /**

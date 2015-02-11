@@ -23,11 +23,18 @@ import static org.junit.Assert.*;
 public class MongoDBManagerTester {
     private MongoDBManager dbManager;
 
+    /**
+     * Creates a connection to a database called 'test'
+     * @throws UnknownHostException
+     */
     @Before
     public void setUp() throws UnknownHostException {
         dbManager = new MongoDBManager("test");
     }
 
+    /**
+     * Tests clearing the database, and that saved parts can be loaded.
+     */
     @Test
     public void testPartsAndClear() {
         // test that part with id "id_test" is not in DB
@@ -71,6 +78,30 @@ public class MongoDBManagerTester {
         }
     }
 
+    /**
+     * Tests that multiple MongoDBManagers can be created which reference the same database, and that after saving
+     * a part with one DBManager enables the part to be loaded from another
+     */
+    @Test
+    public void testMultipleDatabaseRequests() throws UnknownHostException {
+        MongoDBManager db1 = new MongoDBManager("test-2");
+        MongoDBManager db2 = new MongoDBManager("test-2");
+
+        Part part = new Part("Mid", "Pid", "link", "imageL");
+        db1.savePart(part);
+
+        // test that the part can now be correctly loaded from the database
+        try {
+            Part loadedPart = db2.loadPart(part.get_id());
+            assertTrue(loadedPart.equals(part));
+        } catch (ItemNotFoundException e) {
+            fail("Part just saved not found in database");
+        }
+    }
+
+    /**
+     * Removes contents of the database 'test'
+     */
     @After
     public void tearDown() {
         dbManager.clearDatabase();
