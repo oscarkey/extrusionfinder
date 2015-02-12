@@ -1,10 +1,10 @@
 package uk.ac.cam.echo.extrusionfinder.database;
 
 import uk.ac.cam.echo.extrusionfinder.parts.Part;
+import uk.ac.cam.echo.extrusionfinder.parts.ZernikeMap;
 
 /**
- * A database wrapper which provides APIs for loading and saving parts
- * and TODO classifiers
+ * A database wrapper which provides APIs for loading and saving parts and zernike maps
  *
  * @author as2388
  */
@@ -26,7 +26,19 @@ public interface IDBManager {
      */
     public Part loadPart(String _id) throws ItemNotFoundException;
 
-    // TODO: Load some sort of classifier
+    /**
+     * Inserts a zernike map into the database.
+     * If the database already contains a zernike map, that map is overwritten
+     * @param zernikeMap    ZernikeMap to insert
+     */
+    public void saveZernikeMap(ZernikeMap zernikeMap);
+
+    /**
+     * Loads the ZernikeMap in the database from the database
+     * @return                       Current ZernikeMap in database
+     * @throws ItemNotFoundException Thrown if database does not contain a ZernikeMap
+     */
+    public ZernikeMap loadZernikeMap() throws ItemNotFoundException;
 
     /**
      * Removes all items from the database

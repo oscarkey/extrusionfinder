@@ -3,11 +3,16 @@ package uk.ac.cam.cl.echo.extrusionfinder.server.database.test;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import uk.ac.cam.echo.extrusionfinder.configuration.Configuration;
 import uk.ac.cam.echo.extrusionfinder.database.ItemNotFoundException;
 import uk.ac.cam.echo.extrusionfinder.database.MongoDBManager;
 import uk.ac.cam.echo.extrusionfinder.parts.Part;
+import uk.ac.cam.echo.extrusionfinder.parts.ZernikeMap;
 
 import java.net.UnknownHostException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -30,15 +35,15 @@ public class MongoDBManagerTester {
     @Before
     public void setUp() throws UnknownHostException {
         dbManager = new MongoDBManager("test");
+        dbManager.clearDatabase();
     }
 
     /**
      * Tests clearing the database, and that saved parts can be loaded.
      */
     @Test
-    public void testPartsAndClear() {
+    public void testDatabase() {
         // test that part with id "id_test" is not in DB
-        dbManager.clearDatabase();
         try {
             dbManager.loadPart("id_test");
             fail("Loading from an empty database did not trigger an exception");
@@ -69,6 +74,55 @@ public class MongoDBManagerTester {
         }
 
         // clear the database, and attempt to load the part again. This should fail
+        dbManager.clearDatabase();
+        try {
+            dbManager.loadPart("id_test");
+            fail("Loading from an empty database did not trigger an exception");
+        } catch (ItemNotFoundException e) {
+            assertTrue(e.getMessage().equals("Item with id 'id_test' not found in database"));
+        }
+
+        // create a new ZernikeMap and insert it into the database
+        Map<String, Float[]> map = new HashMap<>();
+        map.put("p0", new Float[]{(float) 0.0, (float) 0.1, (float) 0.2});
+        map.put("p1", new Float[]{(float) 0.5, (float) 1.2, (float) -0.2});
+        ZernikeMap zernikeMap = new ZernikeMap(map);
+        dbManager.saveZernikeMap(zernikeMap);
+
+        // test that the part can now be correctly loaded from the database
+        try {
+            ZernikeMap loadedZernikeMap = dbManager.loadZernikeMap();
+            assertTrue(Arrays.equals(loadedZernikeMap.getZernikeMap().get("p0"),
+                    new Float[]{(float) 0.0, (float) 0.1, (float) 0.2}));
+            assertTrue(Arrays.equals(loadedZernikeMap.getZernikeMap().get("p1"),
+                    new Float[]{(float) 0.5, (float) 1.2, (float) -0.2}));
+            assertTrue(loadedZernikeMap.getZernikeMap().keySet().size() == 2);
+        } catch (ItemNotFoundException e) {
+            fail("ZernikeMap just saved not found in database");
+        }
+
+        // insert a new zernikemap which has the same identifier. This should succeed: test by loading from database
+        map = new HashMap<>();
+        map.put("p0", new Float[]{(float) 0.0, (float) 0.1, (float) 0.2});
+        zernikeMap = new ZernikeMap(map);
+        dbManager.saveZernikeMap(zernikeMap);
+        try {
+            ZernikeMap loadedZernikeMap = dbManager.loadZernikeMap();
+            assertTrue(Arrays.equals(loadedZernikeMap.getZernikeMap().get("p0"),
+                    new Float[]{(float) 0.0, (float) 0.1, (float) 0.2}));
+            assertTrue(loadedZernikeMap.getZernikeMap().keySet().size() == 1);
+        } catch (ItemNotFoundException e) {
+            fail("Modified part not saved in DB");
+        }
+
+        // clear the database, and attempt to load the part and zernike moment again. This should fail
+        dbManager.clearDatabase();
+        try {
+            dbManager.loadZernikeMap();
+            fail("Loading from an empty database did not trigger an exception");
+        } catch (ItemNotFoundException e) {
+            assertTrue(e.getMessage().equals("Item with id '" + Configuration.ZERNIKE_MAP_ID + "' not found in database"));
+        }
         dbManager.clearDatabase();
         try {
             dbManager.loadPart("id_test");

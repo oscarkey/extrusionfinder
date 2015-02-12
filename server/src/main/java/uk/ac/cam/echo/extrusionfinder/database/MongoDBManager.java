@@ -2,19 +2,21 @@ package uk.ac.cam.echo.extrusionfinder.database;
 
 import com.mongodb.DB;
 import org.mongojack.JacksonDBCollection;
+import uk.ac.cam.echo.extrusionfinder.configuration.Configuration;
 import uk.ac.cam.echo.extrusionfinder.parts.Part;
+import uk.ac.cam.echo.extrusionfinder.parts.ZernikeMap;
 
 import java.net.UnknownHostException;
 
 /**
- * A database wrapper which provides APIs for loading and saving parts
- * and TODO classifiers
+ * A database wrapper which provides APIs for loading and saving parts zernike maps
  *
  * This implementation uses MongoDB. Many instances of MongoDBManager can be created; all will share the
  * same connection
  */
 public class MongoDBManager implements IDBManager {
     private final MongoDBCollectionManager<Part> partManager;
+    private final MongoDBCollectionManager<ZernikeMap> zernikeManager;
 
     /**
      * @param databaseName          Name of database to connect to
@@ -26,6 +28,12 @@ public class MongoDBManager implements IDBManager {
         partManager = new MongoDBCollectionManager<>(
                 JacksonDBCollection.wrap(
                     database.getCollection("parts"), Part.class, String.class
+                )
+        );
+
+        zernikeManager = new MongoDBCollectionManager<>(
+                JacksonDBCollection.wrap(
+                        database.getCollection("zernikemap"), ZernikeMap.class, String.class
                 )
         );
     }
@@ -50,7 +58,24 @@ public class MongoDBManager implements IDBManager {
      * {@inheritDoc}
      */
     @Override
+    public void saveZernikeMap(ZernikeMap zernikeMap) {
+        zernikeManager.save(zernikeMap);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ZernikeMap loadZernikeMap() throws ItemNotFoundException {
+        return zernikeManager.load(Configuration.ZERNIKE_MAP_ID);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void clearDatabase() {
         partManager.clear();
+        zernikeManager.clear();
     }
 }
