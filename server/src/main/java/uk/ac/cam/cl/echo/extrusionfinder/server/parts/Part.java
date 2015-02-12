@@ -1,8 +1,8 @@
-package uk.ac.cam.echo.extrusionfinder.parts;
+package uk.ac.cam.cl.echo.extrusionfinder.server.parts;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import uk.ac.cam.echo.extrusionfinder.database.DatabaseItem;
+import uk.ac.cam.cl.echo.extrusionfinder.server.database.DatabaseItem;
 
 public class Part implements DatabaseItem {
     private String _id;

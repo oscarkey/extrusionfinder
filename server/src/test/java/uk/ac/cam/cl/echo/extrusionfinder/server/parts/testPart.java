@@ -1,7 +1,7 @@
-package uk.ac.cam.cl.echo.extrusionfinder.server.parts.test;
+package uk.ac.cam.cl.echo.extrusionfinder.server.parts;
 
 import org.junit.Test;
-import uk.ac.cam.echo.extrusionfinder.parts.Part;
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
 
 import static org.junit.Assert.assertTrue;
 

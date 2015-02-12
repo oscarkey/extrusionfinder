@@ -1,14 +1,14 @@
-package uk.ac.cam.cl.echo.extrusionfinder.server.database.test;
+package uk.ac.cam.cl.echo.extrusionfinder.server.database;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import uk.ac.cam.echo.extrusionfinder.configuration.Configuration;
-import uk.ac.cam.echo.extrusionfinder.database.ItemNotFoundException;
-import uk.ac.cam.echo.extrusionfinder.database.MongoDBManager;
-import uk.ac.cam.echo.extrusionfinder.parts.Part;
-import uk.ac.cam.echo.extrusionfinder.parts.ZernikeMap;
+import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Configuration;
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.ZernikeMap;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -151,6 +151,15 @@ public class MongoDBManagerTester {
         } catch (ItemNotFoundException e) {
             fail("Part just saved not found in database");
         }
+    }
+
+    @Test
+    public void testPrivateConstructor() throws Exception {
+        Constructor constructor = MongoInstance.class.getDeclaredConstructor();
+        assertTrue("Constructor is not private", Modifier.isPrivate(constructor.getModifiers()));
+
+        constructor.setAccessible(true);
+        constructor.newInstance();
     }
 
     /**

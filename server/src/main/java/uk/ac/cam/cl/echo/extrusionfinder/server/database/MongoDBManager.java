@@ -1,10 +1,10 @@
-package uk.ac.cam.echo.extrusionfinder.database;
+package uk.ac.cam.cl.echo.extrusionfinder.server.database;
 
 import com.mongodb.DB;
 import org.mongojack.JacksonDBCollection;
-import uk.ac.cam.echo.extrusionfinder.configuration.Configuration;
-import uk.ac.cam.echo.extrusionfinder.parts.Part;
-import uk.ac.cam.echo.extrusionfinder.parts.ZernikeMap;
+import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Configuration;
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.ZernikeMap;
 
 import java.net.UnknownHostException;
 

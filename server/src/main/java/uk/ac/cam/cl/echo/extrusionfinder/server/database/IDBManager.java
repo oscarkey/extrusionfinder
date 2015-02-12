@@ -1,7 +1,7 @@
-package uk.ac.cam.echo.extrusionfinder.database;
+package uk.ac.cam.cl.echo.extrusionfinder.server.database;
 
-import uk.ac.cam.echo.extrusionfinder.parts.Part;
-import uk.ac.cam.echo.extrusionfinder.parts.ZernikeMap;
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.ZernikeMap;
 
 /**
  * A database wrapper which provides APIs for loading and saving parts and zernike maps

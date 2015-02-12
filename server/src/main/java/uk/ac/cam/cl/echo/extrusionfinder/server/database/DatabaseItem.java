@@ -1,4 +1,4 @@
-package uk.ac.cam.echo.extrusionfinder.database;
+package uk.ac.cam.cl.echo.extrusionfinder.server.database;
 
 /**
  * Indicates that an object can be stored by IDBManager.

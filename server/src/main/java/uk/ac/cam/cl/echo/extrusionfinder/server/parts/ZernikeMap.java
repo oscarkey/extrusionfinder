@@ -1,9 +1,9 @@
-package uk.ac.cam.echo.extrusionfinder.parts;
+package uk.ac.cam.cl.echo.extrusionfinder.server.parts;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import uk.ac.cam.echo.extrusionfinder.configuration.Configuration;
-import uk.ac.cam.echo.extrusionfinder.database.DatabaseItem;
+import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Configuration;
+import uk.ac.cam.cl.echo.extrusionfinder.server.database.DatabaseItem;
 
 import java.util.Map;
 
