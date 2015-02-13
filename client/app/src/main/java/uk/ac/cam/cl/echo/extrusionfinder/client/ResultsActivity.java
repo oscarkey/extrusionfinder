@@ -7,10 +7,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.MenuItem;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
@@ -31,6 +28,7 @@ public class ResultsActivity extends ActionBarActivity {
     private String requestUuid;
     private ResultsCache resultsCache;
     private BroadcastReceiver resultsReceivedBroadcastReceiver;
+    private ListView listView;
 
     /**
      * Send an intent to start the ResultsActivity
@@ -57,13 +55,10 @@ public class ResultsActivity extends ActionBarActivity {
         setContentView(R.layout.activity_results);
 
         // get a reference to the list view
-        ListView listView = (ListView) findViewById(R.id.resultsListView);
+        listView = (ListView) findViewById(R.id.resultsListView);
 
-        // initially show a progress bar
-        ProgressBar progressBar = new ProgressBar(this);
-        progressBar.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
-                LayoutParams.WRAP_CONTENT, Gravity.CENTER));
-        progressBar.setIndeterminate(true);
+        // initially show a progress bar/spinner
+        ProgressBar progressBar = (ProgressBar) findViewById(R.id.resultsProgressBar);
         listView.setEmptyView(progressBar);
 
         // set up a broadcast receiver so we are notified when new results arrive
@@ -113,18 +108,33 @@ public class ResultsActivity extends ActionBarActivity {
         }
     }
 
-
+    /**
+     * Display the given results in the list view. Any existing results will be removed.
+     * @param results List of results to display
+     */
     private void displayResults(List<Result> results) {
-        //TODO implement result display
+        // create a list adapter with the results and attach it to the list
+        ResultsAdapter resultsAdapter = new ResultsAdapter(this,
+                results.toArray(new Result[results.size()]));
+        listView.setAdapter(resultsAdapter);
     }
 
+    /**
+     * Set up a broadcast receiver to detect when the CommsService has received results.
+     */
     private void setupBroadcastReceiver() {
+        // we use a local broadcast receiver as broadcasts are staying within the app
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
 
+        // this is the callback that runs when the results arrive
         resultsReceivedBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Log.v(LOG_TAG, "results received");
+                // check that the results are the ones we want
+                if(resultsCache.hasResults(requestUuid)) {
+                    // display them
+                    displayResults(resultsCache.getResults(requestUuid));
+                }
             }
         };
 
