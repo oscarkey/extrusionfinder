@@ -4,13 +4,15 @@ import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Core.MinMaxLocResult;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfRect;
+import org.opencv.core.MatOfInt;
+import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.core.Scalar;
 import org.opencv.highgui.Highgui;
+import java.util.List;
 import java.util.LinkedList;
 import java.util.ArrayList;
 import java.util.Queue;
@@ -23,9 +25,7 @@ import java.util.Queue;
 public class ProfileDetector extends ImageModifier {
     private static final int imageSize = 200;
 
-    public ProfileDetector(String in, String out) {
-        super(in, out);
-    }
+    private int diameter;
 
     class IntPoint {
         int x;
@@ -36,9 +36,13 @@ public class ProfileDetector extends ImageModifier {
         }
     };
 
+    public ProfileDetector(String in, String out) {
+        super(in, out);
+    }
+
     @Override
     protected void process() {
-        int diameter = imageSize;
+        diameter = imageSize;
         int blurDiameter = 8;
         int sigma = 15;
 
@@ -49,23 +53,24 @@ public class ProfileDetector extends ImageModifier {
         rawImage = standardiseInput();
 
         Mat thresholdMask;
-        imageStep = imageRaw;
+        imageStep = rawImage;
         imageStep = blur(imageStep, blurDiameter, sigma, sigma);
         imageStep = minGreyscale(imageStep);
-        imageStep = tunnelVision(imageStep);
+        imageStep = invert(imageStep);
+        imageStep = fade(imageStep);
         imageStep = threshold(imageStep);
         thresholdMask = imageStep;
 
         Mat contourMask;
         imageStep = thresholdMask;
-        imageStep = largestContour(imageStep);
+        imageStep = largestContourMask(imageStep);
         contourMask = imageStep;
 
         Mat profile;
-        imageStep = imageRaw;
+        imageStep = rawImage;
         imageStep = avgGreyscale(imageStep);
-        imageStep = applyMask(imageStep, thresholdMask);
-        imageStep = applyMask(imageStep, contourMask);
+        imageStep = applyBinaryMask(imageStep, thresholdMask);
+        imageStep = applyBinaryMask(imageStep, contourMask);
         profile = imageStep;
 
         imageOut = profile;
@@ -97,7 +102,7 @@ public class ProfileDetector extends ImageModifier {
     private Mat blur(Mat input, int blurDiameter, int sigmaColor, int sigmaSpace) {
         Mat output = new Mat();
         Imgproc.bilateralFilter(input, output, blurDiameter, sigmaColor, sigmaSpace);
-        return input;
+        return output;
     }
 
     /**
@@ -110,11 +115,14 @@ public class ProfileDetector extends ImageModifier {
         Mat c1 = new Mat(diameter, diameter, CvType.CV_8UC1);
         Mat c2 = new Mat(diameter, diameter, CvType.CV_8UC1);
         Mat c3 = new Mat(diameter, diameter, CvType.CV_8UC1);
-        List mats = new ArrayList(3);
-        mats.add(c1);
-        mats.add(c2);
-        mats.add(c3);
-        Imgproc.split(input, mats);
+        List<Mat> matSrc = new ArrayList<Mat>(3);
+        List<Mat> matDst = new ArrayList<Mat>(3);
+        MatOfInt fromTo = new MatOfInt(0, 0, 1, 1, 2, 2);
+        matSrc.add(input);
+        matDst.add(c1);
+        matDst.add(c2);
+        matDst.add(c3);
+        Core.mixChannels(matSrc, matDst, fromTo);
 
         // Get minimums
         Mat output;
@@ -138,12 +146,26 @@ public class ProfileDetector extends ImageModifier {
 
     /**
      * Applies a fade to black to the given image with radial distance from the center.
+     * NOT TRUE!
      * <p>
-     * The fade is linear, and the fading region is the maximal circle bound by the image.
+     * The fade is linear, and the fading region is the circle, centred with the image, with double
+     * the diameter.
      */
-    private Mat tunnelVision(Mat input) {
-        byte[] = new byte[diameter * diameter];
-        Mat mask = new Mat(diameter, diameter, CvType.CV_8UC1
+    private Mat fade(Mat input) {
+        byte[] bytes = new byte[diameter * diameter];
+        Mat mask = new Mat(diameter, diameter, CvType.CV_8UC1);
+
+        int r = diameter / 2;
+        int i = 0;
+        for (int y = 0; y < diameter; y++) {
+            for (int x = 0; x < diameter; x++, i++) {
+                double keep = 0.707106781187 - (Math.sqrt((x-r)*(x-r) + (y-r)*(y-r)) / diameter);
+                bytes[i] = (byte)(keep < 0 ? 0 : (byte)(keep * 255.0));
+            }
+        }
+
+        mask.put(0, 0, bytes);
+
         return applyMask(input, mask);
     }
 
@@ -151,14 +173,65 @@ public class ProfileDetector extends ImageModifier {
      * Applies an adaptive threshold to the given image.
      */
     private Mat threshold(Mat input) {
-        return input;
+        Mat output = new Mat();
+        Imgproc.adaptiveThreshold(
+            input, 
+            output, 
+            255,
+            Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C,
+            Imgproc.THRESH_BINARY_INV,
+            11,
+            2);
+
+        return output;
     }
 
     /**
      * Finds the largest contour of the given image and returns its mask.
+     * <p>
+     * The contour area has a mask value of 255, whilst non-contour area has a value of 0.
+     * <p>
+     * If no contours exist, the mask is all zeros.
      */
-    private Mat largestContour(Mat input) {
-        return input;
+    private Mat largestContourMask(Mat input) {
+        Mat output = new Mat(input.rows(), input.cols(), CvType.CV_8UC1);
+        List<MatOfPoint> contours = new LinkedList<MatOfPoint>();
+        Mat hierarchy = new Mat();
+        Imgproc.findContours(
+            input.clone(),
+            contours,
+            hierarchy,
+            Imgproc.RETR_TREE,
+            Imgproc.CHAIN_APPROX_SIMPLE);
+
+        MatOfPoint largestContour = null;
+        double largestArea = 0;
+        for (MatOfPoint contour : contours) {
+            double area = Imgproc.contourArea(contour);
+            if (area > largestArea) {
+                largestArea = area;
+                largestContour = contour;
+            }
+        }
+
+        output.setTo(new Scalar(0));
+        if (largestContour != null) {
+            // Could be done using the original list and an index.
+            List<MatOfPoint> list = new ArrayList<MatOfPoint>(1);
+            list.add(largestContour);
+            Imgproc.drawContours(output, list, 0, new Scalar(255), -1);
+        }
+        return output;
+    }
+
+    /**
+     * Inverts the given image.
+     */
+    private Mat invert(Mat input) {
+        Mat output = new Mat(input.rows(), input.cols(), input.type());
+        output.setTo(new Scalar(255));
+        Core.subtract(output, input, output);
+        return output;
     }
 
     /**
@@ -167,25 +240,48 @@ public class ProfileDetector extends ImageModifier {
      * All pixels with non-zero values in mask are preserved, otherwise they are reduced to black.
      */
     private Mat applyBinaryMask(Mat input, Mat mask) {
-        Mat output = new Mat();
-        return input.copyTo(input, mask);
+        Mat binMask = new Mat();
+        Core.min(mask.clone(), new Scalar(1), binMask);
+
+        return applyMultiplicationMask(input, binMask, 1.0);
     }
 
     /**
-     * Applies the given binary mask to the given image.
+     * Applies the given mask to the given image.
      * <p>
-     * The input and mask are multiplied together. The mask must be single channel.
+     * The mask is normalised and multiplied with the image. The mask must be single channel.
      */
-    private Mat applyMultiplicationMask(Mat input, Mat mask) {
-        // Mat output = input.clone();
-        // Mat multiMask = new Mat();
+    private Mat applyMask(Mat input, Mat mask) {
+        return applyMultiplicationMask(input, mask, 1.0 / 255.0);
+    }
 
+    /**
+     * Applies the given mask to the given image by multiplying raw values.
+     * <p>
+     * The input and mask are multiplied together, and a scale is applied. The mask must be single
+     * channel.
+     * <p>
+     * Note that the mask has values 0 to 255, so scaling is necessary to avoid overflow.
+     */
+    private Mat applyMultiplicationMask(Mat input, Mat mask, double scale) {
+        Mat output = new Mat(input.rows(), input.cols(), input.type());
+        Mat compatibleMask;
+        switch (input.channels()) {
+        case 3:
+        case 4:
+            compatibleMask = new Mat();
+            Imgproc.cvtColor(mask, compatibleMask, Imgproc.COLOR_GRAY2RGB, input.channels());
+            break;
+        default:
+            compatibleMask = mask;
+            break;
+        }
+        Core.multiply(input, compatibleMask, output, scale);
         // return output.copyTo(input, mask);
-        return input;
+        return output;
     }
 
     public static void main(String[] args) {
         new ProfileDetector(args[0], args[1]);
     }
 }
-
