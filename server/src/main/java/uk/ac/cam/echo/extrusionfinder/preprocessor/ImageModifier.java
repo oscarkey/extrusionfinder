@@ -23,7 +23,7 @@ public abstract class ImageModifier {
     }
 
     private void load(String in) {
-        imageOn = Highgui.imread(in);
+        imageIn = Highgui.imread(in);
     }
 
     private void save(String out) {
