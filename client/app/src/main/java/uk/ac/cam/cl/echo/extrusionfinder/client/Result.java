@@ -1,5 +1,7 @@
 package uk.ac.cam.cl.echo.extrusionfinder.client;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.net.URI;
 
@@ -8,6 +10,7 @@ import java.net.URI;
  * Basic, immutable data structure to hold the part data of one result
  */
 public class Result implements Serializable {
+    @SerializedName("_id")
     private final String partId;
     private URI purchaseUri;
 
