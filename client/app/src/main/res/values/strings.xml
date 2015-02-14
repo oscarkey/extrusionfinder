@@ -7,4 +7,15 @@
     <string name="text_capture_image_button">Capture image</string>
     <string name="title_activity_results">Matches</string>
 
+    <string name="title_dialog_error_no_network">No connection</string>
+    <string name="message_dialog_error_no_network">
+        We were unable to connect to the internet. Please check your signal.
+    </string>
+    <string name="text_button_neutral">@android:string/ok</string>
+
+    <string name="title_dialog_error_other">Error</string>
+    <string name="message_dialog_error_other">
+        An error occurred retrieving results from the server.
+    </string>
+
 </resources>

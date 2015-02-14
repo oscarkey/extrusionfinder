@@ -5,10 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Base64;
+import android.util.Log;
 
 import java.util.List;
 
 import retrofit.RestAdapter;
+import retrofit.RetrofitError;
 
 /**
  * An {@link IntentService} for submitting an image and loading results from the server
@@ -20,10 +22,16 @@ public class CommsService extends IntentService {
     public static final String ACTION_RESULTS_RECEIVED
             = "uk.ac.cam.cl.echo.extrusionfinder.client.action.RESULTS_RECEIVED";
 
+    public static final String ACTION_REQUEST_ERROR
+            = "uk.ac.cam.cl.echo.extrusionfinder.client.action.REQUEST_ERROR";
+    public static final String EXTRA_REQUEST_ERROR_TYPE
+            = "uk.ac.cam.cl.echo.extrusionfinder.client.extra.REQUEST_ERROR_TYPE";
+    public static final int ERROR_TYPE_NETWORK = 0;
+    public static final int ERROR_TYPE_OTHER = 1;
+
     private static final String ACTION_REQUEST_RESULTS
             = "uk.ac.cam.cl.echo.extrusionfinder.client.action.REQUEST_RESULTS";
-
-    private static final String EXTRA_REQUEST_UUID
+    public static final String EXTRA_REQUEST_UUID
             = "uk.ac.cam.cl.echo.extrusionfinder.client.extra.REQUEST_UUID";
 
 
@@ -94,19 +102,38 @@ public class CommsService extends IntentService {
         byte[] image = resultsCache.getImage(uuid);
 
         // encode the image as a base 64 string
-        //TODO catch network exception
         String base64Image = Base64.encodeToString(image, Base64.DEFAULT);
 
         // send a blocking request to the server to get results
         // blocking doesn't matter as we have our own thread
-        List<Result> results = resultsServiceAdapter.getMatches(base64Image);
+        List<Result> results;
+        try {
+            results = resultsServiceAdapter.getMatches(base64Image);
+        }
+        catch(RetrofitError e) {
+            // print out the error
+            Log.e(LOG_TAG, "Exception occurred when fetching results: " + e);
+
+            // report it to the ui
+            Intent intent = new Intent(ACTION_REQUEST_ERROR);
+            intent.putExtra(EXTRA_REQUEST_UUID, uuid);
+            if(e.getKind() == RetrofitError.Kind.NETWORK) {
+                intent.putExtra(EXTRA_REQUEST_ERROR_TYPE, ERROR_TYPE_NETWORK);
+            }
+            else {
+                intent.putExtra(EXTRA_REQUEST_ERROR_TYPE, ERROR_TYPE_OTHER);
+            }
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+
+            // give up loading
+            return;
+        }
 
         // store the results in the cache
         resultsCache.putResults(uuid, results);
 
         // send a local broadcast to notify the ui that we have received the results
         Intent intent = new Intent(ACTION_RESULTS_RECEIVED);
-        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
-        localBroadcastManager.sendBroadcast(intent);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }
