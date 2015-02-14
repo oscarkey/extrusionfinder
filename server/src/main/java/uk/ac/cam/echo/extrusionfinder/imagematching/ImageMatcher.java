@@ -1,6 +1,6 @@
-package uk.ac.cam.echo.extrusionfinder.server.imagematching;
+package uk.ac.cam.echo.extrusionfinder.imagematching;
 
-import uk.ac.cam.echo.extrusionfinder.server.zernike.Zernike;
+import uk.ac.cam.echo.extrusionfinder.zernike.Zernike;
 
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
