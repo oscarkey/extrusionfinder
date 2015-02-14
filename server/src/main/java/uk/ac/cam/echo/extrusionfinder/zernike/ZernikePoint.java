@@ -1,4 +1,4 @@
-package uk.ac.cam.echo.extrusionfinder.server.zernike;
+package uk.ac.cam.echo.extrusionfinder.zernike;
 
 public class ZernikePoint {
 

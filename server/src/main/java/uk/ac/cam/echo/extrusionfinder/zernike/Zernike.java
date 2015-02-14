@@ -1,4 +1,4 @@
-package uk.ac.cam.echo.extrusionfinder.server.zernike;
+package uk.ac.cam.echo.extrusionfinder.zernike;
 
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
