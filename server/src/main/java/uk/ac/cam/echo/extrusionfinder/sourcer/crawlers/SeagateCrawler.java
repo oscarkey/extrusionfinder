@@ -3,13 +3,12 @@ package uk.ac.cam.echo.extrusionfinder.sourcer.crawlers;
 import uk.ac.cam.echo.extrusionfinder.parts.Part;
 
 import edu.uci.ics.crawler4j.crawler.Page;
-import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.url.WebURL;
 
-import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+import java.util.stream.Stream.Builder;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -17,31 +16,35 @@ import org.jsoup.select.Elements;
 import org.jsoup.Jsoup;
 
 
-
 /**
  * Seagate Plastics specific crawler (part sourcer).
- * PERHAPS INCLUDE A NOTION OF A VISITED PAGE, TO AVOID DUPLICATES ??
  */
+
 public class SeagateCrawler extends ExtendedCrawler {
 
     /* Vendor specific unique id */
     public static final String VENDOR_ID = "1";
 
     /* This is where we start our search */
-    public static final String[] SEEDS = { "http://seagateplastics.com/" };
+    private static final String[] seeds = { "http://seagateplastics.com/" };
 
     /* We are not interested in entering pages with these file endings */
     private final static Pattern FILTERS =
         Pattern.compile(".*(\\.(css|js|gif|jpe?g|png|mp3|mp3|zip|gz|pdf))$");
 
     /* This is the stream that we manipulate via side effects.
-     * Note that if used, it HAS to be initialised with configure method.
+     * Note that if used, it HAS to be assigned with configure method.
      */
-    private static Stream.Builder<Part> parts;
+    private static Builder<Part> parts;
 
     @Override
-    public void configure(Stream.Builder<Part> prts) {
+    public void configure(Builder<Part> prts) {
         parts = prts;
+    }
+
+    @Override
+    public String[] getSeeds() {
+        return seeds;
     }
 
     /**
@@ -54,7 +57,7 @@ public class SeagateCrawler extends ExtendedCrawler {
     public boolean shouldVisit(Page referringPage, WebURL url) {
 
         String href = url.getURL().toLowerCase();
-        return !FILTERS.matcher(href).matches() && (href.startsWith(SEEDS[0]));
+        return !FILTERS.matcher(href).matches() && (href.startsWith(seeds[0]));
     }
 
     /**
@@ -114,7 +117,9 @@ public class SeagateCrawler extends ExtendedCrawler {
                 image = images.first().attr("abs:src").toLowerCase();
             }
 
-            parts.add(new Part(VENDOR_ID, productId, link, image));
+            if (parts != null) {
+                parts.add(new Part(VENDOR_ID, productId, link, image));
+            }
         }
     }
 }
