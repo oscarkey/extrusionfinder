@@ -2,7 +2,9 @@ package uk.ac.cam.cl.echo.extrusionfinder.client;
 
 import java.util.List;
 
+import retrofit.http.Body;
 import retrofit.http.GET;
+import retrofit.http.POST;
 import retrofit.http.Query;
 
 /**
@@ -16,6 +18,6 @@ public interface ResultsServiceAdapter {
      * @param image The image to find results for encoded as a base64 string
      * @return A list of the results matched
      */
-    @GET("/matches")
-    public List<Result> getMatches( @Query("image") String image);
+    @POST("/matches")
+    public List<Result> getMatches(@Body String image);
 }

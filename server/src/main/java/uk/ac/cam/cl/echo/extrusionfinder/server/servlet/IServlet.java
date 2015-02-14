@@ -1,8 +1,10 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.servlet;
 
+import org.jboss.resteasy.annotations.Body;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
 
 import javax.ws.rs.*;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -13,7 +15,8 @@ import java.util.List;
 @Produces("application/json")
 public interface IServlet {
 
-    @GET
+    @POST
     @Path("/matches/")
-    public abstract List<Part> findMatches(@QueryParam("image") String image);
+    @Consumes("*/*")
+    public abstract List<Part> findMatches(String image) throws IOException;
 }

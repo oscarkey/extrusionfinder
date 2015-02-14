@@ -78,7 +78,8 @@ public class CommsService extends IntentService {
      */
     private void handleActionRequestResults(String uuid, byte[] image) {
         // encode the image as a base 64 string
-        String base64Image = Base64.encodeToString(image, Base64.DEFAULT);
+        String base64Image = Base64.encodeToString(image, Base64.NO_WRAP);
+        System.out.println(base64Image);
 
         // send a blocking request to the server to get results
         // blocking doesn't matter as we have our own thread
