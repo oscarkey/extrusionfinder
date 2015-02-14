@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
+import java.util.UUID;
 
 //TODO check/improve thread safety
 
@@ -30,7 +31,7 @@ public class ResultsCache {
     private static int clientCount;
 
     private final Context context;
-    private ResultSet results;
+    private ResultRequest request;
 
 
     /**
@@ -53,7 +54,7 @@ public class ResultsCache {
         this.context = context;
 
         // load the existing cache from the file
-        results = loadFromFile();
+        request = loadFromFile();
     }
 
 
@@ -66,53 +67,96 @@ public class ResultsCache {
 
         // check if we now have no clients and so need to save ready for destruction
         if(clientCount <= 0) {
-            saveToFile(results);
+            saveToFile(request);
         }
     }
 
-
     /**
-     * Save this list of results to the cache associated with the given id.
-     * Won't be saved to disk until cache is closed.
-     * @param uuid String uuid of the request
-     * @param results List of results to cache
+     * Store a new request in the cache
+     * @param image The image to look up in this request
+     * @return the uuid of the new request
      */
-    public synchronized void putResults(String uuid, List<Result> results) {
-        this.results = new ResultSet(uuid, results);
+    public String putRequest(byte[] image) {
+        String uuid = UUID.randomUUID().toString();
+        request = new ResultRequest(uuid, image);
+        return uuid;
     }
 
+    /**
+     * Store the results for a request
+     * @param uuid The id of the request
+     * @param results The list of results to store
+     */
+    public void putResults(String uuid, List<Result> results) {
+        // only store the results if they are for the current request
+        if(isDesiredRequest(uuid)) {
+            request.putResults(results);
+        }
+    }
 
     /**
-     * Get an List of the cached results for this uuid
-     * @return List of cached results
+     * Check if the currently cached request has this id
+     * @param uuid the id to test
+     * @return true if we do have this request, else false
      */
-    public synchronized List<Result> getResults(String uuid) {
-        // check if we have results and that they have the right uuid
-        if(results != null && results.getRequestUuid().equals(uuid)) {
-            return results.getResults();
+    public boolean hasRequest(String uuid) {
+        return isDesiredRequest(uuid);
+    }
+
+    /**
+     * Check if we have results for the given request id
+     * @param uuid id of the request
+     * @return true if we do have results else false
+     */
+    public boolean hasResults(String uuid) {
+        // check if we have any request, if it's the right request and if it has results
+        return (isDesiredRequest(uuid) && request.hasResults());
+    }
+
+    /**
+     * Get the image for a given request id
+     * @param uuid id of the request
+     * @return byte array of image data, null if we don't have this request
+     */
+    public byte[] getImage(String uuid) {
+        // only return the image if this is the right request
+        if(isDesiredRequest(uuid)) {
+            return request.getImage();
         }
         else {
             return null;
         }
     }
 
-
     /**
-     * Check if we have cached results for this uuid
-     * @param uuid String uui dto search for
-     * @return true if there are cached results or false if there aren't
+     * Get the results associated with a given id
+     * @param uuid the id
+     * @return the results or null if they're aren't any for this uuid
      */
-    public synchronized boolean hasResults(String uuid) {
-        // false if results is null
-        return results != null && results.getRequestUuid().equals(uuid);
+    public List<Result> getResults(String uuid) {
+        // only return the results if this is the right uuid
+        if(isDesiredRequest(uuid)) {
+            return request.getResults();
+        }
+        else {
+            return null;
+        }
     }
 
+    /**
+     * Test if the cache has a request for this uuid
+     * @param uuid the uuid to test
+     * @return true if there is a request else false
+     */
+    private boolean isDesiredRequest(String uuid) {
+        return (request != null && request.getRequestUuid().equals(uuid));
+    }
 
     /**
      * Tries to load the results from the cache file
      * @return A ResultSet containing the results
      */
-    private synchronized ResultSet loadFromFile() {
+    private synchronized ResultRequest loadFromFile() {
         // find the path of the cache file
         File cacheFile = getCacheFile();
 
@@ -123,7 +167,7 @@ public class ResultsCache {
                 BufferedInputStream bIS = new BufferedInputStream(new FileInputStream(cacheFile));
                 ObjectInputStream oIS = new ObjectInputStream(bIS);
 
-                ResultSet loadedResults = (ResultSet) oIS.readObject();
+                ResultRequest loadedResults = (ResultRequest) oIS.readObject();
 
                 oIS.close();
                 bIS.close();
@@ -154,7 +198,7 @@ public class ResultsCache {
      * Saves a set of results out to the cache file
      * @param results The ResultSet to be saved
      */
-    private void saveToFile(ResultSet results) {
+    private void saveToFile(ResultRequest results) {
         // if we don't have any results then there's nothing to do
         if(results == null) {
             return;

@@ -70,8 +70,13 @@ public class ImageCaptureActivity extends ActionBarActivity {
             = new CameraController.ImageCapturedCallback() {
         @Override
         public void onImageCaptured(byte[] image) {
-            // launch the results activity with this image
-            ResultsActivity.startWithImage(context, image);
+            // save the request to the cache
+            ResultsCache cache = ResultsCache.getInstance(context);
+            String uuid = cache.putRequest(image);
+            cache.close();
+
+            // launch the results activity
+            ResultsActivity.startWithUuid(context, uuid);
         }
     };
 

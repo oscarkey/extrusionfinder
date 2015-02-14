@@ -23,13 +23,12 @@ public class CommsService extends IntentService {
     private static final String ACTION_REQUEST_RESULTS
             = "uk.ac.cam.cl.echo.extrusionfinder.client.action.REQUEST_RESULTS";
 
-    private static final String EXTRA_IMAGE_BYTES
-            = "uk.ac.cam.cl.echo.extrusionfinder.client.extra.IMAGE_BYTES";
     private static final String EXTRA_REQUEST_UUID
             = "uk.ac.cam.cl.echo.extrusionfinder.client.extra.REQUEST_UUID";
 
 
     private ResultsServiceAdapter resultsServiceAdapter;
+    private ResultsCache resultsCache;
 
 
     /**
@@ -38,11 +37,10 @@ public class CommsService extends IntentService {
      *
      * @see IntentService
      */
-    public static void startActionRequestResults(Context context, String uuid, byte[] image) {
+    public static void startActionRequestResults(Context context, String uuid) {
         Intent intent = new Intent(context, CommsService.class);
         intent.setAction(ACTION_REQUEST_RESULTS);
         intent.putExtra(EXTRA_REQUEST_UUID, uuid);
-        intent.putExtra(EXTRA_IMAGE_BYTES, image);
         context.startService(intent);
     }
 
@@ -59,6 +57,15 @@ public class CommsService extends IntentService {
                 .setEndpoint(REST_ENDPOINT)
                 .build();
         resultsServiceAdapter = restAdapter.create(ResultsServiceAdapter.class);
+
+        resultsCache = ResultsCache.getInstance(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        resultsCache.close();
     }
 
     @Override
@@ -67,8 +74,7 @@ public class CommsService extends IntentService {
             final String action = intent.getAction();
             if (ACTION_REQUEST_RESULTS.equals(action)) {
                 final String uuid = intent.getStringExtra(EXTRA_REQUEST_UUID);
-                final byte[] image = intent.getByteArrayExtra(EXTRA_IMAGE_BYTES);
-                handleActionRequestResults(uuid, image);
+                handleActionRequestResults(uuid);
             }
         }
     }
@@ -76,8 +82,19 @@ public class CommsService extends IntentService {
     /**
      * Request results for the image. This runs in a provided background thread.
      */
-    private void handleActionRequestResults(String uuid, byte[] image) {
+    private void handleActionRequestResults(String uuid) {
+        // check if this request is the one we're currently look for results for
+        if(!resultsCache.hasRequest(uuid)) {
+            // give up, no longer interested in this request
+            //TODO probably should handle this more gracefully
+            return;
+        }
+
+        // get the image from the cache
+        byte[] image = resultsCache.getImage(uuid);
+
         // encode the image as a base 64 string
+        //TODO catch network exception
         String base64Image = Base64.encodeToString(image, Base64.DEFAULT);
 
         // send a blocking request to the server to get results
@@ -85,7 +102,6 @@ public class CommsService extends IntentService {
         List<Result> results = resultsServiceAdapter.getMatches(base64Image);
 
         // store the results in the cache
-        ResultsCache resultsCache = ResultsCache.getInstance(this);
         resultsCache.putResults(uuid, results);
 
         // send a local broadcast to notify the ui that we have received the results

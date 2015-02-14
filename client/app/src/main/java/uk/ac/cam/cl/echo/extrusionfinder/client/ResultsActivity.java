@@ -12,7 +12,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import java.util.List;
-import java.util.UUID;
 
 import uk.ac.cam.cl.groupecho.extrusionfinder.R;
 
@@ -20,8 +19,6 @@ public class ResultsActivity extends ActionBarActivity {
 
     private static final String LOG_TAG = "ResultsActivity";
 
-    private static final String EXTRA_IMAGE_BYTES
-            = "uk.ac.cam.cl.echo.extrusionfinder.client.extra.IMAGE_BYTES";
     private static final String EXTRA_REQUEST_UUID
             = "uk.ac.cam.cl.echo.extrusionfinder.client.extra.REQUEST_UUID";
 
@@ -33,18 +30,11 @@ public class ResultsActivity extends ActionBarActivity {
     /**
      * Send an intent to start the ResultsActivity
      * @param context a context
-     * @param image the image byte data array to get results for
+     * @param uuid the uuid of the request that we wish to display results for
      */
-    public static void startWithImage(Context context, byte[] image) {
+    public static void startWithUuid(Context context, String uuid) {
         Intent intent = new Intent(context, ResultsActivity.class);
-
-        // pass the image bytes
-        intent.putExtra(EXTRA_IMAGE_BYTES, image);
-
-        // give the request an id to allow us to cache it
-        String uuid = UUID.randomUUID().toString();
         intent.putExtra(EXTRA_REQUEST_UUID, uuid);
-
         context.startActivity(intent);
     }
 
@@ -73,13 +63,9 @@ public class ResultsActivity extends ActionBarActivity {
             displayResults(resultsCache.getResults(requestUuid));
         }
         else {
-            // otherwise load from the service
-            // get the image from the intent
-            byte[] image = getIntent().getByteArrayExtra(EXTRA_IMAGE_BYTES);
-
-            // launch the service to request the results
+            // otherwise launch the service to request the results
             // these are stored in the cache and then we get a broadcast
-            CommsService.startActionRequestResults(this, requestUuid, image);
+            CommsService.startActionRequestResults(this, requestUuid);
         }
     }
 
