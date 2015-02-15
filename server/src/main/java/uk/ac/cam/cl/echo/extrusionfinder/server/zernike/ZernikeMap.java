@@ -14,10 +14,10 @@ import java.util.Map;
  */
 public class ZernikeMap implements DatabaseItem {
     private final String _id;
-    private final Map<String, Double[]> zernikeMap;
+    private final Map<String, double[]> zernikeMap;
 
     @JsonCreator
-    public ZernikeMap(@JsonProperty("_id") String _id, @JsonProperty("zernikeMap") Map<String, Double[]> map) {
+    public ZernikeMap(@JsonProperty("_id") String _id, @JsonProperty("zernikeMap") Map<String, double[]> map) {
         this._id = _id;
         this.zernikeMap = map;
     }
@@ -25,7 +25,7 @@ public class ZernikeMap implements DatabaseItem {
     /**
      * @param map Map from part identifiers to Zernike Moments
      */
-    public ZernikeMap(Map<String, Double[]> map) {
+    public ZernikeMap(Map<String, double[]> map) {
         this._id = Configuration.ZERNIKE_MAP_ID;
         this.zernikeMap = map;
     }
@@ -38,7 +38,7 @@ public class ZernikeMap implements DatabaseItem {
     /**
      * @return Map from part identifiers to Zernike Moments
      */
-    public Map<String, Double[]> getZernikeMap() {
+    public Map<String, double[]> getZernikeMap() {
         return zernikeMap;
     }
 }

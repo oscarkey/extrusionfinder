@@ -21,12 +21,12 @@ public class ZernikeManagerTester {
     @Test
     public void testGetZernikeMoments() throws ItemNotFoundException, UnknownHostException {
         // Test getZernikeMoments() with an empty map
-        Map<String, Double[]> map = new HashMap<>();
+        Map<String, double[]> map = new HashMap<>();
         testGetZernikeMomentsAndClose(new ZernikeMap(map));
 
         // Test again with a non-empty map
-        map.put("p0", new Double[]{0.0, 0.1, 0.2});
-        map.put("p1", new Double[]{0.5, 1.2, -0.2});
+        map.put("p0", new double[]{0.0, 0.1, 0.2});
+        map.put("p1", new double[]{0.5, 1.2, -0.2});
         testGetZernikeMomentsAndClose(new ZernikeMap(map));
     }
 
@@ -47,7 +47,7 @@ public class ZernikeManagerTester {
             // Test loading for the first time. This should load data from the mocked database
             EasyMock.expect(dbManager.loadZernikeMap()).andReturn(zernikeMap);
             EasyMock.replay(dbManager);
-            Stream<Map.Entry<String, Double[]>> stream = zernikeManager.getZernikeMoments();
+            Stream<Map.Entry<String, double[]>> stream = zernikeManager.getZernikeMoments();
             final int[] streamSize = {0};
             stream.forEach(x -> {
                         streamSize[0]++;
@@ -109,9 +109,9 @@ public class ZernikeManagerTester {
         try (ZernikeManager zernikeManager = new ZernikeManager(dbManager)) {
             EasyMock.reset(dbManager);
 
-            Map<String, Double[]> map = new HashMap<>();
-            map.put("p0", new Double[]{0.0, 0.1, 0.2});
-            map.put("p1", new Double[]{0.5, 1.2, -0.2});
+            Map<String, double[]> map = new HashMap<>();
+            map.put("p0", new double[]{0.0, 0.1, 0.2});
+            map.put("p1", new double[]{0.5, 1.2, -0.2});
             EasyMock.expect(dbManager.loadZernikeMap()).andReturn(new ZernikeMap(map));
             EasyMock.replay(dbManager);
             zernikeManager.getZernikeMoments();
@@ -135,9 +135,9 @@ public class ZernikeManagerTester {
      */
     private void testUpdateZernikeMapCommon(ZernikeManager zernikeManager, IDBManager dbManager)
             throws UnknownHostException, ItemNotFoundException {
-        Map<String, Double[]> map = new HashMap<>();
-        map.put("p1", new Double[]{0.0, 0.1, 0.2});
-        map.put("p3", new Double[]{0.9, 1.2, -0.2});
+        Map<String, double[]> map = new HashMap<>();
+        map.put("p1", new double[]{0.0, 0.1, 0.2});
+        map.put("p3", new double[]{0.9, 1.2, -0.2});
         ZernikeMap zernikeMap = new ZernikeMap(map);
         dbManager.saveZernikeMap(zernikeMap);
         EasyMock.expectLastCall().once();
@@ -145,7 +145,7 @@ public class ZernikeManagerTester {
         zernikeManager.updateZernikeMap(zernikeMap);
         EasyMock.verify(dbManager);
 
-        Stream<Map.Entry<String, Double[]>> stream = zernikeManager.getZernikeMoments();
+        Stream<Map.Entry<String, double[]>> stream = zernikeManager.getZernikeMoments();
         final int[] streamSize = {0};
         stream.forEach(x -> {
                     streamSize[0]++;

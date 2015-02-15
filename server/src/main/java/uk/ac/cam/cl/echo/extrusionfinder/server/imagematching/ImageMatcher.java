@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-class ImageMatcher {
+public class ImageMatcher {
 
 	private static double correlation(double[] A, double[] B) {
 		double x = 0;
@@ -17,6 +17,17 @@ class ImageMatcher {
 		}
 		return x;
 	}
+
+    public static double compare(BufferedImage img, double[] preComputedZm) {
+        // TODO: Set the following to good default values
+        int degree = 0;
+        Point2D center = new Point2D.Double(0.0, 0.0);
+        double radius = 0;
+
+        double[] imgZm = Zernike.zernikeMoments(img, degree, center, radius);
+
+        return correlation(imgZm, preComputedZm);
+    }
 
 	public static double compare(BufferedImage img0, BufferedImage img1, int degree, Point2D center, double radius) {
 		double[] zm0 = Zernike.zernikeMoments(img0, degree, center, radius);
