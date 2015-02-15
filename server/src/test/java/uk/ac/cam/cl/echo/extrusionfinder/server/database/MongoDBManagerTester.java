@@ -162,6 +162,12 @@ public class MongoDBManagerTester {
         constructor.newInstance();
     }
 
+    @Test
+    public void testGetDatabaseName() throws UnknownHostException {
+        MongoDBManager db = new MongoDBManager("test");
+        assertTrue(db.getDatabaseName().equals("test"));
+    }
+
     /**
      * Removes contents of the database 'test'
      */

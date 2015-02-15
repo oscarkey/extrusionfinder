@@ -44,4 +44,9 @@ public interface IDBManager {
      * Removes all items from the database
      */
     public void clearDatabase();
+
+    /**
+     * @return Name of database
+     */
+    public String getDatabaseName();
 }

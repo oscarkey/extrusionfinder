@@ -15,6 +15,7 @@ import java.net.UnknownHostException;
  * same connection
  */
 public class MongoDBManager implements IDBManager {
+    private final String databaseName;
     private final MongoDBCollectionManager<Part> partManager;
     private final MongoDBCollectionManager<ZernikeMap> zernikeManager;
 
@@ -23,6 +24,8 @@ public class MongoDBManager implements IDBManager {
      * @throws UnknownHostException Thrown if unable to connect to MongoDB
      */
     public MongoDBManager(String databaseName) throws UnknownHostException {
+        this.databaseName = databaseName;
+
         DB database = MongoInstance.getDatabase(databaseName);
 
         partManager = new MongoDBCollectionManager<>(
@@ -77,5 +80,11 @@ public class MongoDBManager implements IDBManager {
     public void clearDatabase() {
         partManager.clear();
         zernikeManager.clear();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getDatabaseName() {
+        return databaseName;
     }
 }
