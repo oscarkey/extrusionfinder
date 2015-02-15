@@ -1,5 +1,6 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.servlet;
 
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.MatchedPart;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
 
 import javax.ws.rs.*;
@@ -15,5 +16,5 @@ public interface IServlet {
 
     @GET
     @Path("/matches/")
-    public abstract List<Part> findMatches(@QueryParam("image") String image);
+    public abstract List<MatchedPart> findMatches(@QueryParam("image") String image);
 }
