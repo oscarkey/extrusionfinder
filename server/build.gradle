@@ -10,7 +10,10 @@ repositories {
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+    // JUnit and EasyMock (used for testing)
+    testCompile 'junit:junit:4.11'
+    testCompile 'org.easymock:easymock:3.3.1'
+
 
     // RESTEasy with Jackson auto-serialization
     compile 'org.jboss.resteasy:resteasy-jaxrs:3.0.6.Final'
