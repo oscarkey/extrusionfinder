@@ -15,7 +15,6 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="uk.ac.cam.cl.echo.extrusionfinder.client.ImageCaptureActivity"
-            android:label="@string/title_activity_image_capture"
             android:theme="@style/Theme.AppCompat.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
