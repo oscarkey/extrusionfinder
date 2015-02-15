@@ -1,4 +1,4 @@
-package uk.ac.cam.echo.extrusionfinder.zernike;
+package uk.ac.cam.cl.echo.extrusionfinder.server.zernike;
 
 class Complex {
 

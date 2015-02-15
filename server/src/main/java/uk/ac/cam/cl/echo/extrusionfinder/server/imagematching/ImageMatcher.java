@@ -1,14 +1,12 @@
-package uk.ac.cam.echo.extrusionfinder.imagematching;
+package uk.ac.cam.cl.echo.extrusionfinder.server.imagematching;
 
-import uk.ac.cam.echo.extrusionfinder.zernike.Zernike;
+import uk.ac.cam.cl.echo.extrusionfinder.server.zernike.Zernike;
 
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-
-import java.util.Arrays;
 
 class ImageMatcher {
 
