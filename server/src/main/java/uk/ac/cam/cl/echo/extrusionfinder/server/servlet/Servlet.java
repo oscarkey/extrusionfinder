@@ -24,7 +24,8 @@ public class Servlet implements IServlet {
         // TODO: Be prepared to call the image processor if filtering is to be done server side
 
         IExtrusionMatcher matcher = null; // TODO: set to a concrete implementer of IExtrusionMatcher
-        return matcher.bestMatches(image);
+//        return matcher.bestMatches(image, null);
+        return null;
 
         // TODO: remove
 //        List<MatchedPart> matches = new LinkedList<>();

@@ -83,9 +83,9 @@ public class MongoDBManagerTester {
         }
 
         // create a new ZernikeMap and insert it into the database
-        Map<String, Double[]> map = new HashMap<>();
-        map.put("p0", new Double[]{0.0, 0.1, 0.2});
-        map.put("p1", new Double[]{0.5, 1.2, -0.2});
+        Map<String, double[]> map = new HashMap<>();
+        map.put("p0", new double[]{0.0, 0.1, 0.2});
+        map.put("p1", new double[]{0.5, 1.2, -0.2});
         ZernikeMap zernikeMap = new ZernikeMap(map);
         dbManager.saveZernikeMap(zernikeMap);
 
@@ -93,9 +93,9 @@ public class MongoDBManagerTester {
         try {
             ZernikeMap loadedZernikeMap = dbManager.loadZernikeMap();
             assertTrue(Arrays.equals(loadedZernikeMap.getZernikeMap().get("p0"),
-                    new Double[]{0.0, 0.1, 0.2}));
+                    new double[]{0.0, 0.1, 0.2}));
             assertTrue(Arrays.equals(loadedZernikeMap.getZernikeMap().get("p1"),
-                    new Double[]{0.5, 1.2, -0.2}));
+                    new double[]{0.5, 1.2, -0.2}));
             assertTrue(loadedZernikeMap.getZernikeMap().keySet().size() == 2);
         } catch (ItemNotFoundException e) {
             fail("ZernikeMap just saved not found in database");
@@ -103,13 +103,13 @@ public class MongoDBManagerTester {
 
         // insert a new zernikemap which has the same identifier. This should succeed: test by loading from database
         map = new HashMap<>();
-        map.put("p0", new Double[]{0.0, 0.1, 0.2});
+        map.put("p0", new double[]{0.0, 0.1, 0.2});
         zernikeMap = new ZernikeMap(map);
         dbManager.saveZernikeMap(zernikeMap);
         try {
             ZernikeMap loadedZernikeMap = dbManager.loadZernikeMap();
             assertTrue(Arrays.equals(loadedZernikeMap.getZernikeMap().get("p0"),
-                    new Double[]{0.0, 0.1, 0.2}));
+                    new double[]{0.0, 0.1, 0.2}));
             assertTrue(loadedZernikeMap.getZernikeMap().keySet().size() == 1);
         } catch (ItemNotFoundException e) {
             fail("Modified part not saved in DB");

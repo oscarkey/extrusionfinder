@@ -42,7 +42,7 @@ public class ZernikeManager implements AutoCloseable {
      * Returns the contents of the current ZernikeMap as a stream
      * @return Current ZernikeMap
      */
-    public Stream<Map.Entry<String, Double[]>> getZernikeMoments() throws ItemNotFoundException {
+    public Stream<Map.Entry<String, double[]>> getZernikeMoments() throws ItemNotFoundException {
         initialiseZernikeMap();
         return zernikeMap.get(databaseName).getZernikeMap().entrySet().parallelStream();
     }

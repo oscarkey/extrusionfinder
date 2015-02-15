@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
-class ImageMatcher {
+public class ImageMatcher {
 
     //The Zernike moments of the ImageMatcher
     private double[] zm;
@@ -48,7 +48,7 @@ class ImageMatcher {
 		}
 		return Math.sqrt(x);
 	}
-
+    
     /**
      * Computes the Zernike moments of the two images and returns the Euclidean
      * distance between them.
