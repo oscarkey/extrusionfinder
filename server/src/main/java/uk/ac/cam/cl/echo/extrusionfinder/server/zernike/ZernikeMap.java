@@ -1,4 +1,4 @@
-package uk.ac.cam.cl.echo.extrusionfinder.server.parts;
+package uk.ac.cam.cl.echo.extrusionfinder.server.zernike;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
