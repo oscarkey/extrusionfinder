@@ -1,15 +1,15 @@
-package uk.ac.cam.echo.extrusionfinder.sourcer;
+package uk.ac.cam.cl.echo.extrusionfinder.server.sourcer;
 
-import uk.ac.cam.echo.extrusionfinder.parts.Part;
-import uk.ac.cam.echo.extrusionfinder.sourcer.crawlers.*;
-import uk.ac.cam.echo.extrusionfinder.database.IDBManager;
-import uk.ac.cam.echo.extrusionfinder.database.MongoDBManager;
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
+import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.*;
+import uk.ac.cam.cl.echo.extrusionfinder.server.database.IDBManager;
+import uk.ac.cam.cl.echo.extrusionfinder.server.database.MongoDBManager;
 
+import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
-import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 
 import java.util.Collection;
 import java.util.ArrayList;
@@ -25,8 +25,8 @@ public class PartSourcer {
 
     /* crawl configuration */
     private static final String CRAWL_STORAGE_FOLDER = "crawlerdata/root";
-    private static final int MAX_CRAWL_DEPTH = -1;
-    private static final int MAX_CRAWL_PAGES = 5;
+    private static final int MAX_CRAWL_DEPTH = 5;
+    private static final int MAX_CRAWL_PAGES = -1;
 
 
     /**
@@ -38,7 +38,6 @@ public class PartSourcer {
         IDBManager db = new MongoDBManager(dbName);
         db.clearDatabase();
         updateDatabase(db);
-
     }
 
     /**

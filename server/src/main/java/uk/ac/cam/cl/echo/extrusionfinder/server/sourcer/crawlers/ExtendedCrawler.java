@@ -1,6 +1,6 @@
-package uk.ac.cam.echo.extrusionfinder.sourcer.crawlers;
+package uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers;
 
-import uk.ac.cam.echo.extrusionfinder.parts.Part;
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import java.util.stream.Stream;
 
@@ -16,11 +16,11 @@ public abstract class ExtendedCrawler extends WebCrawler {
      * its results in the stream. Kind of hacky, but necessary due to the
      * staticness of the crawler4j implementation.
      */
-    abstract void configure(Stream.Builder<Part> parts);
+    public abstract void configure(Stream.Builder<Part> parts);
 
     /**
      * @return  URL seeds for this crawler.
      */
-    abstract String[] getSeeds();
+    public abstract String[] getSeeds();
 
 }

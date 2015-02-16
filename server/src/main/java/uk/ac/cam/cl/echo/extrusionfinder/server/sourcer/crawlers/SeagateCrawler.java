@@ -1,13 +1,13 @@
-package uk.ac.cam.echo.extrusionfinder.sourcer.crawlers;
+package uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers;
 
-import uk.ac.cam.echo.extrusionfinder.parts.Part;
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
 
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.url.WebURL;
 
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
+import java.util.regex.Matcher;
 import java.util.stream.Stream.Builder;
 
 import org.jsoup.nodes.Document;
@@ -26,11 +26,19 @@ public class SeagateCrawler extends ExtendedCrawler {
     public static final String VENDOR_ID = "1";
 
     /* This is where we start our search */
-    private static final String[] seeds = { "http://seagateplastics.com/" };
+    private static final String[] SEEDS = { "http://seagateplastics.com/" };
 
     /* We are not interested in entering pages with these file endings */
     private final static Pattern FILTERS =
         Pattern.compile(".*(\\.(css|js|gif|jpe?g|png|mp3|mp3|zip|gz|pdf))$");
+
+    /* detects if a pdf uses the wrong format (see usage for explanation) */
+    private final static Pattern FAULTY_PDF_FILTER =
+        Pattern.compile(".*[a-zA-Z0-9].pdf");
+
+    /* separates size from name in seagate description */
+    private final static Pattern METADATA_FILTER =
+        Pattern.compile("(.*([0-9]| MM| ID| OD| IN)) (.*)");
 
     /* This is the stream that we manipulate via side effects.
      * Note that if used, it HAS to be assigned with configure method.
@@ -38,13 +46,13 @@ public class SeagateCrawler extends ExtendedCrawler {
     private static Builder<Part> parts;
 
     @Override
-    public void configure(Builder<Part> prts) {
-        parts = prts;
+    public void configure(Builder<Part> parts) {
+        this.parts = parts;
     }
 
     @Override
     public String[] getSeeds() {
-        return seeds;
+        return SEEDS;
     }
 
     /**
@@ -57,7 +65,7 @@ public class SeagateCrawler extends ExtendedCrawler {
     public boolean shouldVisit(Page referringPage, WebURL url) {
 
         String href = url.getURL().toLowerCase();
-        return !FILTERS.matcher(href).matches() && (href.startsWith(seeds[0]));
+        return !FILTERS.matcher(href).matches() && (href.startsWith(SEEDS[0]));
     }
 
     /**
@@ -80,18 +88,22 @@ public class SeagateCrawler extends ExtendedCrawler {
 
     /* Extracts metadata from the page.
      * TODO: generalise this to something that can be used by other vendors
+     * TODO: seagateplastics.com/Stock_Plastics_Catalog/catalog/plastic_tubes_misc.html
+     *       (ie. extrusions that all have the same shape - circular - but no image)
      */
     private void extractData(Document htmlDoc) {
 
         Elements productNodes = htmlDoc.getElementsByClass("node");
         for (Element productNode : productNodes) {
 
+            // get the product code
             Elements product = productNode.select("div.product-name");;
             if (product == null || product.size() == 0) {
                 continue;
             }
             String productId = product.first().ownText();
 
+            // get the link to the product
             Elements links = productNode.select("a[href]");
             String link = "";
             if (!(links == null || links.size() == 0)) {
@@ -105,12 +117,12 @@ public class SeagateCrawler extends ExtendedCrawler {
                 // where XYZ is the product id. Some of the urls on their
                 // website are wrong and don't include the " pdf (1)" at the
                 // end ... This is a temporary solution.
-                Pattern faultyPdf = Pattern.compile(".*[a-zA-Z0-9].pdf");
-                if (faultyPdf.matcher(link).matches()) {
+                if (FAULTY_PDF_FILTER.matcher(link).matches()) {
                     link = link.replaceFirst(".pdf", " pdf (1).pdf");
                 }
             }
 
+            // get the image of the product
             Elements images = productNode.select("img[src]");
             String image = "";
             if (!(images == null || images.size() == 0)) {
@@ -118,7 +130,8 @@ public class SeagateCrawler extends ExtendedCrawler {
             }
 
             if (parts != null) {
-                parts.add(new Part(VENDOR_ID, productId, link, image));
+                parts.accept(new Part(VENDOR_ID, productId, link, image, size,
+                    description));
             }
         }
     }
