@@ -13,9 +13,9 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
 
     // RESTEasy with Jackson auto-serialization
-    compile 'org.jboss.resteasy:resteasy-jaxrs:3.0.8.Final'
-    compile 'org.jboss.resteasy:resteasy-jackson2-provider:3.0.8.Final'
-    compile 'org.jboss.resteasy:resteasy-multipart-provider:3.0.8.Final'
+    compile 'org.jboss.resteasy:resteasy-jaxrs:3.0.6.Final'
+    compile 'org.jboss.resteasy:resteasy-jackson2-provider:3.0.6.Final'
+    compile 'org.jboss.resteasy:resteasy-multipart-provider:3.0.6.Final'
 
     // MongoDB driver (used for interfacing with MongoDB)
     compile 'org.mongodb:mongo-java-driver:2.12.2'
