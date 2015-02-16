@@ -1,9 +1,12 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.servlet;
 
+import uk.ac.cam.cl.echo.extrusionfinder.server.database.ItemNotFoundException;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.MatchedPart;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
 
 import javax.ws.rs.*;
+import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.List;
 
 /**
@@ -14,7 +17,7 @@ import java.util.List;
 @Produces("application/json")
 public interface IServlet {
 
-    @GET
+    @POST
     @Path("/matches/")
-    public abstract List<MatchedPart> findMatches(@QueryParam("image") String image);
+    public abstract List<MatchedPart> findMatches(String image) throws IOException, ItemNotFoundException;
 }

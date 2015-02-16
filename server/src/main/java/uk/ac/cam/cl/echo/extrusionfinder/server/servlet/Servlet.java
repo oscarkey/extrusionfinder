@@ -1,11 +1,18 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.servlet;
 
-import uk.ac.cam.cl.echo.extrusionfinder.server.orchestration.IExtrusionMatcher;
+import uk.ac.cam.cl.echo.extrusionfinder.server.database.ItemNotFoundException;
+import uk.ac.cam.cl.echo.extrusionfinder.server.database.MongoDBManager;
+import uk.ac.cam.cl.echo.extrusionfinder.server.orchestration.ExtrusionFinder;
+import uk.ac.cam.cl.echo.extrusionfinder.server.orchestration.IExtrusionFinder;
+import uk.ac.cam.cl.echo.extrusionfinder.server.orchestration.ZernikeManager;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.MatchedPart;
-import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.util.LinkedList;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.net.UnknownHostException;
+import java.util.Base64;
 import java.util.List;
 
 /**
@@ -17,16 +24,20 @@ public class Servlet implements IServlet {
      * {@inheritDoc}
      */
     @Override
-    public List<MatchedPart> findMatches(String encodedImage) {
+    public List<MatchedPart> findMatches(String encodedImage) throws IOException, ItemNotFoundException {
         // TODO: set image to decoded version of encodedImage
-        BufferedImage image = null;
+//        byte[] imageData = Base64.getDecoder().decode(encodedImage);
+//        BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageData));
+//
+//        // TODO: Be prepared to call the image processor if filtering is to be done server side
+//
+//        IExtrusionFinder matcher = new ExtrusionFinder(); // TODO: set to a concrete implementer of IExtrusionMatcher
+//        return matcher.findMatches(image, new MongoDBManager("extrusionDB"), 10,
+//                new ZernikeManager(new MongoDBManager("extrusionDB")).getZernikeMoments());
 
-        // TODO: Be prepared to call the image processor if filtering is to be done server side
 
-        IExtrusionMatcher matcher = null; // TODO: set to a concrete implementer of IExtrusionMatcher
-//        return matcher.bestMatches(image, null);
         return null;
-
+        //return null;
         // TODO: remove
 //        List<MatchedPart> matches = new LinkedList<>();
 //
