@@ -129,6 +129,24 @@ public class SeagateCrawler extends ExtendedCrawler {
                 image = images.first().attr("abs:src").toLowerCase();
             }
 
+            // get the metadata of the product
+            Elements descriptions =
+                productNode.select("div.product-description");
+
+            String description = "";
+            String size = "";
+
+            if (!(descriptions == null || descriptions.size() == 0)) {
+                String desc = descriptions.first().ownText();
+                Matcher m = METADATA_FILTER.matcher(desc);
+                if (m.find()) {
+                    size = m.group(1);
+                    description = m.group(3);
+                } else {
+                    description = desc;
+                }
+            }
+
             if (parts != null) {
                 parts.accept(new Part(VENDOR_ID, productId, link, image, size,
                     description));

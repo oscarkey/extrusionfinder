@@ -52,7 +52,7 @@ public class MongoDBManagerTester {
         }
 
         // create a new part and insert it into the database
-        Part part = new Part("id_test", "", "", "link", "imageL");
+        Part part = new Part("id_test", "", "", "link", "imageL", "", "");
         dbManager.savePart(part);
 
         // test that the part can now be correctly loaded from the database
@@ -64,7 +64,7 @@ public class MongoDBManagerTester {
         }
 
         // insert a new part which has the same identifier. This should succeed: test by loading from database
-        part = new Part("id_test", "", "", "link2", "imageLink2");
+        part = new Part("id_test", "", "", "link2", "imageLink2", "", "");
         dbManager.savePart(part);
         try {
             Part loadedPart = dbManager.loadPart("id_test");

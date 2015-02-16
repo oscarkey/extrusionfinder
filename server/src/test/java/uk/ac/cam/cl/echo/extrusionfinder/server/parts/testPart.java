@@ -14,12 +14,14 @@ public class testPart {
 
     /**
      * Tests the equals method of part
+     * Size and description are not included in equality test.
      */
     @Test
     public void testEquals() {
         Part a = new Part("a", "b", "c", "d");
 
         assertTrue(new Part("a", "b", "c", "d").equals(a));
+        assertTrue(new Part("a", "b", "c", "d", "size", "desc").equals(a));
 
         assertTrue(!new Part("A", "b", "c", "d").equals(a));
         assertTrue(!new Part("b", "B", "c", "d").equals(a));
