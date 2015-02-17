@@ -17,7 +17,7 @@ import retrofit.RetrofitError;
  */
 public class CommsService extends IntentService {
     private static final String LOG_TAG = "CommsService";
-    private static final String REST_ENDPOINT = "http://as2388.ddns.net:8080/extrusionFinder/rest/MatchServlet";
+    private static final String REST_ENDPOINT = "http://extrusionfinder.cloudapp.net:8080/extrusionFinder/rest/MatchServlet";
 
     public static final String ACTION_RESULTS_RECEIVED
             = "uk.ac.cam.cl.echo.extrusionfinder.client.action.RESULTS_RECEIVED";
