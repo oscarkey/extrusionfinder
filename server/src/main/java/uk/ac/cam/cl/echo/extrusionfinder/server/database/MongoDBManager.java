@@ -7,7 +7,6 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
 import uk.ac.cam.cl.echo.extrusionfinder.server.zernike.ZernikeMap;
 
 import java.net.UnknownHostException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
