@@ -8,7 +8,7 @@
 
     <string name="title_dialog_error_no_network">No connection</string>
     <string name="message_dialog_error_no_network">
-        We were unable to connect to the internet. Please check your signal.
+        We were unable to connect to the server. Please check your Internet connection.
     </string>
     <string name="text_button_neutral">@android:string/ok</string>
 
