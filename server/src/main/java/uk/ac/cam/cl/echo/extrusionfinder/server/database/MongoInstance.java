@@ -1,8 +1,8 @@
-package uk.ac.cam.echo.extrusionfinder.database;
+package uk.ac.cam.cl.echo.extrusionfinder.server.database;
 
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
-import uk.ac.cam.echo.extrusionfinder.configuration.Configuration;
+import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Configuration;
 
 import java.net.UnknownHostException;
 import java.util.HashMap;
@@ -16,6 +16,8 @@ import java.util.Map;
 class MongoInstance {
     private static Map<String, DB> databases = new HashMap<>();
 
+    private MongoInstance(){}
+
     /**
      * @return                      Handle to a MongoDB database
      * @throws UnknownHostException Thrown if connecting to MongoDB failed.
@@ -23,7 +25,7 @@ class MongoInstance {
     public static DB getDatabase(String databaseName) throws UnknownHostException {
         if (!databases.containsKey(databaseName)) {
             MongoClient client =
-                    new MongoClient(Configuration.getMongoHost(), Configuration.getMongoPort());
+                    new MongoClient(Configuration.MONGO_HOST, Configuration.MONGO_PORT);
             databases.put(databaseName, client.getDB(databaseName));
         }
         return databases.get(databaseName);

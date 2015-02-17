@@ -1,6 +1,6 @@
-package uk.ac.cam.echo.extrusionfinder.servlet;
+package uk.ac.cam.cl.echo.extrusionfinder.server.servlet;
 
-import uk.ac.cam.echo.extrusionfinder.parts.Part;
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
 
 import java.util.LinkedList;
 import java.util.List;

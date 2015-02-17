@@ -1,8 +1,8 @@
-package uk.ac.cam.echo.extrusionfinder.parts;
+package uk.ac.cam.cl.echo.extrusionfinder.server.parts;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import uk.ac.cam.echo.extrusionfinder.database.DatabaseItem;
+import uk.ac.cam.cl.echo.extrusionfinder.server.database.DatabaseItem;
 
 public class Part implements DatabaseItem {
     private String _id;
@@ -11,6 +11,14 @@ public class Part implements DatabaseItem {
     private String link;
     private String imageLink;
 
+    /**
+     * Constructor to be used by MongoJack only
+     * @param _id            PartId used by database
+     * @param manufacturerId Unique manufacturer identifier
+     * @param partId         Part identifier used by manufacturer
+     * @param link           Link to part on manufacturer's website
+     * @param imageLink      Link to an image of the parts
+     */
     @JsonCreator
     public Part(@JsonProperty("_id") String _id,
                 @JsonProperty("manufacturerId") String manufacturerId,
@@ -24,6 +32,13 @@ public class Part implements DatabaseItem {
         this.imageLink = imageLink;
     }
 
+    /**
+     * Main constructor for creating parts
+     * @param manufacturerId Unique manufacturer identifier
+     * @param partId         Part identifier used by manufacturer
+     * @param link           Link to part on manufacturer's website
+     * @param imageLink      Link to an image of the parts
+     */
     public Part(String manufacturerId, String partId, String link, String imageLink) {
         this(manufacturerId + partId, manufacturerId, partId, link, imageLink);
     }
@@ -53,7 +68,11 @@ public class Part implements DatabaseItem {
     public boolean equals(Object o) {
         if (o instanceof Part) {
             Part part = (Part) o;
-            return part._id.equals(_id) && part.link.equals(link) && part.imageLink.equals(imageLink);
+            return  part._id.equals(_id) &&
+                    part.manufacturerId.equals(manufacturerId) &&
+                    part.partId.equals(partId) &&
+                    part.link.equals(link) &&
+                    part.imageLink.equals(imageLink);
         } else {
             return false;
         }
