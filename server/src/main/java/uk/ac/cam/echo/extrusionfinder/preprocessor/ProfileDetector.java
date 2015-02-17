@@ -2,20 +2,15 @@ package uk.ac.cam.echo.extrusionfinder.preprocessor;
 
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
-import org.opencv.core.Core.MinMaxLocResult;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfPoint;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.core.Scalar;
-import org.opencv.highgui.Highgui;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.ArrayList;
-import java.util.Queue;
 
 // Note: Currently extends ImageModifier for the purposes of testing.
 
@@ -26,15 +21,6 @@ public class ProfileDetector extends ImageModifier {
     private static final int imageSize = 200;
 
     private int diameter;
-
-    class IntPoint {
-        int x;
-        int y;
-        IntPoint(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-    };
 
     public ProfileDetector(String in, String out) {
         super(in, out);
@@ -52,6 +38,7 @@ public class ProfileDetector extends ImageModifier {
         Mat rawImage;
         rawImage = standardiseInput();
 
+        // Compute a mask by using adaptivate thresholding.
         Mat thresholdMask;
         imageStep = rawImage;
         imageStep = blur(imageStep, blurDiameter, sigma, sigma);
@@ -61,17 +48,22 @@ public class ProfileDetector extends ImageModifier {
         imageStep = threshold(imageStep);
         thresholdMask = imageStep;
 
+        // Calculate the contours using the threshold mask.
         Mat contourMask;
         imageStep = thresholdMask;
         imageStep = largestContourMask(imageStep);
         contourMask = imageStep;
 
+        // Extract profile from original standardised image, using masks.
         Mat profile;
         imageStep = rawImage;
         imageStep = avgGreyscale(imageStep);
+        // Does the threshold mask need to be applied? Isn't this a subset of the contour mask?
         imageStep = applyBinaryMask(imageStep, thresholdMask);
         imageStep = applyBinaryMask(imageStep, contourMask);
         profile = imageStep;
+
+        // Need to add histogram equalisation.
 
         imageOut = profile;
     }
@@ -144,6 +136,7 @@ public class ProfileDetector extends ImageModifier {
         return output;
     }
 
+    // This function needs to be revised!
     /**
      * Applies a fade to black to the given image with radial distance from the center.
      * NOT TRUE!
@@ -159,6 +152,7 @@ public class ProfileDetector extends ImageModifier {
         int i = 0;
         for (int y = 0; y < diameter; y++) {
             for (int x = 0; x < diameter; x++, i++) {
+                // This could be normalised!
                 double keep = 0.707106781187 - (Math.sqrt((x-r)*(x-r) + (y-r)*(y-r)) / diameter);
                 bytes[i] = (byte)(keep < 0 ? 0 : (byte)(keep * 255.0));
             }
