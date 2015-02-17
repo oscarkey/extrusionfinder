@@ -6,13 +6,26 @@ import java.awt.image.DataBufferByte;
 
 public class Zernike {
 
+    /**
+     * Computes the sum n*(n-1)*...2*1
+     * @param n a number
+     * @return n!
+     */
 	private static double factorial(int n) {
 		double x = 1;
 		for (int i=n; i>0; i--) x *= i;
 		return x;
 	}
-	
-	private static Complex zm(ZernikePoint[] zps, int zpsSize, int n, int m) {
+
+    /**
+     * Computes a Zernike moment
+     * @param zps the points to use to compute the Zernike moment
+     * @param zpsSize the number of points in zps
+     * @param n a value
+     * @param m the exponent to raise the position of each ZernikePoint to
+     * @return a Zernike moment
+     */
+	private static Complex zernikeMoment(ZernikePoint[] zps, int zpsSize, int n, int m) {
 		int p = (n-m)/2;
 		int q = (n+m)/2;
 		Complex v = new Complex(0, 0);
@@ -37,10 +50,16 @@ public class Zernike {
 		return v;
 	}
 
-	/**
-	 * Calcultes Zernike moments of an image to a particular degree using a circle
-	 * with the specified radius and center.
-	 */
+    /**
+     * Computes Zernike moments of an image to a particular degree using a circle
+     * with the specified radius and center.
+     * @param img the image to use for computing Zernike oments
+     * @param imgWidth the width of img in pixels
+     * @param degree the degree to which to compute the Zernike moments to
+     * @param center the point at which to take Zernike moments from
+     * @param radius the radius of the circle to use
+     * @return a vector of the magitudes of each Zernike moment
+     */
 	public static double[] zernikeMoments(byte[] img, int imgWidth, int degree, Point2D center, double radius) {
 		int imgHeight = img.length / imgWidth;
 		int zpsSize = (int) (Math.PI*radius*radius);
@@ -58,7 +77,7 @@ public class Zernike {
 					if (c > 0) {
 						r = Math.max(r, 1e-9);
 						Complex z = new Complex(x/r, y/r);
-						zps[i] = new ZernikePoint(z, r, c, degree);
+						zps[i] = new ZernikePoint(z, c, degree);
 						totalIntensity += c;
 						i++;
 					}
@@ -73,7 +92,7 @@ public class Zernike {
 		for (int n=0; n<degree; n++) {
 			for (int m=0; m<=n; m++) {
 				if ((n-m)%2==0) {
-					Complex z = zm(zps, zpsSize, n, m);
+					Complex z = zernikeMoment(zps, zpsSize, n, m);
 					zvalues[i] = z.modulus();
 					i++;
 				}
@@ -82,6 +101,16 @@ public class Zernike {
 		
 		return zvalues;
 	}
+    /**
+     * Computes Zernike moments of an image to a particular degree using a circle
+     * with the specified radius and center. The image is converted to grayscale
+     * format if it is not already.
+     * @param img the image to use for computing Zernike oments
+     * @param degree the degree to which to compute the Zernike moments to
+     * @param center the point at which to take Zernike moments from
+     * @param radius the radius of the circle to use
+     * @return a vector of the magitudes of each Zernike moment
+     */
 	public static double[] zernikeMoments(BufferedImage img, int degree, Point2D center, double radius) {
 		if (img.getType() != BufferedImage.TYPE_BYTE_GRAY) {
 			BufferedImage t = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
