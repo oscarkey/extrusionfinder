@@ -6,7 +6,7 @@ import java.util.Objects;
  * TODO
  */
 public class MatchedPart extends Part {
-    private final Double confidence;
+    protected final Double confidence;
 
     public MatchedPart(Part p, Double confidence) {
         super(
@@ -33,7 +33,7 @@ public class MatchedPart extends Part {
                     part.partId.equals(partId) &&
                     part.link.equals(link) &&
                     part.imageLink.equals(imageLink) &&
-                    Objects.equals(part.confidence, confidence);
+                    Objects.equals(part.getConfidence(), confidence);
         } else {
             return false;
         }
