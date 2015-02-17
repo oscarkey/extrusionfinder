@@ -13,7 +13,8 @@ dependencies {
     // JUnit and EasyMock (used for testing)
     testCompile 'junit:junit:4.11'
     testCompile 'org.easymock:easymock:3.3.1'
-
+//    testCompile 'org.powermock:powermock-module-junit4:1.6.1'
+//    testCompile 'org.powermock:powermock-api-easymock:1.6.1'
 
     // RESTEasy with Jackson auto-serialization
     compile 'org.jboss.resteasy:resteasy-jaxrs:3.0.6.Final'
@@ -25,5 +26,4 @@ dependencies {
 
     // MongoJack (used for converting Java objects into MongoDB's format)
     compile 'org.mongojack:mongojack:2.0.0'
-
 }

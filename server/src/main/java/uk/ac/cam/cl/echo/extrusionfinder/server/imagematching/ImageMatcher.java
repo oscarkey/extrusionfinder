@@ -29,7 +29,7 @@ public class ImageMatcher {
         return correlation(imgZm, preComputedZm);
     }
 
-	public static double compare(BufferedImage img0, BufferedImage img1, int degree, Point2D center, double radius) {
+    	public static double compare(BufferedImage img0, BufferedImage img1, int degree, Point2D center, double radius) {
 		double[] zm0 = Zernike.zernikeMoments(img0, degree, center, radius);
 		double[] zm1 = Zernike.zernikeMoments(img1, degree, center, radius);
 		
