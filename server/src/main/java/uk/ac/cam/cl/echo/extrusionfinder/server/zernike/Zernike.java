@@ -90,15 +90,14 @@ public class Zernike {
 		double[] zvalues = new double[(int)(2*Math.pow(degree,2)+4*degree-Math.pow(-1,degree)+1)/8];
 		i=0;
 		for (int n=0; n<degree; n++) {
-			for (int m=0; m<=n; m++) {
-				if ((n-m)%2==0) {
-					Complex z = zernikeMoment(zps, zpsSize, n, m);
-					zvalues[i] = z.modulus();
-					i++;
-				}
-			}
-		}
-		
+            for (int m = 0; m <= n; m++) {
+                if ((n - m) % 2 == 0) {
+                    Complex z = zernikeMoment(zps, zpsSize, n, m);
+                    zvalues[i] = z.modulus();
+                    i++;
+                }
+            }
+        }
 		return zvalues;
 	}
     /**
