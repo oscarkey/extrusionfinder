@@ -1,18 +1,9 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.servlet;
 
 import uk.ac.cam.cl.echo.extrusionfinder.server.database.ItemNotFoundException;
-import uk.ac.cam.cl.echo.extrusionfinder.server.database.MongoDBManager;
-import uk.ac.cam.cl.echo.extrusionfinder.server.orchestration.ExtrusionFinder;
-import uk.ac.cam.cl.echo.extrusionfinder.server.orchestration.IExtrusionFinder;
-import uk.ac.cam.cl.echo.extrusionfinder.server.orchestration.ZernikeManager;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.MatchedPart;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.UnknownHostException;
-import java.util.Base64;
 import java.util.List;
 
 /**
