@@ -2,8 +2,9 @@ package uk.ac.cam.cl.echo.extrusionfinder.client;
 
 import android.test.AndroidTestCase;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 /**
@@ -12,52 +13,78 @@ import java.util.UUID;
  * DOES NOT test concurrent users yet. Should do this.
  */
 public class ResultsCacheTest extends AndroidTestCase {
-    private ResultsCache cache;
 
-    private String uuid;
-    private List<Result> results;
+    private static final int TEST_IMAGE_SIZE_BYTES = 2000000;
+    private static final int TEST_RESULTS_COUNT = 10;
 
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
+    public void testPutHasRequest() throws Exception {
+        ResultsCache cache = ResultsCache.getInstance(getContext());
 
-        cache = ResultsCache.getInstance(getContext());
+        // create a new request
+        String uuid = cache.putRequest(generateTestImage());
 
-        uuid = UUID.randomUUID().toString();
-        results = Arrays.asList(new Result("part1"), new Result("part2"));
+        // check we have that request and don't have a random request
+        assertTrue(cache.hasRequest(uuid));
+        assertFalse(cache.hasRequest(generateTestUuid()));
+    }
 
+    public void testGetImage() throws Exception {
+        ResultsCache cache = ResultsCache.getInstance(getContext());
+
+        // create a new image and request
+        byte[] image = generateTestImage();
+        String uuid = cache.putRequest(image);
+
+        // check that we get correct image for a known uuid and get null for a random uuid
+        assertEquals(image, cache.getImage(uuid));
+        assertNull(cache.getImage(generateTestUuid()));
+    }
+
+    public void testPutHasGetResults() throws Exception {
+        ResultsCache  cache = ResultsCache.getInstance(getContext());
+
+        // create an image and put the request
+        String uuid = cache.putRequest(generateTestImage());
+
+        // create and put some results
+        List<Result> results = generateTestResults();
         cache.putResults(uuid, results);
-    }
 
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
-
-        cache.close();
-    }
-
-    public void testSetGetResults() throws Exception {
-        // check that we can take the results out of the cache
-        List<Result> testResults = cache.getResults(uuid);
-        assertEquals(results, testResults);
-
-        // check that asking for a made up uuid doesn't return anything
-        assertNull(cache.getResults("sfsdfsdfgb"));
-    }
-
-    public void testHasResults() throws Exception {
-        // check that the cache has the right results
+        // check the cache has the right results but not the wrong results
         assertTrue(cache.hasResults(uuid));
-        // check that it doesn't have a made up result
-        assertFalse(cache.hasResults("runfidbk"));
+        assertFalse(cache.hasResults(generateTestUuid()));
+
+        // check we can get the right results but not the wrong results
+        assertEquals(results, cache.getResults(uuid));
+        assertNull(cache.getResults(generateTestUuid()));
     }
 
-    public void testSave() throws Exception {
-        //FIXME doesn't actually test if this works as ResultsCache won't be garbage collected
-        // close the cache and reopen it, checking that the results are still there
-        cache.close();
-        ResultsCache cache2 = ResultsCache.getInstance(getContext());
-        List<Result> testResults = cache2.getResults(uuid);
-        assertEquals(results, testResults);
+    public void testPersistence() throws Exception {
+        //TODO add tests for persistence, not sure how to do this...
+    }
+
+
+    private byte[] generateTestImage() {
+        //FIXME should probably generate a byte array that actually is an image
+        // create a large byte array
+        byte[] image = new byte[TEST_IMAGE_SIZE_BYTES];
+        Random random = new Random();
+        random.nextBytes(image);
+
+        return image;
+    }
+
+    private String generateTestUuid() {
+        return UUID.randomUUID().toString();
+    }
+
+    private List<Result> generateTestResults() {
+        List<Result> results = new ArrayList<>(TEST_RESULTS_COUNT);
+
+        for(int i = 0; i < TEST_RESULTS_COUNT; i++) {
+            results.add(new Result("part" + i));
+        }
+
+        return results;
     }
 }
