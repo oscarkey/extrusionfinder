@@ -7,15 +7,19 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
 import uk.ac.cam.cl.echo.extrusionfinder.server.zernike.ZernikeMap;
 
 import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * A database wrapper which provides APIs for loading and saving parts zernike maps
- *
+ * A database wrapper which provides APIs for loading and saving parts zernike maps.
+ * <p></p>
  * This implementation uses MongoDB. Many instances of MongoDBManager can be created; all will share the
- * same connection
+ * same connection. This manager keeps a static, in-memory thread-safe cache of zernike maps
  */
 public class MongoDBManager implements IDBManager {
     private final String databaseName;
+    private static Map<String, ZernikeMap> zernikeMapCache = new ConcurrentHashMap<>();
     private final MongoDBCollectionManager<Part> partManager;
     private final MongoDBCollectionManager<ZernikeMap> zernikeManager;
 
@@ -63,6 +67,7 @@ public class MongoDBManager implements IDBManager {
     @Override
     public void saveZernikeMap(ZernikeMap zernikeMap) {
         zernikeManager.save(zernikeMap);
+        zernikeMapCache.put(databaseName, zernikeMap);
     }
 
     /**
@@ -70,7 +75,10 @@ public class MongoDBManager implements IDBManager {
      */
     @Override
     public ZernikeMap loadZernikeMap() throws ItemNotFoundException {
-        return zernikeManager.load(Configuration.ZERNIKE_MAP_ID);
+        if (!zernikeMapCache.containsKey(databaseName)) {
+            zernikeMapCache.put(databaseName, zernikeManager.load(Configuration.ZERNIKE_MAP_ID));
+        }
+        return zernikeMapCache.get(databaseName);
     }
 
     /**
@@ -80,6 +88,7 @@ public class MongoDBManager implements IDBManager {
     public void clearDatabase() {
         partManager.clear();
         zernikeManager.clear();
+        zernikeMapCache = new ConcurrentHashMap<>();
     }
 
     /** {@inheritDoc} */
