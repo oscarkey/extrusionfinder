@@ -15,7 +15,8 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="uk.ac.cam.cl.echo.extrusionfinder.client.ImageCaptureActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar" >
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,7 +26,8 @@
 
         <activity
             android:name="uk.ac.cam.cl.echo.extrusionfinder.client.ResultsActivity"
-            android:label="@string/title_activity_results" >
+            android:label="@string/title_activity_results"
+            android:screenOrientation="portrait" >
         </activity>
 
         <service
