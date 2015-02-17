@@ -12,12 +12,27 @@ import java.util.Arrays;
 
 class ImageMatcher {
 
+    private double[] zm;
+
+    ImageMatcher(BufferedImage img, int degree, Point2D center, double radius) {
+        zm = Zernike.zernikeMoments(img, degree, center, radius);
+    }
+
+    /**
+     *
+     * @param zm
+     * @return
+     */
+    public double compare(double[] zm) {
+        return correlation(this.zm, zm);
+    }
+
 	private static double correlation(double[] A, double[] B) {
 		double x = 0;
 		for (int i=0; i<A.length; i++) {
-			x += Math.abs(Math.pow(A[i], 2) - Math.pow(B[i], 2));
+			x += Math.pow(Math.abs(A[i]) - Math.abs(B[i]), 2);
 		}
-		return x;
+		return Math.sqrt(x);
 	}
 
 	public static double compare(BufferedImage img0, BufferedImage img1, int degree, Point2D center, double radius) {
