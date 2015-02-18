@@ -35,7 +35,6 @@ public class ExtrusionFinder {
         }
     }
 
-
     /**
      * Produces a list of best matches to the given extrusion image using the contents of the database.
      * @param inputImage   Image to find matches for. Automatic preprocessing on this image is performed TODO
@@ -119,5 +118,4 @@ public class ExtrusionFinder {
 
         return output;
     }
-
 }

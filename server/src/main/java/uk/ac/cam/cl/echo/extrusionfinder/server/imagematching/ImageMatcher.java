@@ -48,7 +48,7 @@ public class ImageMatcher {
 		}
 		return Math.sqrt(x);
 	}
-    
+
     /**
      * Computes the Zernike moments of the two images and returns the Euclidean
      * distance between them.
