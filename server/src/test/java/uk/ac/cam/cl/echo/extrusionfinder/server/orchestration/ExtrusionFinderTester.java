@@ -3,10 +3,10 @@ package uk.ac.cam.cl.echo.extrusionfinder.server.orchestration;
 import static junit.framework.TestCase.assertTrue;
 import static org.easymock.EasyMock.*;
 import static org.powermock.api.easymock.PowerMock.createMock;
-import static org.powermock.api.easymock.PowerMock.mockStatic;
 import static org.powermock.api.easymock.PowerMock.replay;
 
 import org.easymock.EasyMock;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -18,6 +18,8 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.parts.MatchedPart;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
 import uk.ac.cam.cl.echo.extrusionfinder.server.zernike.ZernikeMap;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -88,5 +90,14 @@ public class ExtrusionFinderTester {
         replay(zernikeMap);
 
         return ExtrusionFinder.findMatches(imageMatcher, database, maxResults);
+    }
+
+    @Test
+    public void testPrivateConstructor() throws Exception {
+        Constructor constructor = ExtrusionFinder.class.getDeclaredConstructor();
+        Assert.assertTrue("Constructor is not private", Modifier.isPrivate(constructor.getModifiers()));
+
+        constructor.setAccessible(true);
+        constructor.newInstance();
     }
 }

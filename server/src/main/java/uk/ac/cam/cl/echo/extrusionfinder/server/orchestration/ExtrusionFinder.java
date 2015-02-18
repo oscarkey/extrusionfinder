@@ -18,6 +18,8 @@ import java.util.*;
  */
 public class ExtrusionFinder {
 
+    private ExtrusionFinder(){}
+
     static class CorrelationPair implements Comparable<CorrelationPair> {
         private final String id;
         private final double correlation;
@@ -40,6 +42,7 @@ public class ExtrusionFinder {
      * @param database     Database to load find matches in.
      * @param maxResults   Maximum number of results to include in output list
      * @return             List of best matches found in the database
+     * @throws ItemNotFoundException Thrown if the Zernike Map or a part referenced by the Zernike Map is not in DB
      */
     public static List<MatchedPart> findMatches(BufferedImage inputImage, IDBManager database, int maxResults)
             throws ItemNotFoundException {
@@ -59,6 +62,7 @@ public class ExtrusionFinder {
      * @param database     Database to load find matches in.
      * @param maxResults   Maximum number of results to include in output list
      * @return             List of best matches found in the database
+     * @throws ItemNotFoundException Thrown if the Zernike Map or a part referenced by the Zernike Map is not in DB
      */
     static List<MatchedPart> findMatches(ImageMatcher imageMatcher, IDBManager database, int maxResults) throws ItemNotFoundException {
         // Load the map of zernike moments from the database
