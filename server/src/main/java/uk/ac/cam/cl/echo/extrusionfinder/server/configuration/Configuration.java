@@ -7,6 +7,7 @@ public class Configuration {
     public static final String ZERNIKE_MAP_ID = "zernike";
     public static final String DEFAULT_DATABASE_NAME = "extrusionDB";
     public static final int DEFAULT_NUMBER_OF_MATCHES = 15;
+    public static final int DEFULT_ZERNIKE_DEGREE = 6;
 
     private Configuration(){}
 }

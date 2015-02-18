@@ -1,11 +1,12 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.orchestration;
 
-import static junit.framework.Assert.assertTrue;
+import static junit.framework.TestCase.assertTrue;
 import static org.easymock.EasyMock.*;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.mockStatic;
 import static org.powermock.api.easymock.PowerMock.replay;
 
+import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -17,7 +18,6 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.parts.MatchedPart;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
 import uk.ac.cam.cl.echo.extrusionfinder.server.zernike.ZernikeMap;
 
-import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,18 +65,16 @@ public class ExtrusionFinderTester {
     }
 
     private List<MatchedPart> testFindMatchesWorker(double[] confidences) throws ItemNotFoundException {
-        BufferedImage inputImage = new BufferedImage(100, 50, BufferedImage.TYPE_INT_ARGB);
         int maxResults = 3;
-
-        mockStatic(ImageMatcher.class);
 
         Map<String, double[]> zernikeMomentsMap = new HashMap<>();
         IDBManager database = createMock(IDBManager.class);
+        ImageMatcher imageMatcher = EasyMock.createMock(ImageMatcher.class);
 
         for (int i = 0; i < confidences.length; i++) {
             double[] values = {(double) i};
             zernikeMomentsMap.put("p" + i, values);
-            expect(ImageMatcher.compare(inputImage, values)).andReturn(confidences[i]);
+            expect(imageMatcher.compare(values)).andReturn(confidences[i]);
             expect(database.loadPart("p" + i)).andReturn(new Part("p" + i, "m", "p", "l", "il"));
         }
 
@@ -86,8 +84,9 @@ public class ExtrusionFinderTester {
 
         replay(ImageMatcher.class);
         replay(database);
+        EasyMock.replay(imageMatcher);
         replay(zernikeMap);
 
-        return new ExtrusionFinder().findMatches(inputImage, database, maxResults);
+        return ExtrusionFinder.findMatches(imageMatcher, database, maxResults);
     }
 }

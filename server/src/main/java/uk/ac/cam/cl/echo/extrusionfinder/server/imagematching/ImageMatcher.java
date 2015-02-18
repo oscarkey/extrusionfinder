@@ -21,7 +21,7 @@ public class ImageMatcher {
      * @param center the point at which to take Zernike moments from
      * @param radius the radius of the circle to use
      */
-    ImageMatcher(BufferedImage img, int degree, Point2D center, double radius) {
+    public ImageMatcher(BufferedImage img, int degree, Point2D center, double radius) {
         zm = Zernike.zernikeMoments(img, degree, center, radius);
     }
 

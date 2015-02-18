@@ -1,20 +1,24 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.orchestration;
 
+import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Configuration;
 import uk.ac.cam.cl.echo.extrusionfinder.server.database.IDBManager;
 import uk.ac.cam.cl.echo.extrusionfinder.server.database.ItemNotFoundException;
 import uk.ac.cam.cl.echo.extrusionfinder.server.imagematching.ImageMatcher;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.MatchedPart;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
 
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.*;
 
 /**
+ * Provides the function findMatches() which returns a list of n best matches from the database
+ *
  * @author as2388
  */
-public class ExtrusionFinder implements IExtrusionFinder {
+public class ExtrusionFinder {
 
-    class CorrelationPair implements Comparable<CorrelationPair> {
+    static class CorrelationPair implements Comparable<CorrelationPair> {
         private final String id;
         private final double correlation;
 
@@ -29,12 +33,34 @@ public class ExtrusionFinder implements IExtrusionFinder {
         }
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public List<MatchedPart> findMatches(BufferedImage inputImage, IDBManager database, int maxResults)
+
+    /**
+     * Produces a list of best matches to the given extrusion image using the contents of the database.
+     * @param inputImage   Image to find matches for. Automatic preprocessing on this image is performed TODO
+     * @param database     Database to load find matches in.
+     * @param maxResults   Maximum number of results to include in output list
+     * @return             List of best matches found in the database
+     */
+    public static List<MatchedPart> findMatches(BufferedImage inputImage, IDBManager database, int maxResults)
             throws ItemNotFoundException {
         // TODO: call preprocessor to clean up inputImage before proceeding
 
+        // TODO: call preprocessor for center and radius data
+        int radius = 1;
+        Point2D center = new Point2D.Double(0.0, 0.0);
+
+        return findMatches(new ImageMatcher(inputImage, Configuration.DEFULT_ZERNIKE_DEGREE, center, radius),
+                database, maxResults);
+    }
+
+    /**
+     * Produces a list of best matches to the given extrusion image using the contents of the database.
+     * @param imageMatcher Class to call to compare Zernike Moments against
+     * @param database     Database to load find matches in.
+     * @param maxResults   Maximum number of results to include in output list
+     * @return             List of best matches found in the database
+     */
+    static List<MatchedPart> findMatches(ImageMatcher imageMatcher, IDBManager database, int maxResults) throws ItemNotFoundException {
         // Load the map of zernike moments from the database
         Set<Map.Entry<String, double[]>> zernikeMoments =
                 database.loadZernikeMap().getZernikeMap().entrySet();
@@ -49,7 +75,7 @@ public class ExtrusionFinder implements IExtrusionFinder {
         // in the priority queue. Having done this, if the priority queue is bigger than the requested number of
         // results, remove the top of the priority queue (which is the worst value).
         for (Map.Entry<String, double[]> moment: zernikeMoments) {
-            double correlation = ImageMatcher.compare(inputImage, moment.getValue());
+            double correlation = imageMatcher.compare(moment.getValue());
             bestParts.add(new CorrelationPair(moment.getKey(), correlation));
 
             if (bestParts.size() > maxResults) bestParts.poll();
@@ -81,7 +107,7 @@ public class ExtrusionFinder implements IExtrusionFinder {
      * @param x List to reverse
      * @return  x in reverse order
      */
-    private List<MatchedPart> reverse(List<MatchedPart> x) {
+    static List<MatchedPart> reverse(List<MatchedPart> x) {
         List<MatchedPart> output = new ArrayList<>(x.size());
         for (int i = 1; i <= x.size(); i++) {
             output.add(x.get(x.size() - i));
@@ -89,4 +115,5 @@ public class ExtrusionFinder implements IExtrusionFinder {
 
         return output;
     }
+
 }

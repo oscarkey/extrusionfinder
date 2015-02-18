@@ -28,7 +28,7 @@ public class Servlet implements IServlet {
         BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageData));
 
         // Find and return the best matches
-        return new ExtrusionFinder().findMatches(
+        return ExtrusionFinder.findMatches(
                 image, new MongoDBManager(Configuration.DEFAULT_DATABASE_NAME),
                 Configuration.DEFAULT_NUMBER_OF_MATCHES
         );
