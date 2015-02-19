@@ -33,14 +33,15 @@ public class ZernikePoint {
      * Constructs a new ZernikePoint with the specified position and color intensity. The
      * position is raised to each power between 0 and maxPower to save computing it every
      * time it needed.
-     * @param position the position of the ZernikePoint
+     * @param position the normalized position of the ZernikePoint
+     * @param modulus the modulus of the (unnormalized) position
      * @param intensity the grayscale color (between 0 and 255) of the point
      * @param maxPower
      */
-	ZernikePoint(Complex position, double intensity, int maxPower) {
+	ZernikePoint(Complex position, double modulus, double intensity, int maxPower) {
         this.positionToPower = new Complex[maxPower];
         for (int i=0; i<maxPower; i++) positionToPower[i] = position.pow(i);
-		this.modulus = position.modulus();
+		this.modulus = modulus;
 		this.intensity = intensity;
 	}
 

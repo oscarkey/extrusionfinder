@@ -77,7 +77,7 @@ public class Zernike {
 					if (c > 0) {
 						r = Math.max(r, 1e-9);
 						Complex z = new Complex(x/r, y/r);
-						zps[i] = new ZernikePoint(z, c, degree);
+						zps[i] = new ZernikePoint(z, r, c, degree);
 						totalIntensity += c;
 						i++;
 					}
