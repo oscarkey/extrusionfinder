@@ -5,3 +5,4 @@ server/.idea/*
 */gradle/*
 */target/*
 */crawlerdata/*
+*/gradlew*
