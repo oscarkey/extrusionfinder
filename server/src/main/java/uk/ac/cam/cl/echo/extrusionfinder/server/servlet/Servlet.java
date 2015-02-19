@@ -1,9 +1,7 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.servlet;
 
-import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Configuration;
+import org.jboss.resteasy.util.Base64;
 import uk.ac.cam.cl.echo.extrusionfinder.server.database.ItemNotFoundException;
-import uk.ac.cam.cl.echo.extrusionfinder.server.database.MongoDBManager;
-import uk.ac.cam.cl.echo.extrusionfinder.server.orchestration.ExtrusionFinder;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.MatchedPart;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
 
@@ -11,7 +9,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Base64;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,10 +22,12 @@ public class Servlet implements IServlet {
      */
     @Override
     public List<MatchedPart> findMatches(String encodedImage) throws IOException, ItemNotFoundException {
+        encodedImage = encodedImage.replaceAll("\"", "");
 
         System.out.println("Endpoint hit");
         // Decode image from base64 encoding to a BufferedImage via a byte array
-        byte[] imageData = Base64.getDecoder().decode(encodedImage);
+        byte[] imageData = Base64.decode(encodedImage);
+        System.out.println("decoded");
         BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageData));
 
         // Find and return the best matches
