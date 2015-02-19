@@ -16,7 +16,8 @@ class ImageMatcher {
     /**
      * Constructs an ImageMatcher with the Zernike moments computed using the img,
      * degree, center and radius parameters.
-     * @param img the image to compute Zernike moments for
+     *
+     * @param img    the image to compute Zernike moments for
      * @param degree the degree to which to compute the Zernike moments to
      * @param center the point at which to take Zernike moments from
      * @param radius the radius of the circle to use
@@ -27,6 +28,7 @@ class ImageMatcher {
 
     /**
      * Computes the Euclidean distance between an n-dimensional vector and this.zm.
+     *
      * @param zm the Zernike moments to be compared with
      * @return the Euclidean distance between this.zm and zm
      */
@@ -35,56 +37,58 @@ class ImageMatcher {
     }
 
     /**
-     * Computes the Euclidean distance between 2 vectors. If one of the vectors has
+     * Computes the Euclidean distance between 2 vectors of the same length. If one of the vectors has
      * more dimensions than the other, they are ignored.
+     *
      * @param A an n-dimensional vector
-     * @param B an m-dimensional vector
+     * @param B an n-dimensional vector
      * @return the Euclidean distance between the two vectors.
      */
-	private static double distance(double[] A, double[] B) {
-		double x = 0;
-		for (int i=Math.min(A.length, B.length)-1; i>=0; i--) {
-			x += Math.pow(Math.abs(A[i]) - Math.abs(B[i]), 2);
-		}
-		return Math.sqrt(x);
-	}
+    private static double distance(double[] A, double[] B) {
+        if (A.length != B.length) {
+            throw new IllegalArgumentException("Vectors must be the same length");
+        }
+
+        double x = 0;
+        for (int i = 0; i < A.length; i++) {
+            x += Math.pow(A[i] - B[i], 2);
+        }
+        return Math.sqrt(x);
+    }
 
     /**
      * Computes the Zernike moments of the two images and returns the Euclidean
      * distance between them.
-     * @param img0 an image to be compared
-     * @param img1 an image to be compared
+     *
+     * @param img0   an image to be compared
+     * @param img1   an image to be compared
      * @param degree the degree to which to compute the Zernike moments to
      * @param center the point at which to take Zernike moments from
      * @param radius the radius of the circle to use
      * @return the Euclidean distance between the Zernike moments of the two images
      */
-	public static double compare(BufferedImage img0, BufferedImage img1, int degree, Point2D center, double radius) {
-		double[] zm0 = Zernike.zernikeMoments(img0, degree, center, radius);
-		double[] zm1 = Zernike.zernikeMoments(img1, degree, center, radius);
-		
-		return distance(zm0, zm1);
-	}
+    public static double compare(BufferedImage img0, BufferedImage img1, int degree, Point2D center, double radius) {
+        double[] zm0 = Zernike.zernikeMoments(img0, degree, center, radius);
+        double[] zm1 = Zernike.zernikeMoments(img1, degree, center, radius);
+
+        return distance(zm0, zm1);
+    }
+
     /**
      * Reads the images from their URI then computes their Zernike moments and returns
      * the Euclidean distance between them.
+     *
      * @param imgURI0 a URI of an image to be compared
      * @param imgURI1 a URI of an image to be compared
-     * @param degree the degree to which to compute the Zernike moments to
-     * @param center the point at which to take Zernike moments from
-     * @param radius the radius of the circle to use
+     * @param degree  the degree to which to compute the Zernike moments to
+     * @param center  the point at which to take Zernike moments from
+     * @param radius  the radius of the circle to use
      * @return the Euclidean distance between the Zernike moments of the two images
      */
-	public static double compare(String imgURI0, String imgURI1, int degree, Point2D center, double radius) throws IOException {
-		BufferedImage img0 = null;
-		BufferedImage img1 = null;
+    public static double compare(String imgURI0, String imgURI1, int degree, Point2D center, double radius) throws IOException {
+        BufferedImage img0 = ImageIO.read(new File(imgURI0));
+        BufferedImage img1 = ImageIO.read(new File(imgURI1));
 
-        img0 = ImageIO.read(new File(imgURI0));
-		img1 = ImageIO.read(new File(imgURI1));
-		
-		return compare(img0, img1, degree, center, radius);
-	}
+        return compare(img0, img1, degree, center, radius);
+    }
 }
-
-
-
