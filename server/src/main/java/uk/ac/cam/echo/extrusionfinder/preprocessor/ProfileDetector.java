@@ -5,38 +5,51 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfPoint;
-import org.opencv.core.Size;
-import org.opencv.imgproc.Imgproc;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
+import org.opencv.highgui.Highgui;
+import org.opencv.imgproc.Imgproc;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.ArrayList;
+import java.io.IOException;
 
 // Note: Currently extends ImageModifier for the purposes of testing.
 
 /**
  * Extracts extrusion cross-section profile.
  */
-public class ProfileDetector extends ImageModifier {
+public class ProfileDetector {
     private static final int imageSize = 200;
 
     private int diameter;
 
-    public ProfileDetector(String in, String out) {
-        super(in, out);
+    public ProfileDetector() {
+        // Ensure library is loaded.
+        System.loadLibrary("opencv_java249");
+
+        // If needed, allocate stuff for in-place operations.
     }
 
-    @Override
-    protected void process() {
+    /**
+     * Produces a grey scale image of only the extrusion's profile.
+     *
+     * @param bufferedImageIn An input photograph or scan containing extrusion.
+     * @return A newly allocated greyscale image of the extrusion profile.
+     */
+    public GrayscaleImageData process(RGBImageData input) {
         diameter = imageSize;
         int blurDiameter = 8;
         int sigma = 15;
 
         Mat imageStep;
 
+        Mat imageIn = new Mat(input.width, input.height, CvType.CV_8UC3);
+        imageIn.put(0, 0, input.data);
+
         // Raw image, but resized to given diameter.
         Mat rawImage;
-        rawImage = standardiseInput();
+        rawImage = standardiseInput(imageIn);
 
         // Compute a mask by using adaptivate thresholding.
         Mat thresholdMask;
@@ -65,19 +78,23 @@ public class ProfileDetector extends ImageModifier {
 
         // Need to add histogram equalisation.
 
-        imageOut = profile;
+        Mat imageOut = profile;
+
+        byte[] outData = new byte[imageOut.rows() * imageOut.cols()];
+        imageOut.get(0, 0, outData);
+        return new GrayscaleImageData(outData, imageOut.rows(), imageOut.cols());
     }
 
     /**
-     * Returns a standardised {@link #this.imageIn} image.
+     * Returns a standardised version of the input image.
      * <p>
      * The returned image has both width and height equal to {@link #this.diameter}.
      */
-    private Mat standardiseInput() {
+    private Mat standardiseInput(Mat input) {
         Mat imageResized = new Mat();
         Mat output = new Mat();
         Size newSize = new Size(diameter, diameter);
-        Imgproc.resize(imageIn, imageResized, newSize);
+        Imgproc.resize(input, imageResized, newSize);
 
         // Assuming RGB image already.
         output = imageResized;
@@ -261,13 +278,14 @@ public class ProfileDetector extends ImageModifier {
         Mat output = new Mat(input.rows(), input.cols(), input.type());
         Mat compatibleMask;
         switch (input.channels()) {
+        case 1:
+        default:
+            compatibleMask = mask;
+            break;
         case 3:
         case 4:
             compatibleMask = new Mat();
             Imgproc.cvtColor(mask, compatibleMask, Imgproc.COLOR_GRAY2RGB, input.channels());
-            break;
-        default:
-            compatibleMask = mask;
             break;
         }
         Core.multiply(input, compatibleMask, output, scale);
@@ -276,6 +294,18 @@ public class ProfileDetector extends ImageModifier {
     }
 
     public static void main(String[] args) {
-        new ProfileDetector(args[0], args[1]);
+        System.loadLibrary("opencv_java249");
+
+        Mat in = Highgui.imread(args[0]);
+        byte[] inData = new byte[in.rows() * in.cols() * 3];
+        in.get(0, 0, inData);
+
+        ProfileDetector detector = new ProfileDetector();
+
+        GrayscaleImageData outData = detector.process(new RGBImageData(inData, in.rows(), in.cols()));
+        
+        Mat out = new Mat(outData.width, outData.height, CvType.CV_8UC1);
+        out.put(0, 0, outData.data);
+        Highgui.imwrite(args[1], out);
     }
 }
