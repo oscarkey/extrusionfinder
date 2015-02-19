@@ -5,11 +5,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.ac.cam.cl.echo.extrusionfinder.server.database.DatabaseItem;
 
 public class Part implements DatabaseItem {
-    private String _id;
-    private String manufacturerId;
-    private String partId;
-    private String link;
-    private String imageLink;
+    protected String _id;
+    protected String manufacturerId;
+    protected String partId;
+    protected String link;
+    protected String imageLink;
 
     /**
      * Constructor to be used by MongoJack only
