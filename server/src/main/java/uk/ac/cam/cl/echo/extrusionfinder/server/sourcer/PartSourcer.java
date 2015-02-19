@@ -5,16 +5,11 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.*;
 import uk.ac.cam.cl.echo.extrusionfinder.server.database.IDBManager;
 import uk.ac.cam.cl.echo.extrusionfinder.server.database.MongoDBManager;
 
-import edu.uci.ics.crawler4j.crawler.CrawlConfig;
-import edu.uci.ics.crawler4j.crawler.CrawlController;
-import edu.uci.ics.crawler4j.fetcher.PageFetcher;
-import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
-import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.ArrayList;
-import java.util.stream.Stream;
-
 
 /**
  * Program that crawls plastic extrusion vendors for information about the
@@ -23,7 +18,10 @@ import java.util.stream.Stream;
  */
 public class PartSourcer {
 
-    /* crawl configuration */
+    private static final Logger logger =
+        LoggerFactory.getLogger(PartSourcer.class);
+
+    /* crawl configuration TODO. move this to Configuration.java */
     private static final String CRAWL_STORAGE_FOLDER = "crawlerdata/root";
     private static final int MAX_CRAWL_DEPTH = 5;
     private static final int MAX_CRAWL_PAGES = -1;
@@ -38,31 +36,62 @@ public class PartSourcer {
         IDBManager db = new MongoDBManager(dbName);
         db.clearDatabase();
         updateDatabase(db);
+
+        System.out.println(db.loadPart("1SG1586"));
+        System.out.println(db.loadPart("1SG1500"));
+        System.out.println(db.loadPart("1SG1818"));
+        System.out.println(db.loadPart("1SG2078"));
+        System.out.println(db.loadPart("1TUBE 24"));
     }
 
     /**
      * Runs all the controllers (one per site)
      */
-    public static void updateDatabase(IDBManager dbManager) throws Exception {
+    public static void updateDatabase(IDBManager dbManager) throws CrawlerException {
 
         Collection<Controller<? extends ExtendedCrawler>> crawlers =
             new ArrayList<Controller<? extends ExtendedCrawler>>();
 
-        crawlers.add(
-            new Controller<SeagateCrawler>(
-                getCrawlController(), // call this again per new crawler
-                new SeagateCrawler()));
+        try {
+
+            crawlers.add(
+                new Controller<SeagateCrawler>(
+                    CRAWL_STORAGE_FOLDER, MAX_CRAWL_DEPTH, MAX_CRAWL_PAGES,
+                    new SeagateCrawler()));
+
+        } catch (CrawlerException | IllegalArgumentException e) {
+
+            logger.error(e.getLocalizedMessage());
+            System.exit(1);
+
+        }
+
+        updateDatabase(dbManager, crawlers);
+    }
+
+    /**
+     * Crawls the passed crawlers for extrusions, saving the found parts in db.
+     * @param dbManager Database manager for saving the found parts
+     * @param crawlers  Collection of crawlers to be run
+     */
+    public static void updateDatabase(IDBManager dbManager,
+        Collection<Controller<? extends ExtendedCrawler>> crawlers) {
+
+        logger.info("Updating database...");
 
         for (Controller<? extends ExtendedCrawler> crawler : crawlers) {
 
             try {
-
-                Stream<Part> stream = crawler.start();
-                stream.forEach(p -> dbManager.savePart(p));
+                Collection<Part> parts = crawler.start();
+                logger.info("There are " + parts.size() + " parts.");
+                for (Part p : parts) {
+                    dbManager.savePart(p);
+                }
 
             } catch (Exception e) {
 
-                throw e;
+                logger.error(e.getLocalizedMessage());
+                System.exit(1);
 
             } finally {
 
@@ -70,26 +99,6 @@ public class PartSourcer {
 
             }
         }
-    }
 
-    /**
-     * @return  Standard crawlcontroller to pass to the actual controller.
-     * Note: do not reuse controllers for different crawlers; this is necessary
-     * because once a seed is added, it can't be removed.
-     */
-    private static CrawlController getCrawlController() throws Exception {
-
-        // set config options for controller (might need more!)
-        CrawlConfig config = new CrawlConfig();
-        config.setCrawlStorageFolder(CRAWL_STORAGE_FOLDER);
-        config.setMaxDepthOfCrawling(MAX_CRAWL_DEPTH);
-        config.setMaxPagesToFetch(MAX_CRAWL_PAGES);
-
-        PageFetcher pageFetcher = new PageFetcher(config);
-        RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
-        RobotstxtServer robotstxtServer =
-            new RobotstxtServer(robotstxtConfig, pageFetcher);
-
-        return new CrawlController(config, pageFetcher, robotstxtServer);
     }
 }

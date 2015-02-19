@@ -8,7 +8,7 @@ import edu.uci.ics.crawler4j.url.WebURL;
 
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
-import java.util.stream.Stream.Builder;
+import java.util.Collection;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -43,10 +43,10 @@ public class SeagateCrawler extends ExtendedCrawler {
     /* This is the stream that we manipulate via side effects.
      * Note that if used, it HAS to be assigned with configure method.
      */
-    private static Builder<Part> parts;
+    private static Collection<Part> parts;
 
     @Override
-    public void configure(Builder<Part> parts) {
+    public void configure(Collection<Part> parts) {
         this.parts = parts;
     }
 
@@ -101,7 +101,7 @@ public class SeagateCrawler extends ExtendedCrawler {
             if (product == null || product.size() == 0) {
                 continue;
             }
-            String productId = product.first().ownText();
+            String productId = product.first().ownText().toUpperCase();
 
             // get the link to the product
             Elements links = productNode.select("a[href]");
@@ -148,7 +148,8 @@ public class SeagateCrawler extends ExtendedCrawler {
             }
 
             if (parts != null) {
-                parts.accept(new Part(VENDOR_ID, productId, link, image, size,
+                System.out.println(description + ": " +size);
+                parts.add(new Part(VENDOR_ID, productId, link, image, size,
                     description));
             }
         }
