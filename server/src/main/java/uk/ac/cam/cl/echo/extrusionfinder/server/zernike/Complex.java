@@ -1,6 +1,6 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.zernike;
 
-class Complex {
+public class Complex {
 
     //The real component of the complex number.
 	public final double real;
