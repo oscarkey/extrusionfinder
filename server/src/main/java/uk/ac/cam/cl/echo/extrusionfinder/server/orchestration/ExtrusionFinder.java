@@ -31,7 +31,8 @@ public class ExtrusionFinder {
 
         @Override
         public int compareTo(CorrelationPair o) {
-            return this.correlation - o.correlation > 0 ? -1 : 1;
+            // Negate to sort in reverse order
+            return - Double.compare(this.correlation, o.correlation);
         }
     }
 
@@ -77,11 +78,13 @@ public class ExtrusionFinder {
         // Compare the input image with every zernike moment just loaded from the database, and put the result
         // in the priority queue. Having done this, if the priority queue is bigger than the requested number of
         // results, remove the top of the priority queue (which is the worst value).
-        for (Map.Entry<String, double[]> moment: zernikeMoments) {
+        for (Map.Entry<String, double[]> moment : zernikeMoments) {
             double correlation = imageMatcher.compare(moment.getValue());
             bestParts.add(new CorrelationPair(moment.getKey(), correlation));
 
-            if (bestParts.size() > maxResults) bestParts.poll();
+            if (bestParts.size() > maxResults) {
+                bestParts.poll();
+            }
         }
 
         // Determine how many results should be returned: this is the maximum of the number of results requested
