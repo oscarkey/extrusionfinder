@@ -1,4 +1,4 @@
-package uk.ac.cam.echo.extrusionfinder.preprocessor;
+package uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor;
 
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -14,8 +14,8 @@ import java.util.LinkedList;
 import java.util.ArrayList;
 import java.io.IOException;
 
-import uk.ac.cam.echo.extrusionfinder.imagedata.RGBImageData;
-import uk.ac.cam.echo.extrusionfinder.imagedata.GrayscaleImageData;
+import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
+import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.GrayscaleImageData;
 
 /**
  * Extracts extrusion cross-section profile.

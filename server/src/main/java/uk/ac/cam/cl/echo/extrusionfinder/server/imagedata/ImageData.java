@@ -1,4 +1,4 @@
-package uk.ac.cam.echo.extrusionfinder.imagedata;
+package uk.ac.cam.cl.echo.extrusionfinder.server.imagedata;
 
 /**
  * Generic image storage class containing data and dimension information.

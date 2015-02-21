@@ -1,4 +1,4 @@
-package uk.ac.cam.echo.extrusionfinder.preprocessor;
+package uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor;
 
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.LinkedList;
 import java.util.ArrayList;
 
-import uk.ac.cam.echo.extrusionfinder.imagedata.GrayscaleImageData;
+import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.GrayscaleImageData;
 
 /**
  * Finds profile centre and radius.

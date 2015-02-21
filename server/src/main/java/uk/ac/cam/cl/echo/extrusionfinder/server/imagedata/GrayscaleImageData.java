@@ -1,4 +1,4 @@
-package uk.ac.cam.echo.extrusionfinder.imagedata;
+package uk.ac.cam.cl.echo.extrusionfinder.server.imagedata;
 
 /**
  * Image storing RGB colour space in bytes.
