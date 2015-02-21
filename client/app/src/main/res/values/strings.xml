@@ -12,6 +12,11 @@
     </string>
     <string name="text_button_neutral">@android:string/ok</string>
 
+    <string name="title_dialog_error_camera_start">Camera error</string>
+    <string name="message_dialog_error_camera_Start">
+        Could not start the camera. Please try restarting the device.
+    </string>
+
     <string name="title_dialog_error_other">Error</string>
     <string name="message_dialog_error_other">
         An error occurred retrieving results from the server.

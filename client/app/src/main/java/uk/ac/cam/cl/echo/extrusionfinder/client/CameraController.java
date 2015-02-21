@@ -8,6 +8,7 @@ import android.view.SurfaceHolder;
  * Android version.
  */
 public interface CameraController {
+    public static final int ERROR_TYPE_START = 0;
 
     /**
      * Calls the relevant methods to start the camera.
@@ -61,5 +62,11 @@ public interface CameraController {
          * @param size The Dimension that has been chosen for the preview
          */
         public void onSetPreviewSize(Dimension size);
+
+        /**
+         * Called when an error occurred with the camera
+         * @param errorType A constant representing the error that occurred
+         */
+        public void onError(int errorType);
     }
 }

@@ -33,7 +33,13 @@ public class Camera1Controller implements CameraController {
 
         // open the camera, the rear camera is opened by default (we hope, should be)
         //TODO move this into async task to prevent blocking ui thread
-        camera = Camera.open();
+        try {
+            camera = Camera.open();
+        }
+        catch(RuntimeException e) {
+            Log.e(LOG_TAG, "Failed to open camera: " + e);
+            callback.onError(CameraController.ERROR_TYPE_START);
+        }
 
         camera.setPreviewCallback(previewCallback);
         // default orientation is landscape, so rotate this to portrait
@@ -61,6 +67,7 @@ public class Camera1Controller implements CameraController {
         catch(IOException e) {
             //TODO display this error in a user friendly fashion
             Log.e(LOG_TAG, "Could not start the camera: " + e);
+            callback.onError(ERROR_TYPE_START);
         }
 
         camera.startPreview();

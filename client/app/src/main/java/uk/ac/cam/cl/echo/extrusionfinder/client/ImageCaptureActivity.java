@@ -1,6 +1,8 @@
 package uk.ac.cam.cl.echo.extrusionfinder.client;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -113,7 +115,41 @@ public class ImageCaptureActivity extends ActionBarActivity {
         public void onSetPreviewSize(Dimension size) {
             setPreviewSize(size);
         }
+
+        @Override
+        public void onError(int errorType) {
+            // show the error to the user
+            showErrorDialog(errorType);
+        }
     };
 
+    private void showErrorDialog(int errorType) {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
 
+        // set the title and text of the dialog appropriately for the error
+        switch(errorType) {
+            case Camera1Controller.ERROR_TYPE_START:
+                dialogBuilder.setTitle(R.string.title_dialog_error_camera_start);
+                dialogBuilder.setMessage(R.string.message_dialog_error_camera_Start);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown error type: " + errorType);
+        }
+
+        // add the ok button
+        dialogBuilder.setNeutralButton(R.string.text_button_neutral, null);
+
+        // detect the dialog being closed for some reason, probably by pressing ok
+        // this has to be added to the dialog and not the builder to support older devices
+        AlertDialog dialog = dialogBuilder.create();
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                // exit the activity, and hopefully application
+                finish();
+            }
+        });
+
+        dialog.show();
+    }
 }
