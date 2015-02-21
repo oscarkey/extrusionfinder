@@ -14,7 +14,8 @@ import java.util.LinkedList;
 import java.util.ArrayList;
 import java.io.IOException;
 
-// Note: Currently extends ImageModifier for the purposes of testing.
+import uk.ac.cam.echo.extrusionfinder.imagedata.RGBImageData;
+import uk.ac.cam.echo.extrusionfinder.imagedata.GrayscaleImageData;
 
 /**
  * Extracts extrusion cross-section profile.
@@ -98,7 +99,6 @@ public class ProfileDetector {
 
         // Assuming RGB image already.
         output = imageResized;
-        // Imgproc.cvtColor(imageResized, output, Imgproc.COLOR_RGBA2RGB);
 
         return output;
     }
