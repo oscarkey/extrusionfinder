@@ -35,7 +35,7 @@ public class ProfileDetector {
     /**
      * Produces a grey scale image of only the extrusion's profile.
      *
-     * @param bufferedImageIn An input photograph or scan containing extrusion.
+     * @param input An input photograph or scan containing extrusion.
      * @return A newly allocated greyscale image of the extrusion profile.
      */
     public GrayscaleImageData process(RGBImageData input) {

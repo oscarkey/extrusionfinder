@@ -30,6 +30,8 @@ public class ProfileFitting {
 
     /**
      * Create a fitting for a given input grayscale image.
+     *
+     * @param input The image of the detected profile to find the centre and radius of.
      */
     public ProfileFitting(GrayscaleImageData input) {
         process(input);
@@ -51,6 +53,8 @@ public class ProfileFitting {
 
     /**
      * Return the location of the centre for the Zernike Moment operations.
+     *
+     * @return The centre for Zernike Moment calculations.
      */
     public Point2D getCentre() {
         return new Point2D.Double(centre.x, centre.y);
@@ -58,6 +62,8 @@ public class ProfileFitting {
 
     /**
      * Return the radius for the Zernike Moment operations.
+     *
+     * @return The raidus of the circle for Zernike Moment calculations.
      */
     public double getRadius() {
         return size;
