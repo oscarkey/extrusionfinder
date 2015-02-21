@@ -105,6 +105,11 @@ public class ImageCaptureActivity extends ActionBarActivity {
         }
 
         @Override
+        public void onPreviewFrame(byte[] image) {
+            // do nothing (for now)
+        }
+
+        @Override
         public void onSetPreviewSize(Dimension size) {
             setPreviewSize(size);
         }

@@ -50,6 +50,12 @@ public interface CameraController {
         public void onImageCaptured(byte[] image);
 
         /**
+         * Called every time a preview frame is delivered
+         * @param image The byte data of the frame in a yet to be determined format
+         */
+        public void onPreviewFrame(byte[] image);
+
+        /**
          * Called when the camera has been started and the preview size has been determined.
          * Should be used to set the surface holding the preview to the correct aspect ratio.
          * @param size The Dimension that has been chosen for the preview

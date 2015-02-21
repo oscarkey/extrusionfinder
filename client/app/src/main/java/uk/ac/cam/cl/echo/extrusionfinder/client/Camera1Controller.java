@@ -35,6 +35,7 @@ public class Camera1Controller implements CameraController {
         //TODO move this into async task to prevent blocking ui thread
         camera = Camera.open();
 
+        camera.setPreviewCallback(previewCallback);
         // default orientation is landscape, so rotate this to portrait
         camera.setDisplayOrientation(90);
 
@@ -126,6 +127,13 @@ public class Camera1Controller implements CameraController {
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
             callback.onImageCaptured(data);
+        }
+    };
+
+    private final Camera.PreviewCallback previewCallback = new Camera.PreviewCallback() {
+        @Override
+        public void onPreviewFrame(byte[] data, Camera camera) {
+            callback.onPreviewFrame(data);
         }
     };
 
