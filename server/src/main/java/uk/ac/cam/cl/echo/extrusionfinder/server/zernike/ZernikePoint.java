@@ -18,7 +18,7 @@ class ZernikePoint {
      * @return the position of the point raised to a power of the exponent
      */
     public Complex getPosition(int exponent) throws IllegalArgumentException {
-        if (0 <= exponent && exponent < positionToPower.length) {
+        if (exponent < 0 || positionToPower.length <= exponent) {
             throw new IllegalArgumentException("Exponent is not in correct range. Expected 0 <= exponent < maxExponent");
         }
         return positionToPower[exponent];
@@ -44,9 +44,9 @@ class ZernikePoint {
      * @param maxPower
      */
     ZernikePoint(Complex position, double modulus, double intensity, int maxPower) {
-        this.positionToPower = new Complex[maxPower];
+        this.positionToPower = new Complex[maxPower+1];
         Complex power = new Complex(1.0, 0.0);
-        for (int i = 0; i < maxPower; i++) {
+        for (int i = 0; i <= maxPower; i++) {
             positionToPower[i] = power;
             power = power.multiply(position);
         }

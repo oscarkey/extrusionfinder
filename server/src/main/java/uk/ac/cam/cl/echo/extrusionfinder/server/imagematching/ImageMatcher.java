@@ -11,19 +11,19 @@ import javax.imageio.ImageIO;
 public class ImageMatcher {
 
     //The Zernike moments of the ImageMatcher
-    private double[] zm;
+    private final double[] zm;
 
     /**
      * Constructs an ImageMatcher with the Zernike moments computed using the img,
      * degree, center and radius parameters.
      *
-     * @param img    the image to compute Zernike moments for
+     * @param image    the image to compute Zernike moments for
      * @param degree the degree to which to compute the Zernike moments to
      * @param center the point at which to take Zernike moments from
      * @param radius the radius of the circle to use
      */
-    public ImageMatcher(BufferedImage img, int degree, Point2D center, double radius) {
-        zm = Zernike.zernikeMoments(img, degree, center, radius);
+    public ImageMatcher(BufferedImage image, int degree, Point2D center, double radius) {
+        zm = Zernike.zernikeMoments(image, degree, center, radius);
     }
 
     /**
@@ -44,7 +44,7 @@ public class ImageMatcher {
      * @param B an n-dimensional vector
      * @return the Euclidean distance between the two vectors.
      */
-    private static double distance(double[] A, double[] B) {
+    static double distance(double[] A, double[] B) throws IllegalArgumentException {
         if (A.length != B.length) {
             throw new IllegalArgumentException("Vectors must be the same length");
         }
@@ -60,16 +60,16 @@ public class ImageMatcher {
      * Computes the Zernike moments of the two images and returns the Euclidean
      * distance between them.
      *
-     * @param img0   an image to be compared
-     * @param img1   an image to be compared
+     * @param image0   an image to be compared
+     * @param image1   an image to be compared
      * @param degree the degree to which to compute the Zernike moments to
      * @param center the point at which to take Zernike moments from
      * @param radius the radius of the circle to use
      * @return the Euclidean distance between the Zernike moments of the two images
      */
-    public static double compare(BufferedImage img0, BufferedImage img1, int degree, Point2D center, double radius) {
-        double[] zm0 = Zernike.zernikeMoments(img0, degree, center, radius);
-        double[] zm1 = Zernike.zernikeMoments(img1, degree, center, radius);
+    public static double compare(BufferedImage image0, BufferedImage image1, int degree, Point2D center, double radius) {
+        double[] zm0 = Zernike.zernikeMoments(image0, degree, center, radius);
+        double[] zm1 = Zernike.zernikeMoments(image1, degree, center, radius);
 
         return distance(zm0, zm1);
     }
@@ -78,17 +78,17 @@ public class ImageMatcher {
      * Reads the images from their URI then computes their Zernike moments and returns
      * the Euclidean distance between them.
      *
-     * @param imgURI0 a URI of an image to be compared
-     * @param imgURI1 a URI of an image to be compared
+     * @param iamgeURI0 a URI of an image to be compared
+     * @param iamgeURI1 a URI of an image to be compared
      * @param degree  the degree to which to compute the Zernike moments to
      * @param center  the point at which to take Zernike moments from
      * @param radius  the radius of the circle to use
      * @return the Euclidean distance between the Zernike moments of the two images
      */
-    public static double compare(String imgURI0, String imgURI1, int degree, Point2D center, double radius) throws IOException {
-        BufferedImage img0 = ImageIO.read(new File(imgURI0));
-        BufferedImage img1 = ImageIO.read(new File(imgURI1));
+    public static double compare(String iamgeURI0, String iamgeURI1, int degree, Point2D center, double radius) throws IOException {
+        BufferedImage image0 = ImageIO.read(new File(iamgeURI0));
+        BufferedImage image1 = ImageIO.read(new File(iamgeURI1));
 
-        return compare(img0, img1, degree, center, radius);
+        return compare(image0, image1, degree, center, radius);
     }
 }
