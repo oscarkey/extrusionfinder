@@ -9,10 +9,10 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
+import java.io.IOException;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.ArrayList;
-import java.io.IOException;
 
 import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Configuration;
 import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
@@ -283,7 +283,7 @@ public class ProfileDetector {
      */
     private static Mat applyMultiplicationMask(Mat input, Mat mask, double scale) {
         Mat output = new Mat(input.rows(), input.cols(), input.type());
-        Mat compatibleMask = null;
+        Mat compatibleMask;
         switch (input.channels()) {
             case 1:
                 compatibleMask = mask;
@@ -293,6 +293,8 @@ public class ProfileDetector {
                 compatibleMask = new Mat();
                 Imgproc.cvtColor(mask, compatibleMask, Imgproc.COLOR_GRAY2RGB, input.channels());
                 break;
+            default:
+                throw new UnsupportedOperationException("Number of channels must be 1, 3, or 4 for mask application.");
         }
         Core.multiply(input, compatibleMask, output, scale);
         return output;
