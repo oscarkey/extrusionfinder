@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.ArrayList;
 import java.io.IOException;
 
+import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Configuration;
 import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
 import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.GrayscaleImageData;
 
@@ -21,9 +22,6 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.GrayscaleImageData;
  * Extracts extrusion cross-section profile.
  */
 public class ProfileDetector {
-    /** The standard size (width and height) used for preprocessing images. */
-    private static final int imageSize = 200;
-
     /**
      * Creates a profile detector.
      * <p>
@@ -31,7 +29,7 @@ public class ProfileDetector {
      */
     public ProfileDetector() {
         // Ensure library is loaded.
-        System.loadLibrary("opencv_java249");
+        System.loadLibrary(Configuration.OPENCV_LIBRARY_NAME);
 
         // If it turns out that this class is super slow, we could allocate stuff for in-place
         // operations here.
@@ -44,9 +42,9 @@ public class ProfileDetector {
      * @return A newly allocated greyscale image of the extrusion profile.
      */
     public GrayscaleImageData process(RGBImageData input) {
-        int diameter = imageSize;
-        int blurDiameter = 8;
-        int sigma = 15;
+        int diameter = Configuration.PROFILE_DETECTION_STANDARD_IMAGE_SIZE;
+        int blurDiameter = Configuration.PROFILE_DETECTION_STANDARD_BILATERAL_FILTER_BLUR_DIAMETER;
+        int sigma = Configuration.PROFILE_DETECTION_STANDARD_BILATERAL_FILTER_SIGMA;
 
         Mat imageStep;
 
@@ -93,7 +91,7 @@ public class ProfileDetector {
     /**
      * Returns a standardised version of the input image.
      * <p>
-     * The returned image has both width and height equal to {@link #this.diameter}.
+     * The returned image has both width and height equal equal to specified diameter.
      */
     private Mat standardiseInput(Mat input, int diameter) {
         Mat imageResized = new Mat();
@@ -302,12 +300,11 @@ public class ProfileDetector {
             break;
         }
         Core.multiply(input, compatibleMask, output, scale);
-        // return output.copyTo(input, mask);
         return output;
     }
 
     public static void main(String[] args) {
-        System.loadLibrary("opencv_java249");
+        System.loadLibrary(Configuration.OPENCV_LIBRARY_NAME);
 
         Mat in = Highgui.imread(args[0]);
         byte[] inData = new byte[in.rows() * in.cols() * 3];

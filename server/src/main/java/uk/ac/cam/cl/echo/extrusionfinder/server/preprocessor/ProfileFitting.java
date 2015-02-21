@@ -33,7 +33,7 @@ public class ProfileFitting {
      */
     public ProfileFitting(GrayscaleImageData input) {
         // Ensure library is loaded.
-        System.loadLibrary("opencv_java249");
+        System.loadLibrary(Configuration.OPENCV_LIBRARY_NAME);
 
         process(input);
     }
@@ -115,7 +115,7 @@ public class ProfileFitting {
     }
 
     public static void main(String[] args) {
-        System.loadLibrary("opencv_java249");
+        System.loadLibrary(Configuration.OPENCV_LIBRARY_NAME);
 
         Mat in = avgGreyscale(Highgui.imread(args[0]));
         byte[] inData = new byte[in.rows() * in.cols()];
