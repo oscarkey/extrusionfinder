@@ -90,7 +90,7 @@ public class ProfileDetector {
      * <p>
      * The returned image has both width and height equal equal to specified diameter.
      */
-    private Mat standardiseInput(Mat input, int diameter) {
+    private static Mat standardiseInput(Mat input, int diameter) {
         Mat imageResized = new Mat();
         Mat output = new Mat();
         Size newSize = new Size(diameter, diameter);
@@ -110,7 +110,7 @@ public class ProfileDetector {
      * See http://docs.opencv.org/modules/imgproc/doc/filtering.html#bilateralfilter and
      * http://www.dai.ed.ac.uk/CVonline/LOCAL_COPIES/MANDUCHI1/Bilateral_Filtering.html
      */
-    private Mat blur(Mat input, int blurDiameter, int sigmaColor, int sigmaSpace) {
+    private static Mat blur(Mat input, int blurDiameter, int sigmaColor, int sigmaSpace) {
         Mat output = new Mat();
         Imgproc.bilateralFilter(input, output, blurDiameter, sigmaColor, sigmaSpace);
         return output;
@@ -121,7 +121,7 @@ public class ProfileDetector {
      * <p>
      * For each pixel, the greyscale value is given as min(pixel.red, pixel.green, pixel.blue).
      */
-    private Mat minGreyscale(Mat input) {
+    private static Mat minGreyscale(Mat input) {
         // Extract individual channels.
         Mat c1 = new Mat(input.rows(), input.cols(), CvType.CV_8UC1);
         Mat c2 = new Mat(input.rows(), input.cols(), CvType.CV_8UC1);
@@ -149,7 +149,7 @@ public class ProfileDetector {
      * <p>
      * For each pixel, the greyscale value is given as (pixel.red + pixel.green + pixel.blue) / 3.
      */
-    private Mat avgGreyscale(Mat input) {
+    private static Mat avgGreyscale(Mat input) {
         Mat output = new Mat();
         Imgproc.cvtColor(input, output, Imgproc.COLOR_RGB2GRAY);
         return output;
@@ -162,7 +162,7 @@ public class ProfileDetector {
      * The fade is linear, and the fading region is the circle, centred with the image, with double
      * the diameter.
      */
-    private Mat fade(Mat input) {
+    private static Mat fade(Mat input) {
         int width = input.rows();
         int height = input.cols();
         double diameter = input.rows();
@@ -172,7 +172,7 @@ public class ProfileDetector {
         double r = diameter / 2.0;
         int i = 0;
         // The maximum fade strength of a pixel (current code => always sqrt(2)/2).
-        double maximum = Math.hypot(r + r) / diameter;
+        double maximum = Math.hypot(r, r) / diameter;
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++, i++) {
                 // How much of the pixel (fraction) to keep.
@@ -190,7 +190,7 @@ public class ProfileDetector {
     /**
      * Applies an adaptive threshold to the given image.
      */
-    private Mat threshold(Mat input) {
+    private static Mat threshold(Mat input) {
         Mat output = new Mat();
         Imgproc.adaptiveThreshold(
             input, 
@@ -211,7 +211,7 @@ public class ProfileDetector {
      * <p>
      * If no contours exist, the mask is all zeros.
      */
-    private Mat largestContourMask(Mat input) {
+    private static Mat largestContourMask(Mat input) {
         Mat output = new Mat(input.rows(), input.cols(), CvType.CV_8UC1);
         List<MatOfPoint> contours = new LinkedList<MatOfPoint>();
         Mat hierarchy = new Mat();
@@ -245,7 +245,7 @@ public class ProfileDetector {
     /**
      * Inverts the given image.
      */
-    private Mat invert(Mat input) {
+    private static Mat invert(Mat input) {
         Mat output = new Mat(input.rows(), input.cols(), input.type());
         output.setTo(new Scalar(255));
         Core.subtract(output, input, output);
@@ -257,7 +257,7 @@ public class ProfileDetector {
      * <p>
      * All pixels with non-zero values in mask are preserved, otherwise they are reduced to black.
      */
-    private Mat applyBinaryMask(Mat input, Mat mask) {
+    private static Mat applyBinaryMask(Mat input, Mat mask) {
         Mat binMask = new Mat();
         Core.min(mask.clone(), new Scalar(1), binMask);
 
@@ -269,7 +269,7 @@ public class ProfileDetector {
      * <p>
      * The mask is normalised and multiplied with the image. The mask must be single channel.
      */
-    private Mat applyMask(Mat input, Mat mask) {
+    private static Mat applyMask(Mat input, Mat mask) {
         return applyMultiplicationMask(input, mask, 1.0 / 255.0);
     }
 
@@ -281,12 +281,11 @@ public class ProfileDetector {
      * <p>
      * Note that the mask has values 0 to 255, so scaling is necessary to avoid overflow.
      */
-    private Mat applyMultiplicationMask(Mat input, Mat mask, double scale) {
+    private static Mat applyMultiplicationMask(Mat input, Mat mask, double scale) {
         Mat output = new Mat(input.rows(), input.cols(), input.type());
-        Mat compatibleMask;
+        Mat compatibleMask = null;
         switch (input.channels()) {
         case 1:
-        default:
             compatibleMask = mask;
             break;
         case 3: // Do the same as 4 channels
@@ -297,21 +296,5 @@ public class ProfileDetector {
         }
         Core.multiply(input, compatibleMask, output, scale);
         return output;
-    }
-
-    public static void main(String[] args) {
-        System.loadLibrary(Configuration.OPENCV_LIBRARY_NAME);
-
-        Mat in = Highgui.imread(args[0]);
-        byte[] inData = new byte[in.rows() * in.cols() * 3];
-        in.get(0, 0, inData);
-
-        ProfileDetector detector = new ProfileDetector();
-
-        GrayscaleImageData outData = detector.process(new RGBImageData(inData, in.rows(), in.cols()));
-        
-        Mat out = new Mat(outData.width, outData.height, CvType.CV_8UC1);
-        out.put(0, 0, outData.data);
-        Highgui.imwrite(args[1], out);
     }
 }

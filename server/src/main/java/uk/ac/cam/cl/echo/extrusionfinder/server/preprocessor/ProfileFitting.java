@@ -99,28 +99,4 @@ public class ProfileFitting {
 
         return Math.sqrt(rWin) + 2.0;
     }
-
-    /**
-     * Converts the input image to greyscale using the averaging of all components per pixel.
-     * <p>
-     * For each pixel, the greyscale value is given as (pixel.red + pixel.green + pixel.blue) / 3.
-     */
-    private static Mat avgGreyscale(Mat input) {
-        Mat output = new Mat();
-        Imgproc.cvtColor(input, output, Imgproc.COLOR_RGB2GRAY);
-        return output;
-    }
-
-    public static void main(String[] args) {
-        System.loadLibrary(Configuration.OPENCV_LIBRARY_NAME);
-
-        Mat in = avgGreyscale(Highgui.imread(args[0]));
-        byte[] inData = new byte[in.rows() * in.cols()];
-        in.get(0, 0, inData);
-
-        ProfileFitting fitting = new ProfileFitting(new GrayscaleImageData(inData, in.rows(), in.cols()));
-
-        Point2D centre = fitting.getCentre();
-        System.out.printf("Centre: (%s, %s)\nSize: %s\n", centre.getX(), centre.getY(), fitting.getRadius());
-    }
 }
