@@ -1,9 +1,7 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.imagedata;
 
 /**
- * Image storing RGB colour space in bytes.
- * <p>
- * Bytes store data for pixels as R, G, B, R, G, B, R, G, B, ...
+ * Image storing Grayscale pixels in bytes.
  * <p>
  * Pixels are stored row by row in left-to-right, top-to-bottom order.
  */
