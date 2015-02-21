@@ -28,9 +28,6 @@ public class ProfileDetector {
      * The detector can be reused for different input images.
      */
     public ProfileDetector() {
-        // Ensure library is loaded.
-        System.loadLibrary(Configuration.OPENCV_LIBRARY_NAME);
-
         // If it turns out that this class is super slow, we could allocate stuff for in-place
         // operations here.
     }
@@ -158,7 +155,7 @@ public class ProfileDetector {
         return output;
     }
 
-    // This function needs to be revised!
+    // TODO: change to be better normalised.
     /**
      * Applies a radial fade to black to the given image from the center.
      * <p>
@@ -166,7 +163,6 @@ public class ProfileDetector {
      * the diameter.
      */
     private Mat fade(Mat input) {
-        // This code will likely change later to be better normalised.
         int width = input.rows();
         int height = input.cols();
         double diameter = input.rows();
@@ -175,12 +171,12 @@ public class ProfileDetector {
 
         double r = diameter / 2.0;
         int i = 0;
-        // The maximum fade strength of a pixel (current code => always 0.707106781187).
-        double maximum = (Math.sqrt(r*r + r*r) / diameter);
+        // The maximum fade strength of a pixel (current code => always sqrt(2)/2).
+        double maximum = Math.hypot(r + r) / diameter;
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++, i++) {
                 // How much of the pixel (fraction) to keep.
-                double keep = maximum - (Math.sqrt((x-r)*(x-r) + (y-r)*(y-r)) / diameter);
+                double keep = maximum - (Math.hypot(x-r, y-r) / diameter);
                 // How much of the pixel (fraction*255) to keep.
                 bytes[i] = (byte)(keep < 0 ? 0 : (byte)(keep * 255.0));
             }
@@ -293,7 +289,7 @@ public class ProfileDetector {
         default:
             compatibleMask = mask;
             break;
-        case 3:
+        case 3: // Do the same as 4 channels
         case 4:
             compatibleMask = new Mat();
             Imgproc.cvtColor(mask, compatibleMask, Imgproc.COLOR_GRAY2RGB, input.channels());

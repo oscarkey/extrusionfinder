@@ -32,9 +32,6 @@ public class ProfileFitting {
      * Create a fitting for a given input grayscale image.
      */
     public ProfileFitting(GrayscaleImageData input) {
-        // Ensure library is loaded.
-        System.loadLibrary(Configuration.OPENCV_LIBRARY_NAME);
-
         process(input);
     }
 
