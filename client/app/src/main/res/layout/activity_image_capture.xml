@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -6,15 +6,15 @@
     android:orientation="vertical">
 
     <SurfaceView
+        android:id="@+id/cameraPreviewSurface"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:id="@+id/cameraPreview"
-        android:layout_gravity="center_horizontal" />
+        android:layout_height="match_parent"
+        android:layout_gravity="center"/>
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/text_capture_image_button"
-        android:id="@+id/captureImageButton" />
-</LinearLayout>
+        android:id="@+id/captureImageButton"
+        android:layout_gravity="bottom"/>
+</FrameLayout>

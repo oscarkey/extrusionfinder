@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by oscar on 05/02/15.
@@ -19,7 +20,8 @@ public class Camera1Controller implements CameraController {
     private boolean isSetup;
     private boolean isPreviewing;
     private SurfaceHolder previewSurface;
-    private ImageCapturedCallback capturedCallback;
+    private CameraCallback callback;
+    private Dimension desiredPreviewSize;
     private Camera camera;
 
     @Override
@@ -36,11 +38,20 @@ public class Camera1Controller implements CameraController {
         // default orientation is landscape, so rotate this to portrait
         camera.setDisplayOrientation(90);
 
-        // change settings
+
+        // get the parameters, change them and then put them back again
         Camera.Parameters parameters = camera.getParameters();
+
         parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-        // TODO set parameters to suit the image recognition algorithm
+
+        // work out how big the preview should be and report this
+        Dimension size = getBestSize(desiredPreviewSize, parameters.getSupportedPreviewSizes());
+        callback.onSetPreviewSize(size);
+        // have to swap the width and height because the camera assumes it is in landscape
+        parameters.setPreviewSize(size.getHeight(), size.getWidth());
+
         camera.setParameters(parameters);
+
 
         // connect the camera to the preview surface
         try {
@@ -65,10 +76,13 @@ public class Camera1Controller implements CameraController {
     }
 
     @Override
-    public void setupCamera(SurfaceHolder previewSurface, ImageCapturedCallback capturedCallback) {
+    public void setupCamera(SurfaceHolder previewSurface, Dimension desiredPreviewSize,
+                            CameraCallback callback) {
         // save references for later
         this.previewSurface = previewSurface;
-        this.capturedCallback = capturedCallback;
+        this.callback = callback;
+        this.desiredPreviewSize = desiredPreviewSize;
+
 
         // register a callback on the surface holder to update the camera whenever it changes
         previewSurface.addCallback(new SurfaceHolder.Callback() {
@@ -111,7 +125,23 @@ public class Camera1Controller implements CameraController {
     private final Camera.PictureCallback pictureCallback = new Camera.PictureCallback() {
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
-            capturedCallback.onImageCaptured(data);
+            callback.onImageCaptured(data);
         }
     };
+
+    /**
+     * Choose the best preview size from a list of options given a target
+     * Note that target and return assume portrait display while options assumes landscape
+     * @param target Dimension representing the target size for the preview (in portrait form)
+     * @param options A List of Camera.Size options for the size of the preview (in landscape form)
+     * @return The best size picked from the list (in portrait form)
+     */
+    private Dimension getBestSize(Dimension target, List<Camera.Size> options) {
+        //TODO pick the best size
+        // for now just pick the first size
+        // switch width and height to convert between portrait and landscape
+        int width = options.get(0).height;
+        int height = options.get(0).width;
+        return new Dimension(width, height);
+    }
 }

@@ -25,9 +25,11 @@ public interface CameraController {
     /**
      * Must be called to set up the camera before starting it or taking a picture
      * @param previewSurface The surface where the preview from the camera should be displayed
-     * @param capturedCallback Called when the image has been fully captured and provides byte data
+     * @param desiredPreviewSize A Dimension of the desired size of the preview
+     * @param cameraCallback Called when various camera events occur
      */
-    public void setupCamera(SurfaceHolder previewSurface, ImageCapturedCallback capturedCallback);
+    public void setupCamera(SurfaceHolder previewSurface, Dimension desiredPreviewSize,
+                            CameraCallback cameraCallback);
 
     /**
      * Requests that the camera take a picture.
@@ -38,13 +40,20 @@ public interface CameraController {
     public void requestCapture();
 
     /**
-     * Implemented to handle the completion of the image capture event.
+     * Implemented to handle various camera events.
      */
-    public interface ImageCapturedCallback {
+    public interface CameraCallback {
         /**
          * Called when the image has been completely captured
          * @param image The byte data of the image in a yet to be determined format
          */
         public void onImageCaptured(byte[] image);
+
+        /**
+         * Called when the camera has been started and the preview size has been determined.
+         * Should be used to set the surface holding the preview to the correct aspect ratio.
+         * @param size The Dimension that has been chosen for the preview
+         */
+        public void onSetPreviewSize(Dimension size);
     }
 }
