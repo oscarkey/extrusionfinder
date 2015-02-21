@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.LinkedList;
 import java.util.ArrayList;
 
-// Note: Currently extends ImageModifier for the purposes of testing.
+import uk.ac.cam.echo.extrusionfinder.imagedata.GrayscaleImageData;
 
 /**
  * Finds profile centre and radius.
