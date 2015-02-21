@@ -285,14 +285,14 @@ public class ProfileDetector {
         Mat output = new Mat(input.rows(), input.cols(), input.type());
         Mat compatibleMask = null;
         switch (input.channels()) {
-        case 1:
-            compatibleMask = mask;
-            break;
-        case 3: // Do the same as 4 channels
-        case 4:
-            compatibleMask = new Mat();
-            Imgproc.cvtColor(mask, compatibleMask, Imgproc.COLOR_GRAY2RGB, input.channels());
-            break;
+            case 1:
+                compatibleMask = mask;
+                break;
+            case 3: // Do the same as 4 channels
+            case 4:
+                compatibleMask = new Mat();
+                Imgproc.cvtColor(mask, compatibleMask, Imgproc.COLOR_GRAY2RGB, input.channels());
+                break;
         }
         Core.multiply(input, compatibleMask, output, scale);
         return output;
