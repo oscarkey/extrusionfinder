@@ -28,6 +28,9 @@ public class ProfileFitting {
     private Point centre;
     private double size;
 
+    /**
+     * Create a fitting for a given input grayscale image.
+     */
     public ProfileFitting(GrayscaleImageData input) {
         // Ensure library is loaded.
         System.loadLibrary("opencv_java249");
@@ -65,7 +68,7 @@ public class ProfileFitting {
 
     /**
      * Finds the centre of a given input image.
-     *
+     * <p>
      * This implementation uses centre of mass.
      */
     private Point findCentre(Mat input) {
@@ -76,7 +79,7 @@ public class ProfileFitting {
 
     /**
      * Finds the image's current size.
-     *
+     * <p>
      * This is currently done based on area.
      */
     private double determineSize(Mat input, Point centre) {

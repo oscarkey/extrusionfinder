@@ -25,6 +25,11 @@ public class ProfileDetector {
 
     private int diameter;
 
+    /**
+     * Creates a profile detector.
+     * <p>
+     * The detector can be reused for different input images.
+     */
     public ProfileDetector() {
         // Ensure library is loaded.
         System.loadLibrary("opencv_java249");
@@ -106,7 +111,10 @@ public class ProfileDetector {
     /**
      * Applies a bilateral blur to the given image.
      * <p>
-     * TODO.
+     * The input image is blurred using supplied parameters.
+     * <p>
+     * See http://docs.opencv.org/modules/imgproc/doc/filtering.html#bilateralfilter and
+     * http://www.dai.ed.ac.uk/CVonline/LOCAL_COPIES/MANDUCHI1/Bilateral_Filtering.html
      */
     private Mat blur(Mat input, int blurDiameter, int sigmaColor, int sigmaSpace) {
         Mat output = new Mat();
@@ -155,8 +163,7 @@ public class ProfileDetector {
 
     // This function needs to be revised!
     /**
-     * Applies a fade to black to the given image with radial distance from the center.
-     * NOT TRUE!
+     * Applies a radial fade to black to the given image from the center.
      * <p>
      * The fade is linear, and the fading region is the circle, centred with the image, with double
      * the diameter.
