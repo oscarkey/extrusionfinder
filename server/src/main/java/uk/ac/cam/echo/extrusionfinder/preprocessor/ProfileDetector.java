@@ -21,9 +21,8 @@ import uk.ac.cam.echo.extrusionfinder.imagedata.GrayscaleImageData;
  * Extracts extrusion cross-section profile.
  */
 public class ProfileDetector {
+    /** The standard size (width and height) used for preprocessing images. */
     private static final int imageSize = 200;
-
-    private int diameter;
 
     /**
      * Creates a profile detector.
@@ -34,7 +33,8 @@ public class ProfileDetector {
         // Ensure library is loaded.
         System.loadLibrary("opencv_java249");
 
-        // If needed, allocate stuff for in-place operations.
+        // If it turns out that this class is super slow, we could allocate stuff for in-place
+        // operations here.
     }
 
     /**
@@ -44,7 +44,7 @@ public class ProfileDetector {
      * @return A newly allocated greyscale image of the extrusion profile.
      */
     public GrayscaleImageData process(RGBImageData input) {
-        diameter = imageSize;
+        int diameter = imageSize;
         int blurDiameter = 8;
         int sigma = 15;
 
@@ -54,8 +54,7 @@ public class ProfileDetector {
         imageIn.put(0, 0, input.data);
 
         // Raw image, but resized to given diameter.
-        Mat rawImage;
-        rawImage = standardiseInput(imageIn);
+        Mat rawImage = standardiseInput(imageIn, diameter);
 
         // Compute a mask by using adaptivate thresholding.
         Mat thresholdMask;
@@ -82,7 +81,7 @@ public class ProfileDetector {
         imageStep = applyBinaryMask(imageStep, contourMask);
         profile = imageStep;
 
-        // Need to add histogram equalisation.
+        // TODO: Add histogram equalisation.
 
         Mat imageOut = profile;
 
@@ -96,7 +95,7 @@ public class ProfileDetector {
      * <p>
      * The returned image has both width and height equal to {@link #this.diameter}.
      */
-    private Mat standardiseInput(Mat input) {
+    private Mat standardiseInput(Mat input, int diameter) {
         Mat imageResized = new Mat();
         Mat output = new Mat();
         Size newSize = new Size(diameter, diameter);
@@ -129,9 +128,9 @@ public class ProfileDetector {
      */
     private Mat minGreyscale(Mat input) {
         // Extract individual channels.
-        Mat c1 = new Mat(diameter, diameter, CvType.CV_8UC1);
-        Mat c2 = new Mat(diameter, diameter, CvType.CV_8UC1);
-        Mat c3 = new Mat(diameter, diameter, CvType.CV_8UC1);
+        Mat c1 = new Mat(input.rows(), input.cols(), CvType.CV_8UC1);
+        Mat c2 = new Mat(input.rows(), input.cols(), CvType.CV_8UC1);
+        Mat c3 = new Mat(input.rows(), input.cols(), CvType.CV_8UC1);
         List<Mat> matSrc = new ArrayList<Mat>(3);
         List<Mat> matDst = new ArrayList<Mat>(3);
         MatOfInt fromTo = new MatOfInt(0, 0, 1, 1, 2, 2);
@@ -169,15 +168,22 @@ public class ProfileDetector {
      * the diameter.
      */
     private Mat fade(Mat input) {
-        byte[] bytes = new byte[diameter * diameter];
-        Mat mask = new Mat(diameter, diameter, CvType.CV_8UC1);
+        // This code will likely change later to be better normalised.
+        int width = input.rows();
+        int height = input.cols();
+        double diameter = input.rows();
+        byte[] bytes = new byte[width * height];
+        Mat mask = new Mat(width, height, CvType.CV_8UC1);
 
-        int r = diameter / 2;
+        double r = diameter / 2.0;
         int i = 0;
-        for (int y = 0; y < diameter; y++) {
-            for (int x = 0; x < diameter; x++, i++) {
-                // This could be normalised!
-                double keep = 0.707106781187 - (Math.sqrt((x-r)*(x-r) + (y-r)*(y-r)) / diameter);
+        // The maximum fade strength of a pixel (current code => always 0.707106781187).
+        double maximum = (Math.sqrt(r*r + r*r) / diameter);
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++, i++) {
+                // How much of the pixel (fraction) to keep.
+                double keep = maximum - (Math.sqrt((x-r)*(x-r) + (y-r)*(y-r)) / diameter);
+                // How much of the pixel (fraction*255) to keep.
                 bytes[i] = (byte)(keep < 0 ? 0 : (byte)(keep * 255.0));
             }
         }
