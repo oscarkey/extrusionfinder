@@ -71,7 +71,7 @@ public class ColorSpaceConversion {
     /**
      * Convert XYZImageData to LabImageData, preserving color.
      *
-     * @param lab Input image
+     * @param xyz Input image
      * @return Output image of the same color (barring rounding error)
      *         in Lab format.
      */
@@ -160,7 +160,7 @@ public class ColorSpaceConversion {
     /**
      * Convert XYZImageData to RGBImageData, preserving color.
      *
-     * @param lab Input image
+     * @param xyz Input image
      * @return Output image of the same color (barring rounding error)
      *         in RGB format.
      */
@@ -194,7 +194,7 @@ public class ColorSpaceConversion {
     /**
      * Convert RGBImageData to XYZImageData, preserving color.
      *
-     * @param lab Input image
+     * @param rgb Input image
      * @return Output image of the same color (barring rounding error)
      *         in XYZ format.
      */
