@@ -19,24 +19,35 @@ public class ColorSpaceConversion {
     private static final double Z_N = 1.08833;
 
 
-    // This composition is reccomended
+    // Converting to L*a*b* by going through of XYZ seems
+    // to be recommended by every online source I've found
+
     /**
-     * Convert RGBImageData to LabImageData, preserving color
-     * <p>
-     * @param name Comment
-     * @throws Type Comment
-     * @return Comment
+     * Convert RGBImageData to LabImageData, preserving color.
+     *
+     * @param rgb Input image
+     * @return Output image of the same color (barring rounding error)
+     *         in L*a*b* format.
      */
     public static LabImageData toLab(RGBImageData rgb) {
         return toLab(toXYZ(rgb));
     }
 
+    /**
+     * Convert LabImageData to RGBImageData, preserving color.
+     *
+     * @param lab Input image
+     * @return Output image of the same color (barring rounding error)
+     *         in RGB format.
+     */
     public static RGBImageData toRGB(LabImageData lab) {
         return toRGB(toXYZ(lab));
     }
 
 
-    // The f(t) function from wikipedia.org/wiki/Lab_color_space#Forward_transformation
+    /**
+     * The f(t) function from wikipedia.org/wiki/Lab_color_space#Forward_transformation.
+     */
     private static double f(double t) {
         if (t > 6*6*6 / (29*29*29D)) {
             return Math.cbrt(t);
@@ -45,7 +56,9 @@ public class ColorSpaceConversion {
         }
     }
 
-    // The f⁻¹(t) function from wikipedia.org/wiki/Lab_color_space#Reverse_transformation
+    /**
+     * The f⁻¹(t) function from wikipedia.org/wiki/Lab_color_space#Reverse_transformation
+     */
     private static double f_inv(double t) {
         if (t > 6 / 29D) {
             return t*t*t;
@@ -55,7 +68,13 @@ public class ColorSpaceConversion {
     }
 
 
-    // wikipedia.org/wiki/Lab_color_space#Forward_transformation
+    /**
+     * Convert XYZImageData to LabImageData, preserving color.
+     *
+     * @param lab Input image
+     * @return Output image of the same color (barring rounding error)
+     *         in Lab format.
+     */
     public static LabImageData toLab(XYZImageData xyz) {
         LabImageData lab = new LabImageData(new double[xyz.data.length], xyz.width, xyz.height);
 
@@ -67,6 +86,7 @@ public class ColorSpaceConversion {
                 double y = xyz.data[index + 1];
                 double z = xyz.data[index + 2];
 
+                // wikipedia.org/wiki/Lab_color_space#Forward_transformation
                 double fx = f(x / X_N);
                 double fy = f(y / Y_N);
                 double fz = f(z / Z_N);
@@ -80,7 +100,13 @@ public class ColorSpaceConversion {
         return lab;
     }
 
-    // wikipedia.org/wiki/Lab_color_space#Reverse_transformation
+    /**
+     * Convert LabImageData to XYZImageData, preserving color.
+     *
+     * @param lab Input image
+     * @return Output image of the same color (barring rounding error)
+     *         in XYZ format.
+     */
     public static XYZImageData toXYZ(LabImageData lab) {
         XYZImageData xyz = new XYZImageData(new double[lab.data.length], lab.width, lab.height);
 
@@ -92,6 +118,7 @@ public class ColorSpaceConversion {
                 double a = lab.data[index + 1];
                 double b = lab.data[index + 2];
 
+                // wikipedia.org/wiki/Lab_color_space#Reverse_transformation
                 double l_norm = (l + 16) / 116;
 
                 double x = xyz.data[index + 0] = X_N * f_inv(l_norm + a / 500);
@@ -106,8 +133,10 @@ public class ColorSpaceConversion {
 
     private static final double A = 0.055;
 
-    // The C_srgb(C_linear) function from
-    // wikipedia.org/wiki/SRGB#The_forward_transformation_.28CIE_xyY_or_CIE_XYZ_to_sRGB.29
+    /**
+     * The C_srgb(C_linear) function from
+     * wikipedia.org/wiki/SRGB#The_forward_transformation_.28CIE_xyY_or_CIE_XYZ_to_sRGB.29
+     */
     private static double to_c_srgb(double c_linear) {
         if (c_linear <= 0.0031308) {
             return 12.92 * c_linear;
@@ -116,8 +145,10 @@ public class ColorSpaceConversion {
         }
     }
 
-    // The C_linear(C_srgb) function from
-    // wikipedia.org/wiki/SRGB#The_reverse_transformation
+    /**
+     * The C_linear(C_srgb) function from
+     * wikipedia.org/wiki/SRGB#The_reverse_transformation
+     */
     private static double to_c_linear(double c_srgb) {
         if (c_srgb <= 0.04045) {
             return c_srgb / 12.92;
@@ -126,7 +157,13 @@ public class ColorSpaceConversion {
         }
     }
 
-    // wikipedia.org/wiki/SRGB#The_forward_transformation_.28CIE_xyY_or_CIE_XYZ_to_sRGB.29
+    /**
+     * Convert XYZImageData to RGBImageData, preserving color.
+     *
+     * @param lab Input image
+     * @return Output image of the same color (barring rounding error)
+     *         in RGB format.
+     */
     public static RGBImageData toRGB(XYZImageData xyz) {
         RGBImageData rgb = new RGBImageData(new byte[xyz.data.length], xyz.width, xyz.height);
 
@@ -138,6 +175,7 @@ public class ColorSpaceConversion {
                 double y = xyz.data[index + 1];
                 double z = xyz.data[index + 2];
 
+                // wikipedia.org/wiki/SRGB#The_forward_transformation_.28CIE_xyY_or_CIE_XYZ_to_sRGB.29
                 double r_linear = + 3.2406 * x - 1.5372 * y - 0.4986 * z;
                 double g_linear = - 0.9689 * x + 1.8758 * y + 0.0415 * z;
                 double b_linear = + 0.0557 * x - 0.2040 * y + 1.0570 * z;
@@ -153,7 +191,13 @@ public class ColorSpaceConversion {
         return rgb;
     }
 
-    // wikipedia.org/wiki/SRGB#The_reverse_transformation
+    /**
+     * Convert RGBImageData to XYZImageData, preserving color.
+     *
+     * @param lab Input image
+     * @return Output image of the same color (barring rounding error)
+     *         in XYZ format.
+     */
     public static XYZImageData toXYZ(RGBImageData rgb) {
         XYZImageData xyz = new XYZImageData(new double[rgb.data.length], rgb.width, rgb.height);
 
@@ -165,6 +209,7 @@ public class ColorSpaceConversion {
                 byte g = rgb.data[index + 1];
                 byte b = rgb.data[index + 2];
 
+                // wikipedia.org/wiki/SRGB#The_reverse_transformation
                 double r_lin = to_c_linear((r & 0xFF) / 255.0);
                 double g_lin = to_c_linear((g & 0xFF) / 255.0);
                 double b_lin = to_c_linear((b & 0xFF) / 255.0);
