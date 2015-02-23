@@ -20,29 +20,47 @@ import org.w3c.dom.svg.SVGPathElement;
 import javax.xml.stream.XMLStreamException;
 import java.io.*;
 
+/**
+ * Provides facilites for coverting a pdf to a preprocessed svg.
+ *
+ * @author as2388
+ * //TODO @author Ashley Newson
+ */
 public class SVG {
 
     static {
         nu.pattern.OpenCV.loadShared();
     }
 
+    /**
+     * Converts a pdf file to a png file written to 'profile.png'
+     * <p>
+     * Dear users of this class: Sorry about all the exceptions.
+     * @param pdfPath                   Address of pdf file to convert.
+     * @throws IOException
+     * @throws XMLStreamException
+     * @throws TranscoderException
+     * @throws InterruptedException
+     * @throws ProfileNotFoundException
+     */
     public static void process(String pdfPath) throws IOException, XMLStreamException, TranscoderException,
             InterruptedException, ProfileNotFoundException {
+        // Convert the pdf to an svg file written to 'intermediate.svg'. This svg has yet to be cleaned
         convertPdfToSvg(pdfPath, "intermediate.svg");
 
-        // Load SVG from hard-coded file
+        // Load the raw svg into an SVGDocument
         String parser = XMLResourceDescriptor.getXMLParserClassName();
         SAXSVGDocumentFactory f = new SAXSVGDocumentFactory(parser);
         File file = new File("intermediate.svg");
         SVGDocument svg = f.createSVGDocument(file.toURI().toString());
 
-        // Recurse through the SVG's DOM, removing nodes which look like numbers,
+        // Recurse through the SVG's OM, removing nodes which look like numbers,
         // measurement lines, or arrows
         removeLabels(svg);
 
         // Rasterize, and write out to file system as a png
         PNGTranscoder transcoder = new PNGTranscoder();
-        transcoder.addTranscodingHint(PNGTranscoder.KEY_WIDTH, (float) 4096); //scale
+        transcoder.addTranscodingHint(PNGTranscoder.KEY_WIDTH, (float) 4096); //scale to increase resolution
         transcoder.addTranscodingHint(PNGTranscoder.KEY_HEIGHT, (float) 4096);
         TranscoderInput input = new TranscoderInput(svg);
         OutputStream os = new FileOutputStream("cleaned.png");
@@ -61,6 +79,58 @@ public class SVG {
         Highgui.imwrite("profile.png", profile);
     }
 
+    /**
+     * Converts a pdf to an svg.
+     * <p>
+     * Implementation notes: This is achieved by calling inkscape via its commandline interface
+     * @param input                 Address of pdf to convert
+     * @param output                Address of svg to write conversion to
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    private static void convertPdfToSvg(String input, String output) throws IOException, InterruptedException {
+        // Convert pdf with inkscape
+        String inkscapeLocation = "inkscape";
+        ProcessBuilder pb = new ProcessBuilder(inkscapeLocation, "-l", output, input);
+        Process p = pb.start();
+        p.waitFor();
+    }
+
+    /**
+     * Removes elements in the SVG's Object Model which look like arrows or measurement lines
+     * @param parent Node to explore from. Typical use will be the SVG's root element when calling for the first time.
+     */
+    private static void removeLabels(Node parent) {
+        // This loop needs to be backwards (yuck), because it deletes nodes
+        for (int i = parent.getChildNodes().getLength() - 1; i >= 0; i--) {
+            Node child = parent.getChildNodes().item(i);
+
+            if (child instanceof SVGPathElement) {
+                SVGPathElement element = (SVGPathElement) child;
+                String styleText = element.getAttribute("style");
+                if (styleText.contains("stroke-width:0.2399") ||styleText.contains("fill:#000000")) {
+                    // If the path looks like a label, delete the path
+                    parent.removeChild(child);
+
+                    // If the path's container element is now empty, may as well delete that too
+                    if (!parent.hasChildNodes()) {
+                        parent.getParentNode().removeChild(parent);
+                    }
+                } else {
+                    removeLabels(child);
+                }
+            } else {
+                removeLabels(child);
+            }
+        }
+    }
+
+    /**
+     * TODO
+     * @param input
+     * @return
+     * @throws ProfileNotFoundException
+     */
     private static Mat autocrop_and_pallete(Mat input) throws ProfileNotFoundException {
         int width  = input.cols();
         int height = input.rows();
@@ -115,6 +185,11 @@ public class SVG {
         return cropped;
     }
 
+    /**
+     * TODO
+     * @param input
+     * @return
+     */
     private static Mat fillProfile(Mat input) {
         int width  = input.cols();
         int height = input.rows();
@@ -142,38 +217,5 @@ public class SVG {
         Core.subtract(innerFill, backgroundOnly, result);
 
         return result;
-    }
-
-    private static void convertPdfToSvg(String input, String output) throws IOException, InterruptedException {
-        // Convert pdf with inkscape
-        String inkscapeLocation = "inkscape";
-        ProcessBuilder pb = new ProcessBuilder(inkscapeLocation, "-l", output, input);
-        Process p = pb.start();
-        p.waitFor();
-    }
-
-    private static void removeLabels(Node parent) {
-        // This loop needs to be backwards (yuck), because it deletes nodes
-        for (int i = parent.getChildNodes().getLength() - 1; i >= 0; i--) {
-            Node child = parent.getChildNodes().item(i);
-
-            if (child instanceof SVGPathElement) {
-                SVGPathElement element = (SVGPathElement) child;
-                String styleText = element.getAttribute("style");
-                if (styleText.contains("stroke-width:0.2399") ||
-                        styleText.contains("fill:#000000")) {
-                    parent.removeChild(child);
-
-                    // If the path's container element is now empty, may as well delete that too
-                    if (!parent.hasChildNodes()) {
-                        parent.getParentNode().removeChild(parent);
-                    }
-                } else {
-                    removeLabels(child);
-                }
-            } else {
-                removeLabels(child);
-            }
-        }
     }
 }
