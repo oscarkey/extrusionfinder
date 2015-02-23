@@ -4,13 +4,13 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Base64;
 import android.util.Log;
 
 import java.util.List;
 
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
+import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
 
 /**
  * An {@link IntentService} for submitting an image and loading results from the server
@@ -99,16 +99,16 @@ public class CommsService extends IntentService {
         }
 
         // get the image from the cache
-        byte[] image = resultsCache.getImage(uuid);
+        RGBImageData image = resultsCache.getImage(uuid);
 
-        // encode the image as a base 64 string
-        String base64Image = Base64.encodeToString(image, Base64.NO_WRAP + Base64.NO_PADDING);
+        // encode the image for the network
+        NetworkImage networkImage = NetworkImage.fromRGBImageData(image);
 
         // send a blocking request to the server to get results
         // blocking doesn't matter as we have our own thread
         List<Result> results;
         try {
-            results = resultsServiceAdapter.getMatches(base64Image);
+            results = resultsServiceAdapter.getMatches(networkImage);
         }
         catch(RetrofitError e) {
             // print out the error

@@ -7,6 +7,8 @@ import android.view.SurfaceHolder;
 import java.io.IOException;
 import java.util.List;
 
+import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
+
 /**
  * Created by oscar on 05/02/15.
  * The implementation of CameraController for the old, deprecated camera interface.
@@ -22,6 +24,8 @@ public class Camera1Controller implements CameraController {
     private SurfaceHolder previewSurface;
     private CameraCallback callback;
     private Dimension desiredPreviewSize;
+    private Dimension pictureSize;
+    private Dimension previewSize;
     private Camera camera;
 
     @Override
@@ -51,8 +55,12 @@ public class Camera1Controller implements CameraController {
 
         parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
 
+        Camera.Size defaultPictureSize = parameters.getPictureSize();
+        pictureSize = new Dimension(defaultPictureSize.width, defaultPictureSize.height);
+
         // work out how big the preview should be and report this
         Dimension size = getBestSize(desiredPreviewSize, parameters.getSupportedPreviewSizes());
+        previewSize = size;
         callback.onSetPreviewSize(size);
         // have to swap the width and height because the camera assumes it is in landscape
         parameters.setPreviewSize(size.getHeight(), size.getWidth());
@@ -133,14 +141,16 @@ public class Camera1Controller implements CameraController {
     private final Camera.PictureCallback pictureCallback = new Camera.PictureCallback() {
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
-            callback.onImageCaptured(data);
+            callback.onImageCaptured(new RGBImageData(data,
+                    pictureSize.getWidth(), pictureSize.getHeight()));
         }
     };
 
     private final Camera.PreviewCallback previewCallback = new Camera.PreviewCallback() {
         @Override
         public void onPreviewFrame(byte[] data, Camera camera) {
-            callback.onPreviewFrame(data);
+            callback.onPreviewFrame(new RGBImageData(data,
+                    previewSize.getWidth(), previewSize.getHeight()));
         }
     };
 

@@ -3,16 +3,18 @@ package uk.ac.cam.cl.echo.extrusionfinder.client;
 import java.io.Serializable;
 import java.util.List;
 
+import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
+
 /**
  * Created by oscar on 08/02/15.
  * Basic data structure containing the request id, image and results when they arrive
  */
 public class ResultRequest implements Serializable {
     private final String requestUuid;
-    private final byte[] image;
+    private final RGBImageData image;
     private List<Result> results;
 
-    public ResultRequest(String requestId, byte[] image) {
+    public ResultRequest(String requestId, RGBImageData image) {
         this.requestUuid = requestId;
         this.image = image;
     }
@@ -21,7 +23,7 @@ public class ResultRequest implements Serializable {
         return requestUuid;
     }
 
-    public byte[] getImage() {
+    public RGBImageData getImage() {
         return image;
     }
 

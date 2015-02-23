@@ -2,6 +2,8 @@ package uk.ac.cam.cl.echo.extrusionfinder.client;
 
 import android.view.SurfaceHolder;
 
+import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
+
 /**
  * Created by oscar on 05/02/15.
  * An interface to provide an abstraction over the two types of camera available depending on
@@ -46,15 +48,15 @@ public interface CameraController {
     public interface CameraCallback {
         /**
          * Called when the image has been completely captured
-         * @param image The byte data of the image in a yet to be determined format
+         * @param image ImageData of the image in a yet to be determined format
          */
-        public void onImageCaptured(byte[] image);
+        public void onImageCaptured(RGBImageData image);
 
         /**
          * Called every time a preview frame is delivered
-         * @param image The byte data of the frame in a yet to be determined format
+         * @param image ImageData of the frame in a yet to be determined format
          */
-        public void onPreviewFrame(byte[] image);
+        public void onPreviewFrame(RGBImageData image);
 
         /**
          * Called when the camera has been started and the preview size has been determined.

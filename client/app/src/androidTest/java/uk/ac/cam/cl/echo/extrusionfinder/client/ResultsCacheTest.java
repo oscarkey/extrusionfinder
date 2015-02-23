@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
+
 /**
  * Created by oscar on 08/02/15.
  * Tests for ResultsCache.
@@ -32,7 +34,7 @@ public class ResultsCacheTest extends AndroidTestCase {
         ResultsCache cache = ResultsCache.getInstance(getContext());
 
         // create a new image and request
-        byte[] image = generateTestImage();
+        RGBImageData image = generateTestImage();
         String uuid = cache.putRequest(image);
 
         // check that we get correct image for a known uuid and get null for a random uuid
@@ -41,7 +43,7 @@ public class ResultsCacheTest extends AndroidTestCase {
     }
 
     public void testPutHasGetResults() throws Exception {
-        ResultsCache  cache = ResultsCache.getInstance(getContext());
+        ResultsCache cache = ResultsCache.getInstance(getContext());
 
         // create an image and put the request
         String uuid = cache.putRequest(generateTestImage());
@@ -64,14 +66,14 @@ public class ResultsCacheTest extends AndroidTestCase {
     }
 
 
-    private byte[] generateTestImage() {
+    private RGBImageData generateTestImage() {
         //FIXME should probably generate a byte array that actually is an image
         // create a large byte array
-        byte[] image = new byte[TEST_IMAGE_SIZE_BYTES];
+        byte[] data = new byte[TEST_IMAGE_SIZE_BYTES];
         Random random = new Random();
-        random.nextBytes(image);
+        random.nextBytes(data);
 
-        return image;
+        return new RGBImageData(data, 1024, 1024);
     }
 
     private String generateTestUuid() {

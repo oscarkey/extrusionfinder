@@ -13,9 +13,9 @@ import retrofit.http.POST;
 public interface ResultsServiceAdapter {
     /**
      * Get the results for a given image. Blocks until completion
-     * @param image The image to find results for encoded as a base64 string
+     * @param image The NetworkImage to find results for encoded as a base64 string
      * @return A list of the results matched
      */
     @POST("/matches")
-    public List<Result> getMatches( @Body String image);
+    public List<Result> getMatches( @Body NetworkImage image);
 }

@@ -14,6 +14,8 @@ import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.UUID;
 
+import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
+
 //TODO check/improve thread safety
 
 /**
@@ -73,10 +75,10 @@ public class ResultsCache {
 
     /**
      * Store a new request in the cache
-     * @param image The image to look up in this request
+     * @param image The ImageData to look up in this request
      * @return the uuid of the new request
      */
-    public String putRequest(byte[] image) {
+    public String putRequest(RGBImageData image) {
         String uuid = UUID.randomUUID().toString();
         request = new ResultRequest(uuid, image);
         return uuid;
@@ -116,9 +118,9 @@ public class ResultsCache {
     /**
      * Get the image for a given request id
      * @param uuid id of the request
-     * @return byte array of image data, null if we don't have this request
+     * @return ImageData representing the image, null if we don't have this request
      */
-    public byte[] getImage(String uuid) {
+    public RGBImageData getImage(String uuid) {
         // only return the image if this is the right request
         if(isDesiredRequest(uuid)) {
             return request.getImage();

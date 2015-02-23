@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
 import uk.ac.cam.cl.groupecho.extrusionfinder.R;
 
 public class ImageCaptureActivity extends ActionBarActivity {
@@ -96,7 +97,7 @@ public class ImageCaptureActivity extends ActionBarActivity {
             = new CameraController.CameraCallback() {
 
         @Override
-        public void onImageCaptured(byte[] image) {
+        public void onImageCaptured(RGBImageData image) {
             // save the request to the cache
             ResultsCache cache = ResultsCache.getInstance(context);
             String uuid = cache.putRequest(image);
@@ -107,7 +108,7 @@ public class ImageCaptureActivity extends ActionBarActivity {
         }
 
         @Override
-        public void onPreviewFrame(byte[] image) {
+        public void onPreviewFrame(RGBImageData image) {
             // do nothing (for now)
         }
 
