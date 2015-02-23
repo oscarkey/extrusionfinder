@@ -21,6 +21,11 @@ import javax.xml.stream.XMLStreamException;
 import java.io.*;
 
 public class SVG {
+
+    static {
+        nu.pattern.OpenCV.loadShared();
+    }
+
     public static void main(String[] args) throws IOException, XMLStreamException, TranscoderException,
             InterruptedException, ProfileNotFoundException {
         process();
@@ -29,7 +34,7 @@ public class SVG {
     public static void process() throws IOException, XMLStreamException, TranscoderException, InterruptedException, ProfileNotFoundException {
 //        convertPdfToSvg("in.pdf", "intermediate.svg");
 
-//        System.loadLibrary("opencv_java249");
+//        System.loadLibrary("opencv-java249");
 
         // Load SVG from hard-coded file
         String parser = XMLResourceDescriptor.getXMLParserClassName();

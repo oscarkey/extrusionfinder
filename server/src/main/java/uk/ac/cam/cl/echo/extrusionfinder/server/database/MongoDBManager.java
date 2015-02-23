@@ -15,6 +15,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  * This implementation uses MongoDB. Many instances of MongoDBManager can be created; all will share the
  * same connection. This manager keeps a static, in-memory thread-safe cache of zernike maps
+ *
+ * 
  */
 public class MongoDBManager implements IDBManager {
     private final String databaseName;

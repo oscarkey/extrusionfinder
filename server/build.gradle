@@ -64,4 +64,6 @@ dependencies {
     compile ('batik:batik-transcoder:1.6-1') {
         exclude group: 'fop', module: 'fop'
     }
+
+    compile files("./opencv/build/java/opencv-249.jar")
 }
