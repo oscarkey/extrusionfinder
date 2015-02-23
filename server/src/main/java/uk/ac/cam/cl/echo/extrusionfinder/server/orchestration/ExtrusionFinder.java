@@ -3,9 +3,13 @@ package uk.ac.cam.cl.echo.extrusionfinder.server.orchestration;
 import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Configuration;
 import uk.ac.cam.cl.echo.extrusionfinder.server.database.IDBManager;
 import uk.ac.cam.cl.echo.extrusionfinder.server.database.ItemNotFoundException;
+import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.GrayscaleImageData;
+import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
 import uk.ac.cam.cl.echo.extrusionfinder.server.imagematching.ImageMatcher;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.MatchedPart;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
+import uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor.ProfileDetector;
+import uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor.ProfileFitting;
 
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
@@ -44,15 +48,18 @@ public class ExtrusionFinder {
      * @return             List of best matches found in the database
      * @throws ItemNotFoundException Thrown if the Zernike Map or a part referenced by the Zernike Map is not in DB
      */
-    public static List<MatchedPart> findMatches(BufferedImage inputImage, IDBManager database, int maxResults)
+    public static List<MatchedPart> findMatches(RGBImageData inputImage, IDBManager database, int maxResults)
             throws ItemNotFoundException {
-        // TODO: call preprocessor to clean up inputImage before proceeding
+        // Call preprocessor to clean up inputImage before proceeding
+        GrayscaleImageData grayscaleImageData = new ProfileDetector().process(inputImage);
 
-        // TODO: call preprocessor for center and radius data
-        int radius = 1;
-        Point2D center = new Point2D.Double(0.0, 0.0);
+        // Call preprocessor for center and radius data
+        ProfileFitting fitter = new ProfileFitting(grayscaleImageData);
+        double radius = fitter.getRadius();
+        Point2D center = fitter.getCentre();
 
-        return findMatches(new ImageMatcher(inputImage, Configuration.DEFULT_ZERNIKE_DEGREE, center, radius),
+        // Having processed the image, find matches
+        return findMatches(new ImageMatcher(grayscaleImageData, Configuration.DEFULT_ZERNIKE_DEGREE, center, radius),
                 database, maxResults);
     }
 
