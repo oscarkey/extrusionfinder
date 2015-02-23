@@ -1,7 +1,7 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.database;
 
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
-import uk.ac.cam.cl.echo.extrusionfinder.server.parts.ZernikeMap;
+import uk.ac.cam.cl.echo.extrusionfinder.server.zernike.ZernikeMap;
 
 /**
  * A database wrapper which provides APIs for loading and saving parts and zernike maps
@@ -44,4 +44,9 @@ public interface IDBManager {
      * Removes all items from the database
      */
     public void clearDatabase();
+
+    /**
+     * @return Name of database
+     */
+    public String getDatabaseName();
 }

@@ -10,7 +10,7 @@ import static org.junit.Assert.assertTrue;
  *
  * @author as2388
  */
-public class testPart {
+public class PartTester {
 
     /**
      * Tests the equals method of part

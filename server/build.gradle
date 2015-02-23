@@ -1,6 +1,5 @@
 apply plugin: 'java'
 apply plugin: 'war'
-apply plugin: 'jetty'
 
 sourceCompatibility = 1.8
 version = '1.0'
@@ -10,7 +9,11 @@ repositories {
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+    // JUnit, EasyMock and PowerMock (used for testing)
+    testCompile 'junit:junit:4.11'
+    testCompile 'org.easymock:easymock:3.3.1'
+    testCompile 'org.powermock:powermock-module-junit4:1.6.1'
+    testCompile 'org.powermock:powermock-api-easymock:1.6.1'
 
     // mocking framework for unit tests
     testCompile 'org.mockito:mockito-core:1.+'
@@ -33,4 +36,7 @@ dependencies {
     // jsoup for html parsing in the crawler
     compile 'org.jsoup:jsoup:1.7.2'
 
+    // OpenCV, (used for image preprocessing)
+    compile 'nu.pattern:opencv:2.4.9-5'
 }
+
