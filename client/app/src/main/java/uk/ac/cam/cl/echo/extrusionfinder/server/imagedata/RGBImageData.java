@@ -3,7 +3,9 @@ package uk.ac.cam.cl.echo.extrusionfinder.server.imagedata;
 import java.io.Serializable;
 
 /**
- * Image storing Grayscale pixels in bytes.
+ * Image storing RGB colour space in bytes.
+ * <p>
+ * Bytes store data for pixels as R, G, B, R, G, B, R, G, B, ...
  * <p>
  * Pixels are stored row by row in left-to-right, top-to-bottom order.
  */
