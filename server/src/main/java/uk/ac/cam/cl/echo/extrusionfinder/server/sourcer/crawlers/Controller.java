@@ -11,12 +11,13 @@ import java.util.ArrayList;
 /**
  * Controller for any web crawler. Manages configuration and parts stream.
  *
- * How it works using crawler4j (move to wiki if we have one):
+ * How it works using crawler4j:
  * crawler4j has the two classes CrawlController and WebCrawler.
  * CrawlController's start method is run with the class type of a class that
- * extends WebCrawler. WebCrawler has two methods to be overridden, one to find
- * out which pages to visit and one that determines what to do with a visited
- * page.
+ * extends WebCrawler. WebCrawler has two methods to be overridden:
+ *
+ *  - boolean shouldVisit(page, url) which returns true if the page should be visited.
+ *  - void visit(page) which determines what is done when visiting a page.
  *
  * Controller (this class) is a layer upon CrawlController. The primary purpose
  * is to set up the Part collection and retrieving it from the crawler.

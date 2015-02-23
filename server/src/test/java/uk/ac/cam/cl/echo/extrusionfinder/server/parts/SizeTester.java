@@ -4,7 +4,6 @@ import org.junit.Test;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size.Unit;
 
-
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 
@@ -37,6 +36,9 @@ public class SizeTester {
         assertTrue(s.getUnit().equals(Unit.IN));
     }
 
+    /**
+     * Tests that sizes initialised to a negative value are just set to 0.
+     */
     @Test
     public void testNegativeSize() {
         Size s = new Size(-3.14f, -0.211f, Unit.IN);

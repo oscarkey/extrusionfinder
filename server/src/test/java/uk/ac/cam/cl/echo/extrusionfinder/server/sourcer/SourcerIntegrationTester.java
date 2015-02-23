@@ -35,11 +35,10 @@ import static org.powermock.api.easymock.PowerMock.*;
  * not usually for just building the project.
  */
 
-
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ Configuration.class} )
-@PowerMockIgnore( {"javax.management.*"}) 
-public class SourcerTester {
+@PowerMockIgnore( {"javax.management.*"}) // this prevents some weird exception ...
+public class SourcerIntegrationTester {
 
     private static final String TEMP_FOLDER = "crawlerdata/crawlertest";
     private static final String DB_NAME = "test";

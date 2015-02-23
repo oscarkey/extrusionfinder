@@ -2,20 +2,28 @@ package uk.ac.cam.cl.echo.extrusionfinder.server.parts;
 
 public class Size {
 
-    /* Dimension1 is either width/diameter (if one measurement),
-     * width (if two), or outer diameter (if tube). */
+    public enum Unit {
+        IN, // inches
+        MM, // millimeters
+        UNKNOWN
+    }
+
+    /**
+     * Dimension1 is either width/diameter (if one measurement), width (if two),
+     * or outer diameter (if tube).
+     */
     private float dimension1;
 
-    /* Dimension2 is either 0 (if one measurement), height (if two), or inner
-     * diameter (if tube). */
+    /**
+     * Dimension2 is either 0 (if one measurement), height (if two), or inner
+     * diameter (if tube).
+     */
     private float dimension2;
 
-    /* The unit of the measurements */
+    /**
+     * The unit of the measurements.
+     */
     private Unit unit;
-
-    public enum Unit {
-        MM, IN, UNKNOWN
-    }
 
     /**
      * Default empty constructor. Measurements are set to 0, unit is unknown.
@@ -85,7 +93,7 @@ public class Size {
         } else if (dimension2 <= 0) {
             return String.format("%f %s", dimension1, unit.name());
         } else {
-            return String.format("(%f, %f) %s", dimension1, dimension2, unit.name());
+            return String.format("%f X %f %s", dimension1, dimension2, unit.name());
         }
     }
 

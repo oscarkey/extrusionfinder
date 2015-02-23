@@ -6,7 +6,10 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Configuration;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
 import uk.ac.cam.cl.echo.extrusionfinder.server.database.MongoDBManager;
 import uk.ac.cam.cl.echo.extrusionfinder.server.database.IDBManager;
-import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.*;
+import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.Controller;
+import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.CrawlControllerFactory;
+import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.CrawlerException;
+import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.ExtendedCrawler;
 
 import edu.uci.ics.crawler4j.crawler.CrawlController;
 import java.util.ArrayList;

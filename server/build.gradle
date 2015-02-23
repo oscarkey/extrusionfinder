@@ -30,7 +30,7 @@ dependencies {
     // OpenCV, (used for image preprocessing)
     compile 'nu.pattern:opencv:2.4.9-5'
 
-    // web crawler for part sourcing + simple logger (for debugging)
+    // crawler4j, for crawling, slf4j logging, Jsoup for html parser
     compile 'edu.uci.ics:crawler4j:4.1'
     compile 'org.slf4j:slf4j-simple:1.7.9'
     compile 'org.jsoup:jsoup:1.7.2'
