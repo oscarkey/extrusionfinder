@@ -38,8 +38,8 @@ public class Servlet implements IServlet {
 
         System.out.println("returning");
         List<MatchedPart> results = new LinkedList<>();
-        results.add(new MatchedPart(new Part("SG00", "SG", "00", "link", "imagelink"), 0.05));
-        results.add(new MatchedPart(new Part("SG01", "SG", "01", "link", "imagelink"), 0.09));
+        results.add(new MatchedPart(new Part("SG", "00", "link", "imagelink"), 0.05));
+        results.add(new MatchedPart(new Part("SG", "01", "link", "imagelink"), 0.09));
         return results;
     }
 }

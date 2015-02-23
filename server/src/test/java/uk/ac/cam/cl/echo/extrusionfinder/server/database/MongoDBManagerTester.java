@@ -7,7 +7,7 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Configuration;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size.Unit;
-import uk.ac.cam.cl.echo.extrusionfinder.server.parts.ZernikeMap;
+import uk.ac.cam.cl.echo.extrusionfinder.server.zernike.ZernikeMap;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
@@ -180,3 +180,4 @@ public class MongoDBManagerTester {
         dbManager.clearDatabase();
     }
 }
+
