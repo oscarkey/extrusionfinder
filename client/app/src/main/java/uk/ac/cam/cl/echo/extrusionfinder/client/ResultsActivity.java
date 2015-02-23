@@ -64,13 +64,22 @@ public class ResultsActivity extends ActionBarActivity {
 
         // check the cache to see if we have already have data for this request
         resultsCache = ResultsCache.getInstance(this);
-        if(resultsCache.hasResults(requestUuid)) {
-            displayResults(resultsCache.getResults(requestUuid));
-        }
-        else {
-            // otherwise launch the service to request the results
+        if(!resultsCache.hasResults(requestUuid)) {
+            // launch the service to request the results
             // these are stored in the cache and then we get a broadcast
             CommsService.startActionRequestResults(this, requestUuid);
+        }
+        // results are displayed on resume
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // check to see if we have results to displayed, might have arrived during pause
+        List<Result> results = resultsCache.getResults(requestUuid);
+        if(results != null) {
+            displayResults(results);
         }
     }
 
