@@ -1,11 +1,13 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.imagedata;
 
+import java.io.Serializable;
+
 /**
  * Image storing Grayscale pixels in bytes.
  * <p>
  * Pixels are stored row by row in left-to-right, top-to-bottom order.
  */
-public class RGBImageData extends ImageData<byte[]> {
+public class RGBImageData extends ImageData<byte[]> implements Serializable {
     /**
      * Construct an image with the given RGB byte data, width and height.
      *
