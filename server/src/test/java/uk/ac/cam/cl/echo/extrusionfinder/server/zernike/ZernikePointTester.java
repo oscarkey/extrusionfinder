@@ -58,5 +58,10 @@ public class ZernikePointTester {
 
         zp.normalizeIntensity(100);
         assertTrue(zp.getIntensity() == 0.5);
+
+        try {
+            zp.normalizeIntensity(0);
+        } catch (IllegalArgumentException e) {
+        }
     }
 }

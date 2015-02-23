@@ -2,11 +2,14 @@ package uk.ac.cam.cl.echo.extrusionfinder.server.imagematching;
 
 import org.apache.commons.io.FilenameUtils;
 import org.junit.Test;
+import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.GrayscaleImageData;
 import uk.ac.cam.cl.echo.extrusionfinder.server.zernike.Zernike;
 
 import javax.imageio.ImageIO;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
@@ -54,14 +57,31 @@ public class ImageMatcherTester {
 
         for (int i = 0; i < fileCount; i++) {
             String imagePath = testImages[i].getPath();
-            BufferedImage image1 = ImageIO.read(new File(imagePath));
-            ImageMatcher im = new ImageMatcher(image1, 10, new Point2D.Double(50.0, 50.0), 50.0);
+
+            BufferedImage baseImage1 = ImageIO.read(new File(imagePath));
+            byte[] baseImage1Data;
+            if (baseImage1.getType() != BufferedImage.TYPE_BYTE_GRAY) {
+                BufferedImage t = new BufferedImage(baseImage1.getWidth(), baseImage1.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
+                t.getGraphics().drawImage(baseImage1, 0, 0, null);
+                baseImage1Data = ((DataBufferByte) t.getData().getDataBuffer()).getData();
+            } else {
+                baseImage1Data = ((DataBufferByte) baseImage1.getData().getDataBuffer()).getData();
+            }
+            GrayscaleImageData baseImage2 = new GrayscaleImageData(baseImage1Data, baseImage1.getWidth(), baseImage1.getTileHeight());
+
+            ImageMatcher im1 = new ImageMatcher(baseImage1, 10, new Point2D.Double(50.0, 50.0), 50.0);
+            ImageMatcher im2 = new ImageMatcher(baseImage2, 10, new Point2D.Double(50.0, 50.0), 50.0);
+
             for (int j = i; j < fileCount; j++) {
-                BufferedImage image2 = ImageIO.read(new File(testImages[j].getPath()));
-                double[] zm = Zernike.zernikeMoments(image2, 10, new Point2D.Double(50.0, 50.0), 50.0);
-                double similarity = im.compare(zm);
+                BufferedImage image = ImageIO.read(new File(testImages[j].getPath()));
+                double[] zm = Zernike.zernikeMoments(image, 10, new Point2D.Double(50.0, 50.0), 50.0);
+
+                double similarity1 = im1.compare(zm);
+                double similarity2 = im2.compare(zm);
                 double staticSimilarity = ImageMatcher.compare(imagePath, testImages[j].getPath(), 10, new Point2D.Double(50.0, 50.0), 50.0);
-                assertTrue(similarity == imageComparisons[i][j-i]);
+
+                assertTrue(similarity1 == imageComparisons[i][j-i]);
+                assertTrue(similarity2 == imageComparisons[i][j-i]);
                 assertTrue(staticSimilarity == imageComparisons[i][j-i]);
             }
         }
