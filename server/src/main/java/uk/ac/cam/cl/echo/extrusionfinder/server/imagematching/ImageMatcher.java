@@ -1,6 +1,7 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.imagematching;
 
 import uk.ac.cam.cl.echo.extrusionfinder.server.zernike.Zernike;
+import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.GrayscaleImageData;
 
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
@@ -36,7 +37,7 @@ public class ImageMatcher {
      * @param radius the radius of the circle to use
      */
     public ImageMatcher(GrayscaleImageData image, int degree, Point2D center, double radius) {
-        zm = Zernike.zernikeMoments(image.data, degree, center, radius);
+        zm = Zernike.zernikeMoments(image.data, image.width, degree, center, radius);
     }
 
     /**
