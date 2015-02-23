@@ -97,6 +97,7 @@ public class ImageMatcher {
      * @param degree  the degree to which to compute the Zernike moments to
      * @param center  the point at which to take Zernike moments from
      * @param radius  the radius of the circle to use
+     * @throws IOException Thrown if file at imageURI0 or imageURI1 could not be loaded
      * @return the Euclidean distance between the Zernike moments of the two images
      */
     public static double compare(String imageURI0, String imageURI1, int degree, Point2D center, double radius) throws IOException {

@@ -1,7 +1,5 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.zernike;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
-
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
