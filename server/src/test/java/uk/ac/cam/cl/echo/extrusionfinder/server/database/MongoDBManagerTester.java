@@ -10,9 +10,7 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.zernike.ZernikeMap;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.net.UnknownHostException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -151,6 +149,45 @@ public class MongoDBManagerTester {
         } catch (ItemNotFoundException e) {
             fail("Part just saved not found in database");
         }
+    }
+
+    @Test
+    public void testSaveList() {
+        dbManager.clearDatabase();
+
+        // Save a list of parts into the database
+        List<Part> parts = new ArrayList<>();
+        parts.add(new Part("id_test0", "", "", "link", "imageL"));
+        parts.add(new Part("id_test1", "", "", "link", "imageL"));
+        dbManager.saveParts(parts);
+
+        // test that the parts can now be correctly loaded from the database
+        try {
+            Part loadedPart = dbManager.loadPart("id_test0");
+            assertTrue(loadedPart.equals(parts.get(0)));
+            loadedPart = dbManager.loadPart("id_test1");
+            assertTrue(loadedPart.equals(parts.get(1)));
+        } catch (ItemNotFoundException e) {
+            fail("Part just saved not found in database");
+        }
+
+        // Check that saving the same parts does not now cause an error
+        parts.add(new Part("id_test2", "", "", "link", "imageL"));
+        dbManager.saveParts(parts);
+
+        // test that the parts can now be correctly loaded from the database
+        try {
+            Part loadedPart = dbManager.loadPart("id_test0");
+            assertTrue(loadedPart.equals(parts.get(0)));
+            loadedPart = dbManager.loadPart("id_test1");
+            assertTrue(loadedPart.equals(parts.get(1)));
+            loadedPart = dbManager.loadPart("id_test2");
+            assertTrue(loadedPart.equals(parts.get(2)));
+        } catch (ItemNotFoundException e) {
+            fail("Part just saved not found in database");
+        }
+
+        dbManager.clearDatabase();
     }
 
     @Test
