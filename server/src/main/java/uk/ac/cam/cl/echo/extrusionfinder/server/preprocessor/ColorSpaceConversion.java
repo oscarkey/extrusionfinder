@@ -49,10 +49,10 @@ public class ColorSpaceConversion {
      * The f(t) function from wikipedia.org/wiki/Lab_color_space#Forward_transformation.
      */
     private static double f(double t) {
-        if (t > 6*6*6 / (29*29*29D)) {
+        if (t > 6*6*6 / (double)(29*29*29)) {
             return Math.cbrt(t);
         } else {
-            return 29*29 / (3 * 6*6D) * t + 4/29D;
+            return 29*29 / (double)(3 * 6*6) * t + 4 / 29.0;
         }
     }
 
@@ -60,10 +60,10 @@ public class ColorSpaceConversion {
      * The f⁻¹(t) function from wikipedia.org/wiki/Lab_color_space#Reverse_transformation
      */
     private static double f_inv(double t) {
-        if (t > 6 / 29D) {
+        if (t > 6 / 29.0) {
             return t*t*t;
         } else {
-            return 3 * 6*6 / (29*29D) * (t - 4/29D);
+            return 3 * 6*6 / (double)(29*29) * (t - 4 / 29.0);
         }
     }
 
