@@ -134,8 +134,9 @@ public class SeagateCrawler extends ExtendedCrawler {
             Size size = extractSize(description);
 
             if (parts != null) {
-                parts.add(new Part(VENDOR_ID, productId, link, image, size,
-                    description));
+                Part p = new Part(VENDOR_ID, productId, link, image, size,
+                    description);
+                parts.add(p);
             }
         }
     }

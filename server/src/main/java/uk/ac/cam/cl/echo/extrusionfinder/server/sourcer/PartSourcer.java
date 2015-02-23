@@ -39,11 +39,6 @@ public class PartSourcer {
         Collection<Controller<? extends ExtendedCrawler>> crs = getControllers();
         updateDatabase(db, crs);
 
-        System.out.println(db.loadPart("1SG1586"));
-        System.out.println(db.loadPart("1SG1500"));
-        System.out.println(db.loadPart("1SG1818"));
-        System.out.println(db.loadPart("1SG2078"));
-        System.out.println(db.loadPart("1TUBE 24"));
     }
 
     /**
