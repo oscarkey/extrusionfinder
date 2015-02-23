@@ -30,7 +30,7 @@ public class Servlet implements IServlet {
         System.out.println("Endpoint hit");
 
         // Android puts "" around its JSON, which crashes RESTEasy's parser, so remove them.
-        jsonImage = jsonImage.replaceAll("\"", "");
+//        jsonImage = jsonImage.replaceAll("\"", "");
 
         // Deserialize the uploaded json to an UploadedImage
         ObjectMapper mapper = new ObjectMapper();
