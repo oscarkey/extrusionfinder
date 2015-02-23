@@ -1,5 +1,7 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.zernike;
 
+import com.sun.javaws.exceptions.InvalidArgumentException;
+
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
@@ -14,13 +16,13 @@ public class Zernike {
      * @param n a number
      * @return n!
      */
-    static double factorial(int n) {
-        double x = -1;
-        if (0 <= n) {
-            x = 1;
-            for (int i = 2; i <= n; i++) {
-                x *= (double) i;
-            }
+    static double factorial(int n) throws IllegalArgumentException {
+        if (n < 0) {
+            throw new IllegalArgumentException("Cannot calculate factorial of a negative number");
+        }
+        int x = 1;
+        for (int i = 2; i <= n; i++) {
+            x *= (double) i;
         }
         return x;
     }

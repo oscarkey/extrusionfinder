@@ -15,6 +15,7 @@ import static org.junit.Assert.fail;
 
 public class ImageMatcherTester {
 
+    //Euclidean distances between Zernike moments of the images in the folder testimages1
     double[][] imageComparisons = {
             {0.0, 0.1362300000699998, 0.21021316021322753, 0.19159809807101186, 0.2849470832595251},
             {0.0, 0.17776289731140657, 0.1725392276701063, 0.29121182103283866},
@@ -39,8 +40,11 @@ public class ImageMatcherTester {
 
     @Test
     public void testCompare() throws IOException {
-        final File directory = new File("src\\test\\java\\uk\\ac\\cam\\cl\\echo\\extrusionfinder\\server\\imagematching\\testimages1");
+        final File directory = new File("src/test/java/uk/ac/cam/cl/echo/extrusionfinder/server/imagematching/testimages1");
         int fileCount = directory.listFiles().length;
+        if (fileCount == 0) {
+            return;
+        }
         File[] testImages = new File[fileCount];
         for (final File fileEntry : directory.listFiles()) {
             String fileName = fileEntry.getName();
@@ -63,9 +67,9 @@ public class ImageMatcherTester {
         }
     }
 
-    @Test
-    public void tempTest() throws IOException {
-        final File directory = new File("src\\test\\java\\uk\\ac\\cam\\cl\\echo\\extrusionfinder\\server\\imagematching\\testimages2");
+    /*@Test
+    public void compareAllWithOne() throws IOException {
+        final File directory = new File("src/test/java/uk/ac/cam/cl/echo/extrusionfinder/server/imagematching/testimages2");
         final File[] files = directory.listFiles();
 
         ImageMatcher im = new ImageMatcher(ImageIO.read(files[0]), 12, new Point2D.Double(50.0, 50.0), 50.0);
@@ -79,5 +83,5 @@ public class ImageMatcherTester {
             System.out.print(im.compare(zm));
             System.out.println();
         }
-    }
+    }*/
 }

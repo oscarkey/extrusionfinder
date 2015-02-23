@@ -15,9 +15,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class ZernikeTester {
 
+    //Zernike moments of the images in the folder testimages1
     double[][] zernikeMoments = {
             {0.31830988618380207, 0.025136023494833914, 0.10399598432623215, 0.011640906481696855, 0.028990796833629928, 0.012420632171754275, 0.13585973556510914, 0.011655537165141991, 0.0029574333037594015, 0.05046997461439584, 0.015572086486867986, 0.00387274553148997, 0.0904082790454448, 0.01221858394835789, 0.04940940037230223, 0.0011966887250222911, 0.11312571710822837, 0.013311239761628674, 0.018981370990821325, 0.0019480081641745461, 0.24629351499519084, 0.05935061043675348, 0.07730305311767184, 0.006849041838110381, 0.01005470916452676, 0.07437113986289658, 0.058818930724023145, 0.03438207574601993, 0.00631442030815851, 0.0010110303340493578},
             {0.3183098861837668, 0.01814306885661754, 0.12309197245279199, 0.016933585300113577, 0.020469416136646938, 0.008374090976621888, 0.1192071885285531, 0.001541018808913939, 0.003390250852344901, 0.05311796612897057, 0.007452775599615949, 0.0018331913251173177, 1.8624032071198104E-5, 0.046966515568117886, 0.034208438005879416, 0.0021385871839129495, 0.056422296421245875, 0.02280595231484466, 0.008627518749033227, 0.0014427227413520921, 0.23806860638968547, 0.011005044762478397, 0.05429455969748347, 0.007922371978745806, 0.010437650972085152, 0.0972275445317399, 0.026141701228988276, 0.0298620313364633, 0.007726009621429929, 0.0015929869314674878},
@@ -37,21 +39,25 @@ public class ZernikeTester {
 
     @Test
     public void testFactorial() {
-        double a = Zernike.factorial(-1);
-        double b = Zernike.factorial(0);
-        double c = Zernike.factorial(1);
-        double d = Zernike.factorial(2);
-        double e = Zernike.factorial(3);
-        double f = Zernike.factorial(5);
-        double g = Zernike.factorial(12);
+        double a = Zernike.factorial(0);
+        double b = Zernike.factorial(1);
+        double c = Zernike.factorial(2);
+        double d = Zernike.factorial(3);
+        double e = Zernike.factorial(5);
+        double f = Zernike.factorial(12);
 
-        assertTrue(a == -1);
+        assertTrue(a == 1);
         assertTrue(b == 1);
-        assertTrue(c == 1);
-        assertTrue(d == 2);
-        assertTrue(e == 6);
-        assertTrue(f == 120);
-        assertTrue(g == 479001600);
+        assertTrue(c == 2);
+        assertTrue(d == 6);
+        assertTrue(e == 120);
+        assertTrue(f == 479001600);
+
+        try {
+            Zernike.factorial(-1);
+            fail("IllegalArgumentException not thrown");
+        } catch (IllegalArgumentException ex) {
+        }
     }
 
     private Boolean equal(double[] a, double[] b) {
@@ -66,7 +72,7 @@ public class ZernikeTester {
 
     @Test
     public void testZernikeMoments() throws IOException {
-        final File directory = new File("src\\test\\java\\uk\\ac\\cam\\cl\\echo\\extrusionfinder\\server\\imagematching\\testimages1");
+        final File directory = new File("src/test/java/uk/ac/cam/cl/echo/extrusionfinder/server/imagematching/testimages1");
         for (final File fileEntry : directory.listFiles()) {
             String fileName = fileEntry.getName();
             BufferedImage image = null;

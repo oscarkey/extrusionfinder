@@ -40,6 +40,11 @@ public class ZernikePointTester {
         assertTrue(zp.getPosition(12).real == pos12.real && zp.getPosition(12).imag == pos12.imag);
 
         try {
+            zp.getPosition(-1);
+            fail("IllegalArgumentException not thrown");
+        } catch (IllegalArgumentException e) {
+        }
+        try {
             zp.getPosition(maxPower + 1);
             fail("IllegalArgumentException not thrown");
         } catch (IllegalArgumentException e) {

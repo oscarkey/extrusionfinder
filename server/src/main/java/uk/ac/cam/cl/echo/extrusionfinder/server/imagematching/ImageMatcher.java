@@ -92,16 +92,16 @@ public class ImageMatcher {
      * Reads the images from their URI then computes their Zernike moments and returns
      * the Euclidean distance between them.
      *
-     * @param iamgeURI0 a URI of an image to be compared
-     * @param iamgeURI1 a URI of an image to be compared
+     * @param imageURI0 a URI of an image to be compared
+     * @param imageURI1 a URI of an image to be compared
      * @param degree  the degree to which to compute the Zernike moments to
      * @param center  the point at which to take Zernike moments from
      * @param radius  the radius of the circle to use
      * @return the Euclidean distance between the Zernike moments of the two images
      */
-    public static double compare(String iamgeURI0, String iamgeURI1, int degree, Point2D center, double radius) throws IOException {
-        BufferedImage image0 = ImageIO.read(new File(iamgeURI0));
-        BufferedImage image1 = ImageIO.read(new File(iamgeURI1));
+    public static double compare(String imageURI0, String imageURI1, int degree, Point2D center, double radius) throws IOException {
+        BufferedImage image0 = ImageIO.read(new File(imageURI0));
+        BufferedImage image1 = ImageIO.read(new File(imageURI1));
 
         return compare(image0, image1, degree, center, radius);
     }

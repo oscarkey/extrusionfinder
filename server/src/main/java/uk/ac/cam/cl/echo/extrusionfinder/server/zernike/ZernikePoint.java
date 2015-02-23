@@ -59,7 +59,10 @@ class ZernikePoint {
      *
      * @param n the total intensity of the image
      */
-    public void normalizeIntensity(double n) {
+    public void normalizeIntensity(double n) throws IllegalArgumentException {
+        if (n == 0) {
+            throw new IllegalArgumentException("Cannot divide by zero.");
+        }
         intensity /= n;
     }
 }
