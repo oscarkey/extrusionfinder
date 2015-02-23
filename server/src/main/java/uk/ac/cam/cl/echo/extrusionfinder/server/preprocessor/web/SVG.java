@@ -1,7 +1,6 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor.web;
 
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
-import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
@@ -14,10 +13,8 @@ import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.svg.SVGDocument;
-import org.w3c.dom.svg.SVGGElement;
 import org.w3c.dom.svg.SVGPathElement;
 
 import javax.xml.stream.XMLStreamException;
@@ -32,7 +29,7 @@ public class SVG {
     public static void process() throws IOException, XMLStreamException, TranscoderException, InterruptedException, ProfileNotFoundException {
         convertPdfToSvg("in.pdf", "intermediate.svg");
 
-        System.loadLibrary("opencv_java249");
+//        System.loadLibrary("opencv_java249");
 
         // Load SVG from hard-coded file
         String parser = XMLResourceDescriptor.getXMLParserClassName();
