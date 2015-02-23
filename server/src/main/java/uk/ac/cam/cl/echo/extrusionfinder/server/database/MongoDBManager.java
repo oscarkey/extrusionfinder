@@ -7,6 +7,7 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
 import uk.ac.cam.cl.echo.extrusionfinder.server.zernike.ZernikeMap;
 
 import java.net.UnknownHostException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -50,6 +51,17 @@ public class MongoDBManager implements IDBManager {
     @Override
     public void savePart(Part part) {
         partManager.save(part);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * This implementation only makes one database call, so is more efficient than making successive savePart() calls
+     * @param parts List of parts to insert.
+     */
+    @Override
+    public void saveParts(List<Part> parts) {
+        partManager.save(parts);
     }
 
     /**
