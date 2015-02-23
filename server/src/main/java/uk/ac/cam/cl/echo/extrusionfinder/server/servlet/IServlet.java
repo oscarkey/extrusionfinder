@@ -11,6 +11,7 @@ import java.util.List;
 
 /**
  * Provides a RESTful API to clients for requesting potential matches to a given image
+ *
  * @author as2388
  */
 @Path("/MatchServlet/")
