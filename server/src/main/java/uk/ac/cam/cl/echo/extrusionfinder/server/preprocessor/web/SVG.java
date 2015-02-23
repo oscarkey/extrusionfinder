@@ -26,15 +26,9 @@ public class SVG {
         nu.pattern.OpenCV.loadShared();
     }
 
-    public static void main(String[] args) throws IOException, XMLStreamException, TranscoderException,
+    public static void process(String pdfPath) throws IOException, XMLStreamException, TranscoderException,
             InterruptedException, ProfileNotFoundException {
-        process();
-    }
-
-    public static void process() throws IOException, XMLStreamException, TranscoderException, InterruptedException, ProfileNotFoundException {
-//        convertPdfToSvg("in.pdf", "intermediate.svg");
-
-//        System.loadLibrary("opencv-java249");
+        convertPdfToSvg(pdfPath, "intermediate.svg");
 
         // Load SVG from hard-coded file
         String parser = XMLResourceDescriptor.getXMLParserClassName();
