@@ -27,7 +27,7 @@ public class SVG {
     }
 
     public static void process() throws IOException, XMLStreamException, TranscoderException, InterruptedException, ProfileNotFoundException {
-        convertPdfToSvg("in.pdf", "intermediate.svg");
+//        convertPdfToSvg("in.pdf", "intermediate.svg");
 
 //        System.loadLibrary("opencv_java249");
 
