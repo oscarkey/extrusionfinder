@@ -12,7 +12,7 @@ import edu.uci.ics.crawler4j.url.WebURL;
 
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
-import java.util.Collection;
+import java.util.List;
 
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -54,13 +54,13 @@ public class SeagateCrawler extends ExtendedCrawler {
     /* This is the stream that we manipulate via side effects.
      * Note that if used, it HAS to be assigned with configure method.
      */
-    private static Collection<Part> parts;
+    private static List<Part> parts;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void configure(Collection<Part> parts) {
+    public void configure(List<Part> parts) {
         this.parts = parts;
     }
 

@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Program that crawls plastic extrusion vendors for information about the
@@ -98,7 +99,7 @@ public class PartSourcer {
         for (Controller<? extends ExtendedCrawler> c : controllers) {
 
             try {
-                Collection<Part> parts = c.start();
+                List<Part> parts = c.start();
                 String msg = String.format("For manufacturer %s, found %d parts.",
                     c.getManufacturerId(),
                     parts.size());

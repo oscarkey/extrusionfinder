@@ -5,7 +5,7 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
 
 import java.lang.IllegalArgumentException;
-import java.util.Collection;
+import java.util.List;
 import java.util.ArrayList;
 
 /**
@@ -67,9 +67,9 @@ public class Controller<T extends ExtendedCrawler> {
      * Starts the crawler. Blocking operation.
      * @return  The collection of parts found by the crawler.
      */
-    public Collection<Part> start() {
+    public List<Part> start() {
 
-        Collection<Part> parts = new ArrayList<Part>();
+        List<Part> parts = new ArrayList<Part>();
         crawler.configure(parts);
         controller.start(crawler.getClass(), NUMBER_OF_CRAWLERS);
         return parts;

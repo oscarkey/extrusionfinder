@@ -10,7 +10,7 @@ import edu.uci.ics.crawler4j.url.WebURL;
 
 import java.io.File;
 import java.lang.IllegalArgumentException;
-import java.util.Collection;
+import java.util.List;
 
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
 
@@ -42,7 +42,7 @@ public class ControllerTester {
             new Controller<ExtendedCrawler>(crawlController, crawler);
 
         // test running the controller - invoking the right methods
-        Collection st = controller.start();
+        List st = controller.start();
         verify(crawlController, atLeastOnce()).addSeed(any(String.class));
 
         String manId = controller.getManufacturerId();

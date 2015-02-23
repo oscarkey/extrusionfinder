@@ -13,6 +13,7 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.ExtendedCrawler
 
 import edu.uci.ics.crawler4j.crawler.CrawlController;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Collection;
 
 import org.junit.runner.RunWith;
@@ -57,7 +58,7 @@ public class PartSourcerTester {
         controllers.add(c2);
 
         // create mock of parts returned by the both controllers when run
-        Collection<Part> fakeparts = new ArrayList<Part>();
+        List<Part> fakeparts = new ArrayList<Part>();
         fakeparts.add(mock(Part.class));
         when(c1.start()).thenReturn(fakeparts);
         when(c2.start()).thenReturn(fakeparts);
