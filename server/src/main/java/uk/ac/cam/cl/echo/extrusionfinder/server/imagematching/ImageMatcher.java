@@ -17,13 +17,26 @@ public class ImageMatcher {
      * Constructs an ImageMatcher with the Zernike moments computed using the img,
      * degree, center and radius parameters.
      *
-     * @param image    the image to compute Zernike moments for
+     * @param image  the image to compute Zernike moments for
      * @param degree the degree to which to compute the Zernike moments to
      * @param center the point at which to take Zernike moments from
      * @param radius the radius of the circle to use
      */
     public ImageMatcher(BufferedImage image, int degree, Point2D center, double radius) {
         zm = Zernike.zernikeMoments(image, degree, center, radius);
+    }
+
+    /**
+     * Constructs an ImageMatcher with the Zernike moments computed using the img,
+     * degree, center and radius parameters.
+     *
+     * @param image  the image to compute Zernike moments for
+     * @param degree the degree to which to compute the Zernike moments to
+     * @param center the point at which to take Zernike moments from
+     * @param radius the radius of the circle to use
+     */
+    public ImageMatcher(GrayscaleImageData image, int degree, Point2D center, double radius) {
+        zm = Zernike.zernikeMoments(image.data, degree, center, radius);
     }
 
     /**

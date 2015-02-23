@@ -62,4 +62,22 @@ public class ImageMatcherTester {
             }
         }
     }
+
+    @Test
+    public void tempTest() throws IOException {
+        final File directory = new File("src\\test\\java\\uk\\ac\\cam\\cl\\echo\\extrusionfinder\\server\\imagematching\\testimages2");
+        final File[] files = directory.listFiles();
+
+        ImageMatcher im = new ImageMatcher(ImageIO.read(files[0]), 12, new Point2D.Double(50.0, 50.0), 50.0);
+
+        System.out.println("Comparing with: " + files[0].getName());
+
+        for (final File fileEntry : directory.listFiles()) {
+            BufferedImage image = ImageIO.read(fileEntry);
+            double[] zm = Zernike.zernikeMoments(image, 12, new Point2D.Double(50.0, 50.0), 50.0);
+            System.out.print(fileEntry.getName() + ": ");
+            System.out.print(im.compare(zm));
+            System.out.println();
+        }
+    }
 }
