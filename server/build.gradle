@@ -25,4 +25,7 @@ dependencies {
 
     // MongoJack (used for converting Java objects into MongoDB's format)
     compile 'org.mongojack:mongojack:2.0.0'
+
+    // OpenCV, (used for image preprocessing)
+    compile 'nu.pattern:opencv:2.4.9-5'
 }
