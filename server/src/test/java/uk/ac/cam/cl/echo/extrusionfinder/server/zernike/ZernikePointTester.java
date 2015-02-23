@@ -61,6 +61,7 @@ public class ZernikePointTester {
 
         try {
             zp.normalizeIntensity(0);
+            fail("IllegalArgumentException not thrown");
         } catch (IllegalArgumentException e) {
         }
     }
