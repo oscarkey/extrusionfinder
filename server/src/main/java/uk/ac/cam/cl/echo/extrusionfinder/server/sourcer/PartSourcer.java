@@ -1,9 +1,14 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.sourcer;
 
-import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
-import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.*;
+import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Configuration;
 import uk.ac.cam.cl.echo.extrusionfinder.server.database.IDBManager;
 import uk.ac.cam.cl.echo.extrusionfinder.server.database.MongoDBManager;
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
+import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.Controller;
+import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.CrawlControllerFactory;
+import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.CrawlerException;
+import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.ExtendedCrawler;
+
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,12 +26,6 @@ public class PartSourcer {
     private static final Logger logger =
         LoggerFactory.getLogger(PartSourcer.class);
 
-    /* crawl configuration TODO. move this to Configuration.java */
-    private static final String CRAWL_STORAGE_FOLDER = "crawlerdata/root";
-    private static final int MAX_CRAWL_DEPTH = 5;
-    private static final int MAX_CRAWL_PAGES = -1;
-
-
     /**
      * commandline invocation of the part sourcer.
      */
@@ -35,7 +34,10 @@ public class PartSourcer {
         String dbName = args.length > 0 ? args[0] : "extrusionDB";
         IDBManager db = new MongoDBManager(dbName);
         db.clearDatabase();
-        updateDatabase(db);
+
+        // run the crawlers and put the found extrusions into the database
+        Collection<Controller<? extends ExtendedCrawler>> crs = getControllers();
+        updateDatabase(db, crs);
 
         System.out.println(db.loadPart("1SG1586"));
         System.out.println(db.loadPart("1SG1500"));
@@ -45,19 +47,39 @@ public class PartSourcer {
     }
 
     /**
-     * Runs all the controllers (one per site)
+     * @return  A collection of all currently written crawlers (ie. hardcoded)
      */
-    public static void updateDatabase(IDBManager dbManager) throws CrawlerException {
+    public static Collection<Controller<? extends ExtendedCrawler>> getControllers() {
 
-        Collection<Controller<? extends ExtendedCrawler>> crawlers =
+        // initialise collection of website crawlers
+
+        Collection<Controller<? extends ExtendedCrawler>> controllers =
             new ArrayList<Controller<? extends ExtendedCrawler>>();
+
+        // get config options from Configuration file
+
+        String dir = Configuration.getCrawlStorageFolder();
+        int dp = Configuration.getMaxCrawlDepth();
+        int pg = Configuration.getMaxCrawlPages();
+        Collection<? extends ExtendedCrawler> crawlers = Configuration.getCrawlers();
 
         try {
 
-            crawlers.add(
-                new Controller<SeagateCrawler>(
-                    CRAWL_STORAGE_FOLDER, MAX_CRAWL_DEPTH, MAX_CRAWL_PAGES,
-                    new SeagateCrawler()));
+            for (ExtendedCrawler crawler : crawlers) {
+
+                // NOTE: must call CrawlControllerFactory again for each
+                // crawler! Each crawler must have their own CrawlController
+                // instance. (crawlcontroller is the crawler4j controller)
+
+                Controller<? extends ExtendedCrawler> c =
+                    new Controller<ExtendedCrawler>(
+                        CrawlControllerFactory.get(dir, dp, pg),
+                        crawler
+                    );
+
+                controllers.add(c);
+            }
+
 
         } catch (CrawlerException | IllegalArgumentException e) {
 
@@ -66,7 +88,7 @@ public class PartSourcer {
 
         }
 
-        updateDatabase(dbManager, crawlers);
+        return controllers;
     }
 
     /**
@@ -75,15 +97,16 @@ public class PartSourcer {
      * @param crawlers  Collection of crawlers to be run
      */
     public static void updateDatabase(IDBManager dbManager,
-        Collection<Controller<? extends ExtendedCrawler>> crawlers) {
+        Collection<Controller<? extends ExtendedCrawler>> controllers) {
 
         logger.info("Updating database...");
 
-        for (Controller<? extends ExtendedCrawler> crawler : crawlers) {
+        for (Controller<? extends ExtendedCrawler> c : controllers) {
 
             try {
-                Collection<Part> parts = crawler.start();
+                Collection<Part> parts = c.start();
                 logger.info("There are " + parts.size() + " parts.");
+
                 for (Part p : parts) {
                     dbManager.savePart(p);
                 }
@@ -95,10 +118,9 @@ public class PartSourcer {
 
             } finally {
 
-                crawler.stop();
+                c.stop();
 
             }
         }
-
     }
 }

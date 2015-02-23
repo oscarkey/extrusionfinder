@@ -5,7 +5,9 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Configuration;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
-import uk.ac.cam.cl.echo.extrusionfinder.server.zernike.ZernikeMap;
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size;
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size.Unit;
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.ZernikeMap;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
@@ -52,19 +54,21 @@ public class MongoDBManagerTester {
         }
 
         // create a new part and insert it into the database
-        Part part = new Part("id_test", "", "", "link", "imageL", "", "");
+        Size size = new Size(2.3f, 0.856f, Unit.IN);
+        Part part = new Part("id_test", "", "", "link", "imageL", size, "");
         dbManager.savePart(part);
 
         // test that the part can now be correctly loaded from the database
         try {
             Part loadedPart = dbManager.loadPart("id_test");
             assertTrue(loadedPart.equals(part));
+            assertTrue(loadedPart.getSize().equals(size));
         } catch (ItemNotFoundException e) {
             fail("Part just saved not found in database");
         }
 
         // insert a new part which has the same identifier. This should succeed: test by loading from database
-        part = new Part("id_test", "", "", "link2", "imageLink2", "", "");
+        part = new Part("id_test", "", "", "link2", "imageLink2", new Size(), "");
         dbManager.savePart(part);
         try {
             Part loadedPart = dbManager.loadPart("id_test");

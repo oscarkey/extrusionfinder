@@ -1,6 +1,10 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers;
 
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size.Unit;
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size;
+import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.metadata.MetadataParser;
+import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.metadata.MetadataParserException;
 
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
@@ -10,11 +14,8 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.Collection;
 
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.jsoup.Jsoup;
-
 
 /**
  * Seagate Plastics specific crawler (part sourcer).
@@ -32,24 +33,40 @@ public class SeagateCrawler extends ExtendedCrawler {
     private final static Pattern FILTERS =
         Pattern.compile(".*(\\.(css|js|gif|jpe?g|png|mp3|mp3|zip|gz|pdf))$");
 
-    /* detects if a pdf uses the wrong format (see usage for explanation) */
-    private final static Pattern FAULTY_PDF_FILTER =
+    /* This pattern is used to find bad Seagate link (see details at usage) */
+    private static final Pattern FAULTY_PDF_FILTER =
         Pattern.compile(".*[a-zA-Z0-9].pdf");
 
-    /* separates size from name in seagate description */
-    private final static Pattern METADATA_FILTER =
-        Pattern.compile("(.*([0-9]| MM| ID| OD| IN)) (.*)");
+    /* Patterns for extracting metadata.
+     * 0: 3.4 DIA. MM
+     * 1: 1.2 OD X 2.3 ID IN
+     * 2: 0.125 X 3.0 IN
+     * 3: 0.325 MM
+     */
+    private static final String F = MetadataParser.floatRegex();
+    private static final Pattern[] METADATA_FILTERS = new Pattern[] {
+            Pattern.compile("(("+ F +")( )DIA. (MM|IN)) (.*)"),
+            Pattern.compile("(("+ F +") OD [xX] ("+ F +") ID (MM|IN)) (.*)"),
+            Pattern.compile("(("+ F +") [xX] ("+ F +") (MM|IN)) (.*)"),
+            Pattern.compile("(("+ F +")( )(MM|IN)) (.*)")
+    };
 
     /* This is the stream that we manipulate via side effects.
      * Note that if used, it HAS to be assigned with configure method.
      */
     private static Collection<Part> parts;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void configure(Collection<Part> parts) {
         this.parts = parts;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String[] getSeeds() {
         return SEEDS;
@@ -81,77 +98,95 @@ public class SeagateCrawler extends ExtendedCrawler {
             HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
 
             String html = htmlParseData.getHtml();
-            Document htmlDoc = Jsoup.parse(html, url);
-            extractData(htmlDoc);
+            MetadataParser hp = new MetadataParser(html, url);
+            extractData(hp);
         }
     }
 
-    /* Extracts metadata from the page.
-     * TODO: generalise this to something that can be used by other vendors
-     * TODO: seagateplastics.com/Stock_Plastics_Catalog/catalog/plastic_tubes_misc.html
-     *       (ie. extrusions that all have the same shape - circular - but no image)
+    /* Extracts metadata from the page. Add found parts to the internal list
+     * of parts.
      */
-    private void extractData(Document htmlDoc) {
+    private void extractData(MetadataParser hp) {
 
-        Elements productNodes = htmlDoc.getElementsByClass("node");
+        Elements productNodes = hp.getHtmlDoc().getElementsByClass("node");
         for (Element productNode : productNodes) {
 
             // get the product code
-            Elements product = productNode.select("div.product-name");;
-            if (product == null || product.size() == 0) {
+            String productId = hp.selectSingleText(productNode, "div.product-name");
+            if (productId.isEmpty()) {
                 continue;
             }
-            String productId = product.first().ownText().toUpperCase();
+            productId = productId.toUpperCase();
 
-            // get the link to the product
-            Elements links = productNode.select("a[href]");
-            String link = "";
-            if (!(links == null || links.size() == 0)) {
-
-                link = links.first().attr("abs:href").toLowerCase();
-
-                // regex hack to deal with seagate's bad links
-                // assumption: all seagate's pdf links follow the format
-                // http://seagateplastics.com/stock_plastics_catalog/
-                // images_catalog/XYZ pdf (1).pdf
-                // where XYZ is the product id. Some of the urls on their
-                // website are wrong and don't include the " pdf (1)" at the
-                // end ... This is a temporary solution.
-                if (FAULTY_PDF_FILTER.matcher(link).matches()) {
-                    link = link.replaceFirst(".pdf", " pdf (1).pdf");
-                }
-            }
+            // get the link to the product, deal with seagate's link problems
+            String link = hp.getLink(productNode);
+            link = fixLink(link);
 
             // get the image of the product
-            Elements images = productNode.select("img[src]");
-            String image = "";
-            if (!(images == null || images.size() == 0)) {
-                image = images.first().attr("abs:src").toLowerCase();
+            String image = hp.selectSingleAttr(productNode, "img[src]", "abs:src");
+            if (!image.isEmpty()) {
+                image = image.toLowerCase();
             }
 
             // get the metadata of the product
-            Elements descriptions =
-                productNode.select("div.product-description");
-
-            String description = "";
-            String size = "";
-
-            if (!(descriptions == null || descriptions.size() == 0)) {
-                String desc = descriptions.first().ownText();
-                Matcher m = METADATA_FILTER.matcher(desc);
-                if (m.find()) {
-                    size = m.group(1);
-                    description = m.group(3);
-                } else {
-                    description = desc;
-                }
-            }
+            String description =
+                hp.selectSingleText(productNode, "div.product-description");
+            Size size = extractSize(description);
 
             if (parts != null) {
-                System.out.println(description + ": " +size);
                 parts.add(new Part(VENDOR_ID, productId, link, image, size,
                     description));
             }
         }
+    }
+
+    /**
+     * regex hack to deal with seagate's bad links
+     * assumption: all seagate's pdf links follow the format
+     * http://seagateplastics.com/stock_plastics_catalog/
+     * images_catalog/XYZ pdf (1).pdf
+     * where XYZ is the product id. Some of their own (!) urls on their
+     * website are wrong and don't include the " pdf (1)" at the
+     * end ... This is a temporary solution.
+     */
+    private String fixLink(String link) {
+
+        if (FAULTY_PDF_FILTER.matcher(link).matches()) {
+            return link.replaceFirst(".pdf", " pdf (1).pdf");
+        }
+        return link;
+    }
+
+    /**
+     * Given the description on the Seagate website, use standard regex
+     * patterns to attempt to extract the numbers and units.
+     * @return  Size of the part. If none could be parsed, a size with 0x0
+     *          dimensions and unknown unit.
+     */
+    private Size extractSize(String description) {
+
+        for (Pattern p : METADATA_FILTERS) {
+
+            Matcher m = p.matcher(description);
+            if (m.find()) {
+
+                // group2 is first dim, group3 is second dim, group4 is unit
+                float dim1 = 0.0f;
+                float dim2 = 0.0f;
+                Unit unit = Unit.UNKNOWN;
+
+                try {
+                    unit = MetadataParser.stringToUnit(m.group(4));
+                    dim1 = MetadataParser.stringToFloat(m.group(2));
+                    dim2 = MetadataParser.stringToFloat(m.group(3));
+
+                } catch (MetadataParserException e) {
+                    // ignore, they're set to 0.0f anyway
+                }
+                Size ss = new Size(dim1,dim2,unit);
+                return ss;
+            }
+        }
+        return new Size();
     }
 }

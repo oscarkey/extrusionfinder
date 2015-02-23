@@ -1,7 +1,7 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers;
 
 /**
- * Encapsulates exception thrown by crawler4j class instances.
+ * Encapsulates exception thrown by crawler4j class constructors.
  */
 public class CrawlerException extends Exception {
 

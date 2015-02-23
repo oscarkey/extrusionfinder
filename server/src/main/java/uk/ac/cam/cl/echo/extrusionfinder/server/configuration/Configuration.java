@@ -1,5 +1,11 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.configuration;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.ExtendedCrawler;
+import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.SeagateCrawler;
+
 public class Configuration {
     public static final String MONGO_HOST = "localhost";
     public static final int MONGO_PORT = 27017;
@@ -15,5 +21,41 @@ public class Configuration {
     public static final int PROFILE_DETECTION_STANDARD_BILATERAL_FILTER_BLUR_DIAMETER = 8;
     public static final int PROFILE_DETECTION_STANDARD_BILATERAL_FILTER_SIGMA = 15;
 
+    private static final String CRAWL_STORAGE_FOLDER = "crawlerdata/root";
+    private static final int MAX_CRAWL_DEPTH = 5;
+    private static final int MAX_CRAWL_PAGES = -1;
+    private static final Collection<? extends ExtendedCrawler> CRAWLERS =
+        new ArrayList<ExtendedCrawler>(Arrays.asList(
+            new SeagateCrawler()
+        ));
+
     private Configuration(){}
+
+    /**
+     * @return  Path to the folder that stores intermediate crawl data.
+     */
+    public static String getCrawlStorageFolder() {
+        return CRAWL_STORAGE_FOLDER;
+    }
+
+    /**
+     * @return  The maximum depth of recursive crawls. -1 if unlimited.
+     */
+    public static int getMaxCrawlDepth() {
+        return MAX_CRAWL_DEPTH;
+    }
+
+    /**
+     * @return  The maximum number of pages visited during crawling. -1 if unlimited.
+     */
+    public static int getMaxCrawlPages() {
+        return MAX_CRAWL_PAGES;
+    }
+
+    /**
+     * @return  The collection of manufacturer-specific crawlers to be run.
+     */
+    public static Collection<? extends ExtendedCrawler> getCrawlers() {
+        return CRAWLERS;
+    }
 }

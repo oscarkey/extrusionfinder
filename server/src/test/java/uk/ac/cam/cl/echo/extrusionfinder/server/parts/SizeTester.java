@@ -11,7 +11,7 @@ import static org.junit.Assert.assertFalse;
 /**
  * Unit tests for Size.
  */
-public class SizeTest {
+public class SizeTester {
 
     @Test
     public void testEmptySize() {

@@ -1,11 +1,29 @@
 apply plugin: 'java'
-apply plugin: 'war'
+//apply plugin: 'war'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 1.7
 version = '1.0'
 
 repositories {
     mavenCentral()
+}
+
+allprojects {
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-Xlint:unchecked"
+
+    }
+}
+
+// generate jar
+jar {
+    archiveName = "crawler.jar"
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }}
+
+    manifest {
+      attributes 'Main-Class': 'uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.PartSourcer'
+    }
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
 }
 
 dependencies {
@@ -18,15 +36,25 @@ dependencies {
     // mocking framework for unit tests
     testCompile 'org.mockito:mockito-core:1.+'
 
+// other tests
+ testCompile 'org.easymock:easymock:3.3.1'
+testCompile 'org.powermock:powermock-module-junit4:1.6.1'
+testCompile 'org.powermock:powermock-api-easymock:1.6.1'
+
+    // web crawler and simple logger for crawler
+    compile 'edu.uci.ics:crawler4j:4.1'
+    compile 'org.slf4j:slf4j-simple:1.7.9'
+    compile 'org.jsoup:jsoup:1.7.2'
+
     // RESTEasy with Jackson auto-serialization
-    compile 'org.jboss.resteasy:resteasy-jaxrs:3.0.6.Final'
-    compile 'org.jboss.resteasy:resteasy-jackson2-provider:3.0.6.Final'
-    compile 'org.jboss.resteasy:resteasy-multipart-provider:3.0.6.Final'
+    compile 'org.jboss.resteasy:resteasy-jaxrs:3.0.8.Final'
+    compile 'org.jboss.resteasy:resteasy-jackson2-provider:3.0.8.Final'
+    compile 'org.jboss.resteasy:resteasy-multipart-provider:3.0.8.Final'
 
     // MongoDB driver (used for interfacing with MongoDB)
     compile 'org.mongodb:mongo-java-driver:2.12.2'
 
-    // MongoJack (used for converting Java objects into MongoDB's format)
+    // MongoJack (used for converting Java objects into MongoDB's format
     compile 'org.mongojack:mongojack:2.0.0'
 
     // web crawler for part sourcing + simple logger (for debugging)

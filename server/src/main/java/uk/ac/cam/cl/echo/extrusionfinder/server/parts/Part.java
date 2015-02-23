@@ -11,7 +11,7 @@ public class Part implements DatabaseItem {
     protected String partId;
     protected String link;
     protected String imageLink;
-    protected String size;
+    protected Size size;
     protected String description;
 
     /**
@@ -28,7 +28,7 @@ public class Part implements DatabaseItem {
                 @JsonProperty("partId") String partId,
                 @JsonProperty("link") String link,
                 @JsonProperty("imageLink") String imageLink,
-                @JsonProperty("size") String size,
+                @JsonProperty("size") Size size,
                 @JsonProperty("description") String description) {
         this._id = _id;
         this.manufacturerId = manufacturerId;
@@ -47,7 +47,7 @@ public class Part implements DatabaseItem {
      * @param imageLink      Link to an image of the parts
      */
     public Part(String manufacturerId, String partId, String link, String imageLink) {
-        this(manufacturerId + partId, manufacturerId, partId, link, imageLink, "", "");
+        this(manufacturerId + partId, manufacturerId, partId, link, imageLink, new Size(), "");
     }
 
     /**
@@ -60,7 +60,7 @@ public class Part implements DatabaseItem {
      * @param description    Miscellaneous metadata
      */
     public Part(String manufacturerId, String partId, String link,
-        String imageLink, String size, String description) {
+        String imageLink, Size size, String description) {
 
         this(manufacturerId + partId, manufacturerId, partId, link, imageLink,
             size, description);
@@ -87,7 +87,7 @@ public class Part implements DatabaseItem {
         return partId;
     }
 
-    public String getSize() {
+    public Size getSize() {
         return size;
     }
 
@@ -107,5 +107,15 @@ public class Part implements DatabaseItem {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return _id.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "EXTRUSION-ID: " + _id + "; Description: " + description + ", Size: " + size;
     }
 }
