@@ -3,7 +3,6 @@ package uk.ac.cam.cl.echo.extrusionfinder.client;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-import java.net.URI;
 
 /**
  * Created by oscar on 07/02/15.
@@ -11,18 +10,38 @@ import java.net.URI;
  */
 public class Result implements Serializable {
     @SerializedName("_id")
-    private final String partId;
-    private URI purchaseUri;
+    private final String id;
+    private String manufacturerId;
+    private String partId;
+    private String link;
+    private String imageLink;
+    private String description;
 
-    public Result(String partId) {
-        this.partId = partId;
+    public Result(String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getManufacturerId() {
+        return manufacturerId;
     }
 
     public String getPartId() {
         return partId;
     }
 
-    public URI getPurchaseUri() {
-        return purchaseUri;
+    public String getLink() {
+        return link;
+    }
+
+    public String getImageLink() {
+        return imageLink;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

@@ -14,8 +14,8 @@ import uk.ac.cam.cl.groupecho.extrusionfinder.R;
  * Subclass of ArrayAdapter for connecting an array of Results to a list view
  */
 public class ResultsAdapter extends ArrayAdapter<Result> {
-    private Result[] results;
-    private LayoutInflater layoutInflater;
+    private final Result[] results;
+    private final LayoutInflater layoutInflater;
 
     public ResultsAdapter(Context context, Result[] results) {
         super(context, R.layout.list_item_results, results);
@@ -41,7 +41,7 @@ public class ResultsAdapter extends ArrayAdapter<Result> {
         }
 
         TextView partIdText = (TextView) convertView.findViewById(R.id.resultListItemPartName);
-        partIdText.setText(results[position].getPartId());
+        partIdText.setText(results[position].getId());
 
         return convertView;
     }
