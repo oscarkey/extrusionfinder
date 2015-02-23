@@ -1,7 +1,12 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.servlet;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jboss.resteasy.util.Base64;
+import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Configuration;
 import uk.ac.cam.cl.echo.extrusionfinder.server.database.ItemNotFoundException;
+import uk.ac.cam.cl.echo.extrusionfinder.server.database.MongoDBManager;
+import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
+import uk.ac.cam.cl.echo.extrusionfinder.server.orchestration.ExtrusionFinder;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.MatchedPart;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
 
@@ -21,18 +26,23 @@ public class Servlet implements IServlet {
      * {@inheritDoc}
      */
     @Override
-    public List<MatchedPart> findMatches(String encodedImage) throws IOException, ItemNotFoundException {
-        encodedImage = encodedImage.replaceAll("\"", "");
-
+    public List<MatchedPart> findMatches(String jsonImage) throws IOException, ItemNotFoundException {
         System.out.println("Endpoint hit");
-        // Decode image from base64 encoding to a BufferedImage via a byte array
-        byte[] imageData = Base64.decode(encodedImage);
-        System.out.println("decoded");
-        BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageData));
+
+        // Android puts "" around its JSON, which crashes RESTEasy's parser, so remove them.
+        jsonImage = jsonImage.replaceAll("\"", "");
+
+        // Deserialize the uploaded json to an UploadedImage
+        ObjectMapper mapper = new ObjectMapper();
+        UploadedImage uploadedImage = mapper.readValue(jsonImage, UploadedImage.class);
+
+        RGBImageData rgbImage = new RGBImageData(
+                uploadedImage.getData(), uploadedImage.getWidth(), uploadedImage.getHeight()
+        );
 
         // Find and return the best matches
 //        return ExtrusionFinder.findMatches(
-//                image, new MongoDBManager(Configuration.DEFAULT_DATABASE_NAME),
+//                rgbImage, new MongoDBManager(Configuration.DEFAULT_DATABASE_NAME),
 //                Configuration.DEFAULT_NUMBER_OF_MATCHES
 //        );
 
