@@ -23,4 +23,9 @@ public abstract class ExtendedCrawler extends WebCrawler {
      */
     public abstract String[] getSeeds();
 
+    /**
+     * @return  The unique manufacturer id.
+     */
+    public abstract String getManufacturerId();
+
 }

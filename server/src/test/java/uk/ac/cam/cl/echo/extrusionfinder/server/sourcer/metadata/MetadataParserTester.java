@@ -21,7 +21,7 @@ import static org.easymock.EasyMock.expect;
  */
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Jsoup.class, MetadataParser.class })
+@PrepareForTest({ Jsoup.class })
 public class MetadataParserTester {
 
     private final String html = "<p>valid html</p>";

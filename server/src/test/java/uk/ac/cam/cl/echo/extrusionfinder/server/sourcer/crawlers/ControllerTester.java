@@ -30,10 +30,13 @@ public class ControllerTester {
     @SuppressWarnings("unchecked")
     public void testControlledCrawl() throws CrawlerException {
 
+        String id = "uniqueid";
+
         // instantiate with mocked crawlcontroller + dummy crawler
         CrawlController crawlController = mock(CrawlController.class);
         ExtendedCrawler crawler = mock(ExtendedCrawler.class);
         when(crawler.getSeeds()).thenReturn(new String[] { "foo" });
+        when(crawler.getManufacturerId()).thenReturn(id);
 
         Controller controller =
             new Controller<ExtendedCrawler>(crawlController, crawler);
@@ -41,6 +44,10 @@ public class ControllerTester {
         // test running the controller - invoking the right methods
         Collection st = controller.start();
         verify(crawlController, atLeastOnce()).addSeed(any(String.class));
+
+        String manId = controller.getManufacturerId();
+        verify(crawler, times(1)).getManufacturerId();
+        assertEquals(id, manId);
 
         // any argument of type Class<T>; need to do this in an unchecked way
         // because java-pre-8 does not have type inference

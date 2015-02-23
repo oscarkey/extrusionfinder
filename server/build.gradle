@@ -1,29 +1,11 @@
 apply plugin: 'java'
-//apply plugin: 'war'
+apply plugin: 'war'
 
-sourceCompatibility = 1.7
+sourceCompatibility = 1.8
 version = '1.0'
 
 repositories {
     mavenCentral()
-}
-
-allprojects {
-    tasks.withType(JavaCompile) {
-        options.compilerArgs << "-Xlint:unchecked"
-
-    }
-}
-
-// generate jar
-jar {
-    archiveName = "crawler.jar"
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }}
-
-    manifest {
-      attributes 'Main-Class': 'uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.PartSourcer'
-    }
-    exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
 }
 
 dependencies {
@@ -32,19 +14,7 @@ dependencies {
     testCompile 'org.easymock:easymock:3.3.1'
     testCompile 'org.powermock:powermock-module-junit4:1.6.1'
     testCompile 'org.powermock:powermock-api-easymock:1.6.1'
-
-    // mocking framework for unit tests
     testCompile 'org.mockito:mockito-core:1.+'
-
-// other tests
- testCompile 'org.easymock:easymock:3.3.1'
-testCompile 'org.powermock:powermock-module-junit4:1.6.1'
-testCompile 'org.powermock:powermock-api-easymock:1.6.1'
-
-    // web crawler and simple logger for crawler
-    compile 'edu.uci.ics:crawler4j:4.1'
-    compile 'org.slf4j:slf4j-simple:1.7.9'
-    compile 'org.jsoup:jsoup:1.7.2'
 
     // RESTEasy with Jackson auto-serialization
     compile 'org.jboss.resteasy:resteasy-jaxrs:3.0.8.Final'
@@ -57,14 +27,11 @@ testCompile 'org.powermock:powermock-api-easymock:1.6.1'
     // MongoJack (used for converting Java objects into MongoDB's format
     compile 'org.mongojack:mongojack:2.0.0'
 
+    // OpenCV, (used for image preprocessing)
+    compile 'nu.pattern:opencv:2.4.9-5'
+
     // web crawler for part sourcing + simple logger (for debugging)
     compile 'edu.uci.ics:crawler4j:4.1'
     compile 'org.slf4j:slf4j-simple:1.7.9'
-
-    // jsoup for html parsing in the crawler
     compile 'org.jsoup:jsoup:1.7.2'
-
-    // OpenCV, (used for image preprocessing)
-    compile 'nu.pattern:opencv:2.4.9-5'
 }
-

@@ -24,7 +24,7 @@ import org.jsoup.select.Elements;
 public class SeagateCrawler extends ExtendedCrawler {
 
     /* Vendor specific unique id */
-    public static final String VENDOR_ID = "1";
+    public static final String MANUFACTURER_ID = "1";
 
     /* This is where we start our search */
     private static final String[] SEEDS = { "http://seagateplastics.com/" };
@@ -70,6 +70,14 @@ public class SeagateCrawler extends ExtendedCrawler {
     @Override
     public String[] getSeeds() {
         return SEEDS;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getManufacturerId() {
+        return MANUFACTURER_ID;
     }
 
     /**
@@ -134,7 +142,7 @@ public class SeagateCrawler extends ExtendedCrawler {
             Size size = extractSize(description);
 
             if (parts != null) {
-                Part p = new Part(VENDOR_ID, productId, link, image, size,
+                Part p = new Part(MANUFACTURER_ID, productId, link, image, size,
                     description);
                 parts.add(p);
             }

@@ -8,9 +8,21 @@ import java.lang.IllegalArgumentException;
 import java.util.Collection;
 import java.util.ArrayList;
 
-
 /**
  * Controller for any web crawler. Manages configuration and parts stream.
+ *
+ * How it works using crawler4j (move to wiki if we have one):
+ * crawler4j has the two classes CrawlController and WebCrawler.
+ * CrawlController's start method is run with the class type of a class that
+ * extends WebCrawler. WebCrawler has two methods to be overridden, one to find
+ * out which pages to visit and one that determines what to do with a visited
+ * page.
+ *
+ * Controller (this class) is a layer upon CrawlController. The primary purpose
+ * is to set up the Part collection and retrieving it from the crawler.
+ *
+ * ExtendedCrawler is a layer upon WebCrawler. The primary purpose is to
+ * include functionality for adding parts to a collection while crawling.
  */
 
 public class Controller<T extends ExtendedCrawler> {
@@ -44,9 +56,15 @@ public class Controller<T extends ExtendedCrawler> {
     }
 
     /**
+     * @return  The manufacturer id of the crawler that this controller controls.
+     */
+    public String getManufacturerId() {
+        return crawler.getManufacturerId();
+    }
+
+    /**
      * Starts the crawler. Blocking operation.
-     * Not re-entrant as it is only possible to build the stream once!
-     * @return  The stream of parts found by the crawler.
+     * @return  The collection of parts found by the crawler.
      */
     public Collection<Part> start() {
 
@@ -57,6 +75,9 @@ public class Controller<T extends ExtendedCrawler> {
 
     }
 
+    /**
+     * Safely stops the crawl controller.
+     */
     public void stop() {
         controller.shutdown();
         controller.waitUntilFinish();

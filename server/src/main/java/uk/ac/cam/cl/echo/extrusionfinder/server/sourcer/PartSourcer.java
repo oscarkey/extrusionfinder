@@ -9,7 +9,6 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.CrawlController
 import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.CrawlerException;
 import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.ExtendedCrawler;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,7 +99,10 @@ public class PartSourcer {
 
             try {
                 Collection<Part> parts = c.start();
-                logger.info("There are " + parts.size() + " parts.");
+                String msg = String.format("For manufacturer %s, found %d parts.",
+                    c.getManufacturerId(),
+                    parts.size());
+                logger.info(msg);
 
                 for (Part p : parts) {
                     dbManager.savePart(p);
