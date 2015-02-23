@@ -12,7 +12,6 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor.ProfileDetector;
 import uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor.ProfileFitting;
 
 import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
 import java.util.*;
 
 /**
@@ -71,7 +70,8 @@ public class ExtrusionFinder {
      * @return             List of best matches found in the database
      * @throws ItemNotFoundException Thrown if the Zernike Map or a part referenced by the Zernike Map is not in DB
      */
-    static List<MatchedPart> findMatches(ImageMatcher imageMatcher, IDBManager database, int maxResults) throws ItemNotFoundException {
+    static List<MatchedPart> findMatches(ImageMatcher imageMatcher, IDBManager database, int maxResults)
+            throws ItemNotFoundException {
         // Load the map of zernike moments from the database
         Set<Map.Entry<String, double[]>> zernikeMoments =
                 database.loadZernikeMap().getZernikeMap().entrySet();
