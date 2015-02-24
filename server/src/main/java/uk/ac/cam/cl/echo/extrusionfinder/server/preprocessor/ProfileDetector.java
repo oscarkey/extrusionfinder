@@ -5,6 +5,7 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.highgui.Highgui;
@@ -45,7 +46,7 @@ public class ProfileDetector {
 
         Mat imageStep;
 
-        Mat imageIn = new Mat(input.width, input.height, CvType.CV_8UC3);
+        Mat imageIn = new Mat(input.height, input.width, CvType.CV_8UC3);
         imageIn.put(0, 0, input.data);
 
         // Raw image, but resized to given diameter.
@@ -82,24 +83,39 @@ public class ProfileDetector {
 
         byte[] outData = new byte[imageOut.rows() * imageOut.cols()];
         imageOut.get(0, 0, outData);
-        return new GrayscaleImageData(outData, imageOut.rows(), imageOut.cols());
+        return new GrayscaleImageData(outData, imageOut.cols(), imageOut.rows());
     }
 
     /**
      * Returns a standardised version of the input image.
      * <p>
      * The returned image has both width and height equal equal to specified diameter.
+     * The image will be cropped to a square and then scaled.
      */
     private static Mat standardiseInput(Mat input, int diameter) {
+        int oldWidth = input.cols();
+        int oldHeight = input.rows();
+
+        Mat cropped;
+        if (oldWidth > oldHeight) {
+            int cropAmount = (oldWidth - oldHeight) / 2;
+            Rect region = new Rect(cropAmount, 0, oldHeight, oldHeight);
+            cropped = new Mat(input, region);
+        } else if (oldWidth < oldHeight) {
+            int cropAmount = (oldHeight - oldWidth) / 2;
+            Rect region = new Rect(0, cropAmount, oldWidth, oldWidth);
+            // region = new Rect(0, 0, oldWidth, oldHeight - 1);
+            cropped = new Mat(input, region);
+        } else {
+            cropped = input;
+        }
+
         Mat imageResized = new Mat();
-        Mat output = new Mat();
         Size newSize = new Size(diameter, diameter);
-        Imgproc.resize(input, imageResized, newSize);
+        Imgproc.resize(cropped, imageResized, newSize);
 
         // Assuming RGB image already.
-        output = imageResized;
-
-        return output;
+        return imageResized;
     }
 
     /**
@@ -163,11 +179,11 @@ public class ProfileDetector {
      * the diameter.
      */
     private static Mat fade(Mat input) {
-        int width = input.rows();
-        int height = input.cols();
+        int width = input.cols();
+        int height = input.rows();
         double diameter = input.rows();
         byte[] bytes = new byte[width * height];
-        Mat mask = new Mat(width, height, CvType.CV_8UC1);
+        Mat mask = new Mat(height, width, CvType.CV_8UC1);
 
         double r = diameter / 2.0;
         int i = 0;
