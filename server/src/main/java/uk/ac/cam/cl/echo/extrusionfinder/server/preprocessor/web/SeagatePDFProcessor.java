@@ -40,14 +40,13 @@ public class SeagatePDFProcessor {
      * Dear users of this class: Sorry about all the exceptions.
      * @param inputPDFPath           Address of pdf file to convert.
      * @param outputPNGPath          Address to write processed png file to
-     * @throws IOException
-     * @throws XMLStreamException
-     * @throws TranscoderException
-     * @throws InterruptedException
+     * @throws IOException           Thrown if files could not be loaded or written
+     * @throws TranscoderException   Thrown if the processed svg could not be converted to a png
+     * @throws InterruptedException  Thrown if the process was unable to wait for inkscape to complete
      * @throws ProfileNotFoundException When the profile cannot be detected, possibly due to a blank
      *         or empty image, or an unsupported diagramatic representation.
      */
-    public static void process(String inputPDFPath, String outputPNGPath) throws IOException, XMLStreamException, TranscoderException,
+    public static void process(String inputPDFPath, String outputPNGPath) throws IOException, TranscoderException,
             InterruptedException, ProfileNotFoundException {
         // Convert the pdf to an svg file written to 'intermediate.svg'. This svg has yet to be cleaned
         convertPdfToSvg(inputPDFPath, "intermediate.svg");
