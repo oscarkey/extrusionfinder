@@ -77,4 +77,9 @@ public class Part implements DatabaseItem {
             return false;
         }
     }
+
+    @Override
+    public int hashCode() {
+        return this._id.hashCode();
+    }
 }
