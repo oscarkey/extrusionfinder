@@ -31,9 +31,6 @@ public class Servlet implements IServlet {
     public List<MatchedPart> findMatches(String jsonImage) throws IOException, ItemNotFoundException {
         System.out.println("Endpoint hit");
 
-        // Android puts "" around its JSON, which crashes RESTEasy's parser, so remove them.
-//        jsonImage = jsonImage.replaceAll("\"", "");
-
         // Deserialize the uploaded json to an UploadedImage
         ObjectMapper mapper = new ObjectMapper();
         UploadedImage uploadedImage = mapper.readValue(jsonImage, UploadedImage.class);
