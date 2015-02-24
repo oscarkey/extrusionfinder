@@ -26,17 +26,20 @@ import java.io.*;
  * @author as2388
  * @author ashleynewson
  */
-public class SVG {
+public class SeagatePDFProcessor {
+
+    private SeagatePDFProcessor() {}
 
     static {
         nu.pattern.OpenCV.loadShared();
     }
 
     /**
-     * Converts a pdf file to a png file written to 'profile.png'
+     * Converts a pdf file to a png file, removing labels and applying fill in the process.
      * <p>
      * Dear users of this class: Sorry about all the exceptions.
-     * @param pdfPath                   Address of pdf file to convert.
+     * @param inputPDFPath           Address of pdf file to convert.
+     * @param outputPNGPath          Address to write processed png file to
      * @throws IOException
      * @throws XMLStreamException
      * @throws TranscoderException
@@ -44,10 +47,10 @@ public class SVG {
      * @throws ProfileNotFoundException When the profile cannot be detected, possibly due to a blank
      *         or empty image, or an unsupported diagramatic representation.
      */
-    public static void process(String pdfPath) throws IOException, XMLStreamException, TranscoderException,
+    public static void process(String inputPDFPath, String outputPNGPath) throws IOException, XMLStreamException, TranscoderException,
             InterruptedException, ProfileNotFoundException {
         // Convert the pdf to an svg file written to 'intermediate.svg'. This svg has yet to be cleaned
-        convertPdfToSvg(pdfPath, "intermediate.svg");
+        convertPdfToSvg(inputPDFPath, "intermediate.svg");
 
         // Load the raw svg into an SVGDocument
         String parser = XMLResourceDescriptor.getXMLParserClassName();
@@ -77,7 +80,7 @@ public class SVG {
         Mat croppedImage = autocrop_and_pallete(rawImage);
         Mat profile = fillProfile(croppedImage);
 
-        Highgui.imwrite("profile.png", profile);
+        Highgui.imwrite(outputPNGPath, profile);
     }
 
     /**
