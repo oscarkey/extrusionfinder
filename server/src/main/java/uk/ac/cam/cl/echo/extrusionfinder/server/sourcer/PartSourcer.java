@@ -1,9 +1,12 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.sourcer;
 
 import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Configuration;
+import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Manufacturers;
+import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Manufacturers.Name;
 import uk.ac.cam.cl.echo.extrusionfinder.server.database.IDBManager;
 import uk.ac.cam.cl.echo.extrusionfinder.server.database.MongoDBManager;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Manufacturer;
 import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.Controller;
 import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.CrawlControllerFactory;
 import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.CrawlerException;
@@ -12,9 +15,11 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.ExtendedCrawler
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Program that crawls plastic extrusion vendors for information about the
@@ -28,23 +33,40 @@ public class PartSourcer {
 
     /**
      * commandline invocation of the part sourcer.
+     * @param args  String array containing the arguments. First argument is the
+     *              name of the database where the parts are saved. If no argument,
+     *              use the default database name as specified in Configuration.
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
 
-        String dbName = args.length > 0 ? args[0] : "extrusionDB";
-        IDBManager db = new MongoDBManager(dbName);
-        db.clearDatabase();
+        String dbName = args.length > 0 ? args[0] : Configuration.DEFAULT_DATABASE_NAME;
 
-        // run the crawlers and put the found extrusions into the database
-        Collection<Controller<? extends ExtendedCrawler>> crs = getControllers();
-        updateDatabase(db, crs);
+        try {
+
+            IDBManager db = new MongoDBManager(dbName);
+            db.clearDatabase();
+
+            // run the crawlers and put the found extrusions into the database
+            Collection<Controller<? extends ExtendedCrawler>> crs = getControllers();
+            updateDatabase(db, crs);
+
+        } catch (UnknownHostException
+                |CrawlerException
+                |IllegalArgumentException e) {
+
+            logger.error(e.getLocalizedMessage());
+
+        }
 
     }
 
     /**
-     * @return  A collection of all currently written crawlers (ie. hardcoded)
+     * @return A collection of all crawlers as found in the static Manufacturers class.
+     * @throws CrawlerException         if the controller constructor failed.
+     * @throws IllegalArgumentException if the manufacturer seed array was empty.
      */
-    public static Collection<Controller<? extends ExtendedCrawler>> getControllers() {
+    public static Collection<Controller<? extends ExtendedCrawler>> getControllers()
+        throws CrawlerException, IllegalArgumentException {
 
         // initialise collection of website crawlers
 
@@ -52,35 +74,30 @@ public class PartSourcer {
             new ArrayList<Controller<? extends ExtendedCrawler>>();
 
         // get config options from Configuration file
-
         String dir = Configuration.getCrawlStorageFolder();
-        int dp = Configuration.getMaxCrawlDepth();
-        int pg = Configuration.getMaxCrawlPages();
-        Collection<? extends ExtendedCrawler> crawlers = Configuration.getCrawlers();
+        int maxDepth = Configuration.getMaxCrawlDepth();
+        int maxPages = Configuration.getMaxCrawlPages();
 
-        try {
+        // get manufacturers
+        Map<Name, Manufacturer> mans = Manufacturers.getAll();
 
-            for (ExtendedCrawler crawler : crawlers) {
+        for (Manufacturer manufacturer : mans.values()) {
 
-                // NOTE: must call CrawlControllerFactory again for each
-                // crawler! Each crawler must have their own CrawlController
-                // instance. (crawlcontroller is the crawler4j controller)
+            ExtendedCrawler crawler = manufacturer.getCrawler();
+            String[] seeds = manufacturer.getSeeds();
 
-                Controller<? extends ExtendedCrawler> c =
-                    new Controller<ExtendedCrawler>(
-                        CrawlControllerFactory.get(dir, dp, pg),
-                        crawler
-                    );
+            // NOTE: must call CrawlControllerFactory again for each
+            // crawler! Each crawler must have their own CrawlController
+            // instance. (crawlcontroller is the crawler4j controller)
 
-                controllers.add(c);
-            }
+            Controller<? extends ExtendedCrawler> c =
+                new Controller<ExtendedCrawler>(
+                    CrawlControllerFactory.get(dir, maxDepth, maxPages),
+                    crawler,
+                    seeds
+                );
 
-
-        } catch (CrawlerException | IllegalArgumentException e) {
-
-            logger.error(e.getLocalizedMessage());
-            System.exit(1);
-
+            controllers.add(c);
         }
 
         return controllers;
@@ -99,23 +116,19 @@ public class PartSourcer {
         for (Controller<? extends ExtendedCrawler> c : controllers) {
 
             try {
-                List<Part> parts = c.start();
-                String msg = String.format("For manufacturer %s, found %d parts.",
-                    c.getManufacturerId(),
-                    parts.size());
+                List<Part> parts = c.crawl();
+                String msg = String.format("Found %d parts.", parts.size());
                 logger.info(msg);
 
                 for (Part p : parts) {
                     dbManager.savePart(p);
                 }
 
-            } catch (Exception e) {
-
-                logger.error(e.getLocalizedMessage());
-                System.exit(1);
-
             } finally {
 
+                // cleanup; it's nice and safe and all, but not strictly
+                // necessary, since if run through the commandline, this
+                // program will be closing immediately afterwards anyway.
                 c.stop();
 
             }

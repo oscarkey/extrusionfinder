@@ -6,10 +6,19 @@ import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
-/* it's a factory!*/
+/**
+ * Static provider of CrawlControllers with the only configuration options we
+ * care about: storage folder, max crawl depth, max crawl pages.
+ * Other things can be configured, but we don't need that range of flexibility.
+ * Besides, setting up the CrawlController requires a lot of boilerplate code,
+ * so we just stow it away in this nice, little factory.
+ */
 public class CrawlControllerFactory {
 
     /**
+     * @param storageFolder Path to the directory where the intermediate crawl data is stored.
+     * @param maxCrawlDepth Maximum recursion level allowed. -1 for unlimited.
+     * @param maxCrawlPages Maximum number of pages to be visited. -1 for unlimited.
      * @return  Standard crawlcontroller
      */
     public static CrawlController get(

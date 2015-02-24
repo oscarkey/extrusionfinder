@@ -49,9 +49,8 @@ public class MetadataParser {
      * @param select    String CSS selector to determine searched elements.
      * @return          The inner text value of the first found result for the
      *                  given selector. If none found, the empty string.
-     *
-     * E.g. element contains <div class=hello>This is a value</div> and select
-     * is "div.hello" will return "This is a value".
+     *                  E.g. element contains <div class=hello>This is a value</div>
+     *                  and select is "div.hello" will return "This is a value".
      */
     public String selectSingleText(Element element, String select) {
 
@@ -69,9 +68,8 @@ public class MetadataParser {
      * @param attr      Name of the attribute
      * @return          The attribute value of the first found result for the
      *                  given selector. If none found, the empty string.
-     *
-     * E.g. element contains <div data="hey">This is a value</div> and select
-     * is "div" will return "hey".
+     *                  E.g. element contains <div data="hey">This is a value</div>
+     *                  and select is "div" will return "hey".
      */
     public String selectSingleAttr(Element element, String select, String attr) {
 

@@ -1,8 +1,11 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers;
 
+import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Manufacturers;
+import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Manufacturers.Name;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size.Unit;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size;
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Manufacturer;
 import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.metadata.MetadataParser;
 import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.metadata.MetadataParserException;
 
@@ -23,17 +26,11 @@ import org.jsoup.select.Elements;
 
 public class SeagateCrawler extends ExtendedCrawler {
 
-    /* Vendor specific unique id */
-    public static final String MANUFACTURER_ID = "1";
-
-    /* This is where we start our search */
-    private static final String[] SEEDS = { "http://seagateplastics.com/" };
-
-    /* We are not interested in entering pages with these file endings */
+    /* We are only interested in entering pages with these file endings */
     private final static Pattern FILTERS =
-        Pattern.compile(".*(\\.(css|js|gif|jpe?g|png|mp3|mp3|zip|gz|pdf))$");
+        Pattern.compile(".*(\\.html)$");
 
-    /* This pattern is used to find bad Seagate link (see details at usage) */
+    /* This pattern is used to find bad Seagate links (see details at usage) */
     private static final Pattern FAULTY_PDF_FILTER =
         Pattern.compile(".*[a-zA-Z0-9].pdf");
 
@@ -56,28 +53,35 @@ public class SeagateCrawler extends ExtendedCrawler {
      */
     private static List<Part> parts;
 
+    /* Vendor specific unique id */
+    private String manufacturerId;
+
+    /* We want to keep our search within this domain. */
+    private String domain;
+
+    /**
+     * Empty constructor for the crawler.
+     * Manufacturer id and start link is fetched from Manufacturers; cannot be
+     * done statically as the Manufacturers class uses the crawlers itself.
+     */
+    public SeagateCrawler() {
+
+        Manufacturer m = Manufacturers.get(Name.SEAGATE);
+        if (m != null) {
+            manufacturerId = m.getManufacturerId();
+            domain = m.getLink();
+        } else {
+            manufacturerId = "";
+            domain = "";
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void configure(List<Part> parts) {
         this.parts = parts;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String[] getSeeds() {
-        return SEEDS;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getManufacturerId() {
-        return MANUFACTURER_ID;
     }
 
     /**
@@ -90,7 +94,7 @@ public class SeagateCrawler extends ExtendedCrawler {
     public boolean shouldVisit(Page referringPage, WebURL url) {
 
         String href = url.getURL().toLowerCase();
-        return !FILTERS.matcher(href).matches() && (href.startsWith(SEEDS[0]));
+        return FILTERS.matcher(href).matches() && (href.startsWith(domain));
     }
 
     /**
@@ -102,49 +106,51 @@ public class SeagateCrawler extends ExtendedCrawler {
 
         String url = page.getWebURL().getURL();
 
+        // parsedata can be html, plaintext or binary. We only want html, since
+        // we need both images, links, and metadata.
         if (page.getParseData() instanceof HtmlParseData) {
             HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
 
             String html = htmlParseData.getHtml();
-            MetadataParser hp = new MetadataParser(html, url);
-            extractData(hp);
+            MetadataParser mp = new MetadataParser(html, url);
+            extractData(mp);
+            System.out.println(url);
         }
     }
 
     /* Extracts metadata from the page. Add found parts to the internal list
      * of parts.
      */
-    private void extractData(MetadataParser hp) {
+    private void extractData(MetadataParser mp) {
 
-        Elements productNodes = hp.getHtmlDoc().getElementsByClass("node");
+        Elements productNodes = mp.getHtmlDoc().getElementsByClass("node");
         for (Element productNode : productNodes) {
 
             // get the product code
-            String productId = hp.selectSingleText(productNode, "div.product-name");
+            String productId = mp.selectSingleText(productNode, "div.product-name");
             if (productId.isEmpty()) {
                 continue;
             }
             productId = productId.toUpperCase();
 
             // get the link to the product, deal with seagate's link problems
-            String link = hp.getLink(productNode);
+            String link = mp.getLink(productNode);
             link = fixLink(link);
 
             // get the image of the product
-            String image = hp.selectSingleAttr(productNode, "img[src]", "abs:src");
-            if (!image.isEmpty()) {
-                image = image.toLowerCase();
-            }
+            String image = mp.selectSingleAttr(productNode, "img[src]", "abs:src");
+            image = image.toLowerCase();
 
             // get the metadata of the product
             String description =
-                hp.selectSingleText(productNode, "div.product-description");
+                mp.selectSingleText(productNode, "div.product-description");
             Size size = extractSize(description);
 
             if (parts != null) {
-                Part p = new Part(MANUFACTURER_ID, productId, link, image, size,
+                Part p = new Part(manufacturerId, productId, link, image, size,
                     description);
                 parts.add(p);
+                System.out.println(p);
             }
         }
     }
@@ -156,7 +162,7 @@ public class SeagateCrawler extends ExtendedCrawler {
      * images_catalog/XYZ pdf (1).pdf
      * where XYZ is the product id. Some of their own (!) urls on their
      * website are wrong and don't include the " pdf (1)" at the
-     * end ... This is a temporary solution.
+     * end ... This is a "temporary" solution.
      */
     private String fixLink(String link) {
 
@@ -174,26 +180,25 @@ public class SeagateCrawler extends ExtendedCrawler {
      */
     private Size extractSize(String description) {
 
-        for (Pattern p : METADATA_FILTERS) {
+        for (Pattern pattern : METADATA_FILTERS) {
 
-            Matcher m = p.matcher(description);
-            if (m.find()) {
+            Matcher match = pattern.matcher(description);
+            if (match.find()) {
 
                 // group2 is first dim, group3 is second dim, group4 is unit
-                float dim1 = 0.0f;
-                float dim2 = 0.0f;
+                Float dim1 = null;
+                Float dim2 = null;
                 Unit unit = Unit.UNKNOWN;
 
                 try {
-                    unit = MetadataParser.stringToUnit(m.group(4));
-                    dim1 = MetadataParser.stringToFloat(m.group(2));
-                    dim2 = MetadataParser.stringToFloat(m.group(3));
+                    unit = MetadataParser.stringToUnit(match.group(4));
+                    dim1 = MetadataParser.stringToFloat(match.group(2));
+                    dim2 = MetadataParser.stringToFloat(match.group(3));
 
                 } catch (MetadataParserException e) {
-                    // ignore, they're set to 0.0f anyway
+                    // ignore, they're set to null anyway
                 }
-                Size ss = new Size(dim1,dim2,unit);
-                return ss;
+                return new Size(dim1, dim2, unit);
             }
         }
         return new Size();

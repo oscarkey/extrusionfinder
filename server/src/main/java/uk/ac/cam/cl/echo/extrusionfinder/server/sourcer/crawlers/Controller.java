@@ -31,17 +31,22 @@ public class Controller<T extends ExtendedCrawler> {
     private T crawler;
     private CrawlController controller;
 
+    /* should probably not be configurable as we don't really want to run
+     * the controllers multi-threaded; the crawler implementations are not
+     * quite thread-safe.
+     * (see the configure method, which sets a static field ...).
+     */
     private static final int NUMBER_OF_CRAWLERS = 1;
 
     /**
      * Constructor for crawler of type T, sets config/crawler settings.
      * @param controller    The internal crawlcontroller to run the crawler.
      * @param crawler       Dummy instance of the crawler.
+     * @param seeds         URL seeds with which to start the crawler.
      */
-    public Controller(final CrawlController controller, final T crawler)
-        throws IllegalArgumentException, CrawlerException {
+    public Controller(final CrawlController controller, final T crawler, final String[] seeds)
+        throws IllegalArgumentException {
 
-        String[] seeds = crawler.getSeeds();
         if (seeds.length == 0) {
             throw new IllegalArgumentException(
                 "Crawler must have at least one seed");
@@ -57,17 +62,10 @@ public class Controller<T extends ExtendedCrawler> {
     }
 
     /**
-     * @return  The manufacturer id of the crawler that this controller controls.
-     */
-    public String getManufacturerId() {
-        return crawler.getManufacturerId();
-    }
-
-    /**
-     * Starts the crawler. Blocking operation.
+     * Runs the crawler. Blocking operation.
      * @return  The collection of parts found by the crawler.
      */
-    public List<Part> start() {
+    public List<Part> crawl() {
 
         List<Part> parts = new ArrayList<Part>();
         crawler.configure(parts);

@@ -17,15 +17,4 @@ public abstract class ExtendedCrawler extends WebCrawler {
      * staticness of the crawler4j implementation.
      */
     public abstract void configure(List<Part> parts);
-
-    /**
-     * @return  URL seeds for this crawler.
-     */
-    public abstract String[] getSeeds();
-
-    /**
-     * @return  The unique manufacturer id.
-     */
-    public abstract String getManufacturerId();
-
 }

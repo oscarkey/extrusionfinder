@@ -21,13 +21,14 @@ public class Configuration {
     public static final int PROFILE_DETECTION_STANDARD_BILATERAL_FILTER_BLUR_DIAMETER = 8;
     public static final int PROFILE_DETECTION_STANDARD_BILATERAL_FILTER_SIGMA = 15;
 
+    /* Crawler configuration.
+     * Need to have getters to allow mocking in tests.
+     * Max crawl depth and max crawl pages can be -1 if there is no upper limit.
+     */
     private static final String CRAWL_STORAGE_FOLDER = "crawlerdata/root";
     private static final int MAX_CRAWL_DEPTH = 5;
     private static final int MAX_CRAWL_PAGES = -1;
-    private static final Collection<? extends ExtendedCrawler> CRAWLERS =
-        new ArrayList<ExtendedCrawler>(Arrays.asList(
-            new SeagateCrawler()
-        ));
+
 
     private Configuration(){}
 
@@ -52,10 +53,4 @@ public class Configuration {
         return MAX_CRAWL_PAGES;
     }
 
-    /**
-     * @return  The collection of manufacturer-specific crawlers to be run.
-     */
-    public static Collection<? extends ExtendedCrawler> getCrawlers() {
-        return CRAWLERS;
-    }
 }

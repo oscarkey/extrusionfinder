@@ -3,7 +3,10 @@ package uk.ac.cam.cl.echo.extrusionfinder.server.sourcer;
 import org.junit.Test;
 
 import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Configuration;
+import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Manufacturers;
+import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Manufacturers.Name;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Manufacturer;
 import uk.ac.cam.cl.echo.extrusionfinder.server.database.MongoDBManager;
 import uk.ac.cam.cl.echo.extrusionfinder.server.database.IDBManager;
 import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.Controller;
@@ -15,6 +18,8 @@ import edu.uci.ics.crawler4j.crawler.CrawlController;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Collection;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -34,12 +39,14 @@ import static org.powermock.api.easymock.PowerMock.*;
  */
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Configuration.class, CrawlControllerFactory.class})
+@PrepareForTest({Configuration.class, Manufacturers.class, CrawlControllerFactory.class})
 public class PartSourcerTester {
 
     /**
      * Tests the updateDatabase() method, which starts all the crawlers and
      * saves all the found parts to the database.
+     * Suppresses unchecked warning due to mocking generic class (Controller)
+     * without typing its parameter.
      * NOTE: uses mockito!
      */
     @Test
@@ -60,15 +67,15 @@ public class PartSourcerTester {
         // create mock of parts returned by the both controllers when run
         List<Part> fakeparts = new ArrayList<Part>();
         fakeparts.add(mock(Part.class));
-        when(c1.start()).thenReturn(fakeparts);
-        when(c2.start()).thenReturn(fakeparts);
+        when(c1.crawl()).thenReturn(fakeparts);
+        when(c2.crawl()).thenReturn(fakeparts);
 
         // run the method!
         PartSourcer.updateDatabase(dbManager, controllers);
 
         // assert that the required methods are invoked
-        verify(c1).start();
-        verify(c2).start();
+        verify(c1).crawl();
+        verify(c2).crawl();
         verify(dbManager, times(2)).savePart(any(Part.class));
     }
 
@@ -77,29 +84,37 @@ public class PartSourcerTester {
      * options and the configured crawlers, and initialises controllers for
      * each.
      * NOTE: uses powermock! (due to mocking static methods)
+     *
+     * Suppresses unchecked warning due to mocking generic class (Controller)
+     * without typing its parameter.
      */
     @Test
     @SuppressWarnings("unchecked")
     public void testGetControllers() throws Exception{
 
         mockStatic(Configuration.class);
+        mockStatic(Manufacturers.class);
         mockStatic(CrawlControllerFactory.class);
 
         // our dummy/mocked objects
-        ExtendedCrawler crawler = createMock(ExtendedCrawler.class);
-        Collection crawlers = new ArrayList<ExtendedCrawler>();
-        crawlers.add(crawler);
         CrawlController crawlcontroller = createMock(CrawlController.class);
+        ExtendedCrawler crawler = createMock(ExtendedCrawler.class);
+        Manufacturer manufacturer = createMock(Manufacturer.class);
+        Map manufacturers = new HashMap<Name, Manufacturer>();
+        manufacturers.put(Name.SEAGATE, manufacturer);
 
         // expect calls to configuration
         expect(Configuration.getCrawlStorageFolder()).andReturn("foo");
         expect(Configuration.getMaxCrawlDepth()).andReturn(1);
         expect(Configuration.getMaxCrawlPages()).andReturn(2);
-        expect(Configuration.getCrawlers()).andReturn(crawlers);
+        expect(Manufacturers.getAll()).andReturn(manufacturers);
+
+        // when retrieving crawler from manufacturer, return mocked crawler
+        expect(manufacturer.getCrawler()).andReturn(crawler);
+        expect(manufacturer.getSeeds()).andReturn(new String[] { "bar" });
 
         // expect constructors/factory calls for controller and crawlcontroller
-        expect(CrawlControllerFactory.get("foo",1,2)).andReturn(crawlcontroller);
-        expect(crawler.getSeeds()).andReturn(new String[] {"bar"});
+        expect(CrawlControllerFactory.get("foo", 1, 2)).andReturn(crawlcontroller);
         crawlcontroller.addSeed("bar");
         expectLastCall().once();
 

@@ -103,7 +103,9 @@ public class Part implements DatabaseItem {
                     part.manufacturerId.equals(manufacturerId) &&
                     part.partId.equals(partId) &&
                     part.link.equals(link) &&
-                    part.imageLink.equals(imageLink);
+                    part.imageLink.equals(imageLink) &&
+                    part.size.equals(size) &&
+                    part.description.equals(description);
         } else {
             return false;
         }
@@ -116,6 +118,7 @@ public class Part implements DatabaseItem {
 
     @Override
     public String toString() {
-        return "EXTRUSION-ID: " + _id + "; Description: " + description + ", Size: " + size;
+        return String.format("EXTRUSION-ID: %s; Description: %s, Size: %s",
+            _id, description, size);
     }
 }

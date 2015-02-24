@@ -62,7 +62,6 @@ public class MongoDBManagerTester {
         try {
             Part loadedPart = dbManager.loadPart("id_test");
             assertTrue(loadedPart.equals(part));
-            assertTrue(loadedPart.getSize().equals(size));
         } catch (ItemNotFoundException e) {
             fail("Part just saved not found in database");
         }

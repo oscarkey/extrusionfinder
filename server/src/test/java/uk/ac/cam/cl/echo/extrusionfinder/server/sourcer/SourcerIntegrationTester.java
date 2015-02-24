@@ -8,6 +8,7 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Configuration;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size.Unit;
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Manufacturer;
 import uk.ac.cam.cl.echo.extrusionfinder.server.database.MongoDBManager;
 import uk.ac.cam.cl.echo.extrusionfinder.server.database.IDBManager;
 import uk.ac.cam.cl.echo.extrusionfinder.server.database.ItemNotFoundException;
@@ -35,15 +36,18 @@ import static org.powermock.api.easymock.PowerMock.*;
  * not usually for just building the project.
  */
 
+/* The PowerMockIgnore below apparently prevents some weird things from failing
+ * in the mock class loader. For more (but not much more) information, see:
+ * https://code.google.com/p/powermock/issues/detail?id=277
+ */
+@PowerMockIgnore({"javax.management.*"})
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ Configuration.class} )
-@PowerMockIgnore( {"javax.management.*"}) // this prevents some weird exception ...
 public class SourcerIntegrationTester {
 
     private static final String TEMP_FOLDER = "crawlerdata/crawlertest";
     private static final String DB_NAME = "test";
     private MongoDBManager dbManager;
-    private Collection crawlers;
     private File folder;
 
     @Before
@@ -52,7 +56,6 @@ public class SourcerIntegrationTester {
         dbManager.clearDatabase();
         folder = new File(TEMP_FOLDER);
         folder.mkdir();
-        crawlers = Configuration.getCrawlers();
     }
 
     /**
@@ -61,27 +64,27 @@ public class SourcerIntegrationTester {
      * totally unrobust against changes on the manufacturer's websites).
      * Functionality of all other components should be tested in the other
      * (unit) tests.
+     * Currently only testing results of Seagate.
      */
     @Test
-    @SuppressWarnings("unchecked")
-    public void testPartSourcer() throws Exception {
+
+    public void testPartSourcer() {
 
         mockStatic(Configuration.class);
 
         expect(Configuration.getCrawlStorageFolder()).andReturn(TEMP_FOLDER);
         expect(Configuration.getMaxCrawlDepth()).andReturn(-1);
         expect(Configuration.getMaxCrawlPages()).andReturn(20);
-        expect(Configuration.getCrawlers()).andReturn(crawlers);
 
         replayAll();
 
         PartSourcer.main(new String[] { DB_NAME });
         try {
-            Part p1= dbManager.loadPart("1SG1551");
-            Part p2= dbManager.loadPart("1SG1222");
-            Part p3= dbManager.loadPart("1SG1678");
-            Part p4= dbManager.loadPart("1SG2511");
-            Part p5= dbManager.loadPart("1SG1832");
+            Part p1= dbManager.loadPart("SG000SG1551");
+            Part p2= dbManager.loadPart("SG000SG1222");
+            Part p3= dbManager.loadPart("SG000SG1678");
+            Part p4= dbManager.loadPart("SG000SG2511");
+            Part p5= dbManager.loadPart("SG000SG1832");
 
             Size s1 = new Size(2.340f, Unit.IN);
             Size s2 = new Size();
