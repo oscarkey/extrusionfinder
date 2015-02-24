@@ -5,6 +5,9 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size.Unit;
 import java.lang.Float;
 import java.lang.Integer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -17,6 +20,9 @@ import org.jsoup.Jsoup;
  */
 
 public class MetadataParser {
+
+    private static final Logger logger =
+        LoggerFactory.getLogger(MetadataParser.class);
 
     private Document htmlDoc;
     private String url;
@@ -163,6 +169,7 @@ public class MetadataParser {
                 return Unit.MM;
 
             default:
+                logger.info("Unknown unit: " + s);
                 return Unit.UNKNOWN;
         }
     }

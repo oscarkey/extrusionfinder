@@ -24,6 +24,7 @@ public class PartTester {
 
         assertTrue(new Part("a", "b", "c", "d", new Size(), "desc").equals(a));
 
+        assertTrue(!new Part("a", "b", "c", "d").equals(a));
         assertTrue(!new Part("A", "b", "c", "d", new Size(), "desc").equals(a));
         assertTrue(!new Part("b", "B", "c", "d", new Size(), "desc").equals(a));
         assertTrue(!new Part("b", "b", "C", "d", new Size(), "desc").equals(a));

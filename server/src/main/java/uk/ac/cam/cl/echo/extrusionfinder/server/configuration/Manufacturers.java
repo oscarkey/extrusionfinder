@@ -6,6 +6,11 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.SeagateCrawler;
 import java.util.Map;
 import java.util.HashMap;
 
+/**
+ * Static getters for manufacturers. In here, we configure which manufacturers
+ * we consider in finding our extrusion parts.
+ */
+
 public class Manufacturers {
 
     public enum Name {
@@ -27,10 +32,17 @@ public class Manufacturers {
 
     }
 
+    /**
+     * @return  Map over all manufacturers that we consider in our part matching.
+     */
     public static Map<Name, Manufacturer> getAll() {
         return MANUFACTURERS;
     }
 
+    /**
+     * @param   Name of the manufacturer company.
+     * @return  Manufacturer instance of the company.
+     */
     public static Manufacturer get(Name name) {
         return MANUFACTURERS.get(name);
     }
