@@ -24,7 +24,7 @@ import java.io.*;
  * Provides facilites for coverting a pdf to a preprocessed svg.
  *
  * @author as2388
- * //TODO @author Ashley Newson
+ * @author ashleynewson
  */
 public class SVG {
 
@@ -41,7 +41,8 @@ public class SVG {
      * @throws XMLStreamException
      * @throws TranscoderException
      * @throws InterruptedException
-     * @throws ProfileNotFoundException
+     * @throws ProfileNotFoundException When the profile cannot be detected, possibly due to a blank
+     *         or empty image, or an unsupported diagramatic representation.
      */
     public static void process(String pdfPath) throws IOException, XMLStreamException, TranscoderException,
             InterruptedException, ProfileNotFoundException {
@@ -126,10 +127,12 @@ public class SVG {
     }
 
     /**
-     * TODO
-     * @param input
-     * @return
-     * @throws ProfileNotFoundException
+     * Crops out all transparent space, and produces a binary 8-bit image of the input.
+     *
+     * @param input The extrusion diagram, currently only supports Seagate Plastics diagrams.
+     * @return An 8-bit binarised image with 1 pixel thick transpareny border around diagram. The
+     *         pixel values are 255 for outline and 0 for background.
+     * @throws ProfileNotFoundException Thrown when the image is all transparent or empty.
      */
     private static Mat autocrop_and_pallete(Mat input) throws ProfileNotFoundException {
         int width  = input.cols();
@@ -186,9 +189,12 @@ public class SVG {
     }
 
     /**
-     * TODO
-     * @param input
-     * @return
+     * Fills the perceived interior of the extrusion using the diagram's outline.
+     *
+     * @param input An image of the outline of the extrusion profile, where 255 represents the 
+     *        outline, and 0 represents the background.
+     * @return A binary image of the profile area, where 255 represents profile area, and 0 
+     *         represents the background.
      */
     private static Mat fillProfile(Mat input) {
         int width  = input.cols();
