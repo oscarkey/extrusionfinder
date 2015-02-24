@@ -1,32 +1,8 @@
-//import org.apache.tools.ant.taskdefs.condition.Os;
-
 apply plugin: 'java'
 apply plugin: 'war'
 
 sourceCompatibility = 1.8
 version = '1.0'
-
-//Here we detect the os and whether the system is 32 or 64 bit and set the binary dependency classifier for opencv appropriately
-//we can see al the different classifications here - http://repo1.maven.org/maven2/org/bytedeco/javacpp-presets/opencv/2.4.9-0.9/
-//See different os names here
-//ext {
-//    if (Os.isFamily(Os.FAMILY_UNIX)) {
-//        os = 'linux'
-//    }
-//    if (Os.isFamily(Os.FAMILY_MAC)) {
-//        os = 'macosx'
-//    }
-//    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-//        os = 'windows'
-//    }
-//    arch = System.getProperty("os.arch");
-//
-//    if(arch == 'amd64'){
-//        arch = 'x86_64'
-//    }
-//    opencvBinaryClassifer = os+'-'+arch;
-//
-//}
 
 repositories {
     mavenCentral()
@@ -52,18 +28,12 @@ dependencies {
 
     // OpenCV (used for image preprocessing)
     compile 'nu.pattern:opencv:2.4.9-7'
-//    compile group: 'org.bytedeco', name: 'javacv', version: '0.9'
-//    compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '2.4.9-0.9', classifier: opencvBinaryClassifer
-//    compile group: 'org.bytedeco.javacpp-presets', name: 'ffmpeg', version: '2.3-0.9', classifier: opencvBinaryClassifer
-//    compile group: 'org.bytedeco.javacpp-presets', name: 'libdc1394', version: '2.2.2-0.9', classifier: opencvBinaryClassifer
 
     // Batik (SVG manipulation library)
     compile 'batik:batik:1.5'
     compile 'batik:batik-svg-dom:1.6-1'
     compile 'batik:batik-svggen:1.6-1'
-    compile ('batik:batik-transcoder:1.6-1') {
-        exclude group: 'fop', module: 'fop'
+    compile('batik:batik-transcoder:1.6-1') {
+        exclude group: 'fop', module: 'fop' // Program crashes if this dependency is included
     }
-
-    compile files("./opencv/build/java/opencv-249.jar")
 }
