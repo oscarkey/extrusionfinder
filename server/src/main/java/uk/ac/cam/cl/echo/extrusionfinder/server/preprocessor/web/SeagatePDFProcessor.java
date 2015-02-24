@@ -16,6 +16,7 @@ import org.opencv.imgproc.Imgproc;
 import org.w3c.dom.Node;
 import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGPathElement;
+import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Configuration;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.*;
@@ -93,7 +94,7 @@ public class SeagatePDFProcessor {
      */
     private static void convertPdfToSvg(String input, String output) throws IOException, InterruptedException {
         // Convert pdf with inkscape
-        String inkscapeLocation = "inkscape";
+        String inkscapeLocation = Configuration.INKSCAPE_LOCATION;
         ProcessBuilder pb = new ProcessBuilder(inkscapeLocation, "-l", output, input);
         Process p = pb.start();
         p.waitFor();
