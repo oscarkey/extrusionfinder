@@ -24,7 +24,7 @@ dependencies {
     // MongoDB driver (used for interfacing with MongoDB)
     compile 'org.mongodb:mongo-java-driver:2.12.2'
 
-    // MongoJack (used for converting Java objects into MongoDB's format
+    // MongoJack (used for converting Java objects into MongoDB's format)
     compile 'org.mongojack:mongojack:2.0.0'
 
     // OpenCV, (used for image preprocessing)
