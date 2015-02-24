@@ -152,21 +152,22 @@ public class MongoDBManagerTester {
     }
 
     @Test
-    public void testSaveList() {
+    public void testSaveSet() {
         dbManager.clearDatabase();
 
         // Save a list of parts into the database
-        List<Part> parts = new ArrayList<>();
+        Set<Part> parts = new HashSet<>();
         parts.add(new Part("id_test0", "", "", "link", "imageL"));
         parts.add(new Part("id_test1", "", "", "link", "imageL"));
+        parts.add(new Part("id_test0", "", "", "link", "imageL"));
         dbManager.saveParts(parts);
 
         // test that the parts can now be correctly loaded from the database
         try {
             Part loadedPart = dbManager.loadPart("id_test0");
-            assertTrue(loadedPart.equals(parts.get(0)));
+            assertTrue(loadedPart.equals(parts.toArray()[0]) || loadedPart.equals(parts.toArray()[1]));
             loadedPart = dbManager.loadPart("id_test1");
-            assertTrue(loadedPart.equals(parts.get(1)));
+            assertTrue(loadedPart.equals(parts.toArray()[0]) || loadedPart.equals(parts.toArray()[1]));
         } catch (ItemNotFoundException e) {
             fail("Part just saved not found in database");
         }
@@ -178,11 +179,14 @@ public class MongoDBManagerTester {
         // test that the parts can now be correctly loaded from the database
         try {
             Part loadedPart = dbManager.loadPart("id_test0");
-            assertTrue(loadedPart.equals(parts.get(0)));
+            assertTrue(loadedPart.equals(parts.toArray()[0]) || loadedPart.equals(parts.toArray()[1]) ||
+                    loadedPart.equals(parts.toArray()[2]));
             loadedPart = dbManager.loadPart("id_test1");
-            assertTrue(loadedPart.equals(parts.get(1)));
+            assertTrue(loadedPart.equals(parts.toArray()[0]) || loadedPart.equals(parts.toArray()[1]) ||
+                    loadedPart.equals(parts.toArray()[2]));
             loadedPart = dbManager.loadPart("id_test2");
-            assertTrue(loadedPart.equals(parts.get(2)));
+            assertTrue(loadedPart.equals(parts.toArray()[0]) || loadedPart.equals(parts.toArray()[1]) ||
+                    loadedPart.equals(parts.toArray()[2]));
         } catch (ItemNotFoundException e) {
             fail("Part just saved not found in database");
         }

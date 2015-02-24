@@ -7,8 +7,8 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
 import uk.ac.cam.cl.echo.extrusionfinder.server.zernike.ZernikeMap;
 
 import java.net.UnknownHostException;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -60,7 +60,7 @@ public class MongoDBManager implements IDBManager {
      * @param parts List of parts to insert.
      */
     @Override
-    public void saveParts(List<Part> parts) {
+    public void saveParts(Set<Part> parts) {
         partManager.save(parts);
     }
 
