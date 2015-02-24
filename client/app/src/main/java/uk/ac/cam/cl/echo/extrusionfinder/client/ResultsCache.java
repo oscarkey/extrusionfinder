@@ -78,7 +78,7 @@ public class ResultsCache {
      * @param image The ImageData to look up in this request
      * @return the uuid of the new request
      */
-    public String putRequest(RGBImageData image) {
+    public synchronized String putRequest(RGBImageData image) {
         String uuid = UUID.randomUUID().toString();
         request = new ResultRequest(uuid, image);
         return uuid;
@@ -89,7 +89,7 @@ public class ResultsCache {
      * @param uuid The id of the request
      * @param results The list of results to store
      */
-    public void putResults(String uuid, List<Result> results) {
+    public synchronized void putResults(String uuid, List<Result> results) {
         // only store the results if they are for the current request
         if(isDesiredRequest(uuid)) {
             request.putResults(results);
@@ -101,7 +101,7 @@ public class ResultsCache {
      * @param uuid the id to test
      * @return true if we do have this request, else false
      */
-    public boolean hasRequest(String uuid) {
+    public synchronized boolean hasRequest(String uuid) {
         return isDesiredRequest(uuid);
     }
 
@@ -110,7 +110,7 @@ public class ResultsCache {
      * @param uuid id of the request
      * @return true if we do have results else false
      */
-    public boolean hasResults(String uuid) {
+    public synchronized boolean hasResults(String uuid) {
         // check if we have any request, if it's the right request and if it has results
         return (isDesiredRequest(uuid) && request.hasResults());
     }
@@ -120,7 +120,7 @@ public class ResultsCache {
      * @param uuid id of the request
      * @return ImageData representing the image, null if we don't have this request
      */
-    public RGBImageData getImage(String uuid) {
+    public synchronized RGBImageData getImage(String uuid) {
         // only return the image if this is the right request
         if(isDesiredRequest(uuid)) {
             return request.getImage();
@@ -135,7 +135,7 @@ public class ResultsCache {
      * @param uuid the id
      * @return the results or null if they're aren't any for this uuid
      */
-    public List<Result> getResults(String uuid) {
+    public synchronized List<Result> getResults(String uuid) {
         // only return the results if this is the right uuid
         if(isDesiredRequest(uuid)) {
             return request.getResults();
@@ -150,7 +150,7 @@ public class ResultsCache {
      * @param uuid the uuid to test
      * @return true if there is a request else false
      */
-    private boolean isDesiredRequest(String uuid) {
+    private synchronized boolean isDesiredRequest(String uuid) {
         return (request != null && request.getRequestUuid().equals(uuid));
     }
 
@@ -158,7 +158,7 @@ public class ResultsCache {
      * Tries to load the results from the cache file
      * @return A ResultSet containing the results
      */
-    private synchronized ResultRequest loadFromFile() {
+    private ResultRequest loadFromFile() {
         // find the path of the cache file
         File cacheFile = getCacheFile();
 
