@@ -18,4 +18,19 @@ public class RGBImageData extends ImageData<byte[]> {
     public RGBImageData(byte[] data, int width, int height) {
         super(data, width, height);
     }
+
+    /**
+     * Load an RGB image from a file.
+     */
+    public RGBImageData(String filename) throws ImageLoadException {
+        Mat input = Highgui.imread(filename, 0);
+        Imgproc.cvtColor(input, input, Imgproc.COLOR_BGR2RGB);
+        width = input.cols();
+        height = input.rows();
+        if (width == 0 || height == 0) {
+            throw new ImageLoadException();
+        }
+        data = new byte[width * height * 3];
+        input.get(0, 0, data);
+    }
 }
