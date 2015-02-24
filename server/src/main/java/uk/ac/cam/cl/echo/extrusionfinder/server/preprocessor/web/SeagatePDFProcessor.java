@@ -63,16 +63,19 @@ public class SeagatePDFProcessor {
         removeLabels(svg);
 
         // Rasterize, and write out to file system as a png
-        PNGTranscoder transcoder = new PNGTranscoder();
-        transcoder.addTranscodingHint(PNGTranscoder.KEY_WIDTH, (float) 4096); //scale to increase resolution
-        transcoder.addTranscodingHint(PNGTranscoder.KEY_HEIGHT, (float) 4096);
-        TranscoderInput input = new TranscoderInput(svg);
         OutputStream os = new FileOutputStream("cleaned.png");
-        TranscoderOutput output = new TranscoderOutput(os);
+        try {
+            PNGTranscoder transcoder = new PNGTranscoder();
+            transcoder.addTranscodingHint(PNGTranscoder.KEY_WIDTH, (float) 4096); //scale to increase resolution
+            transcoder.addTranscodingHint(PNGTranscoder.KEY_HEIGHT, (float) 4096);
+            TranscoderInput input = new TranscoderInput(svg);
+            TranscoderOutput output = new TranscoderOutput(os);
 
-        transcoder.transcode(input, output);
-        os.flush();
-        os.close();
+            transcoder.transcode(input, output);
+        } finally {
+            os.flush();
+            os.close();
+        }
 
         // Load the saved cleaned image as greyscale bytes.
         Mat rawImage = Highgui.imread("cleaned.png", -1);
