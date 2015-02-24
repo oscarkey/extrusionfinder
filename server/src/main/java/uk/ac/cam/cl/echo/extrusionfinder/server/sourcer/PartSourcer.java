@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.UnknownHostException;
 import java.util.Collection;
+import java.util.Set;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +33,7 @@ public class PartSourcer {
         LoggerFactory.getLogger(PartSourcer.class);
 
     /**
-     * commandline invocation of the part sourcer.
+     * Commandline invocation of the part sourcer.
      * @param args  String array containing the arguments. First argument is the
      *              name of the database where the parts are saved. If no argument,
      *              use the default database name as specified in Configuration.
@@ -69,7 +70,6 @@ public class PartSourcer {
         throws CrawlerException, IllegalArgumentException {
 
         // initialise collection of website crawlers
-
         Collection<Controller<? extends ExtendedCrawler>> controllers =
             new ArrayList<Controller<? extends ExtendedCrawler>>();
 
@@ -116,7 +116,7 @@ public class PartSourcer {
         for (Controller<? extends ExtendedCrawler> c : controllers) {
 
             try {
-                List<Part> parts = c.crawl();
+                Set<Part> parts = c.crawl();
                 String msg = String.format("Found %d parts.", parts.size());
                 logger.info(msg);
 

@@ -11,6 +11,7 @@ import edu.uci.ics.crawler4j.url.WebURL;
 import java.io.File;
 import java.lang.IllegalArgumentException;
 import java.util.List;
+import java.util.Set;
 
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
 
@@ -41,7 +42,7 @@ public class ControllerTester {
             new Controller<ExtendedCrawler>(crawlController, crawler, seeds);
 
         // test running the controller - invoking the right methods
-        List st = controller.crawl();
+        Set st = controller.crawl();
         verify(crawlController, atLeastOnce()).addSeed(any(String.class));
 
         // any argument of type Class<T>; need to do this in an unchecked way

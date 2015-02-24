@@ -5,25 +5,22 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
 
 import java.lang.IllegalArgumentException;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 
 /**
- * Controller for any web crawler. Manages configuration and parts stream.
+ * <p>Controller for any web crawler. Manages configuration and parts stream.</p>
  *
- * How it works using crawler4j:
- * crawler4j has the two classes CrawlController and WebCrawler.
+ * <p>How it works using crawler4j:</p>
+ * <p>crawler4j has the two classes CrawlController and WebCrawler.
  * CrawlController's start method is run with the class type of a class that
- * extends WebCrawler. WebCrawler has two methods to be overridden:
+ * extends WebCrawler.</p>
  *
- *  - boolean shouldVisit(page, url) which returns true if the page should be visited.
- *  - void visit(page) which determines what is done when visiting a page.
+ * <p>Controller (this class) is a layer upon CrawlController. The primary purpose
+ * is to set up the Part collection and retrieve it from the crawler.</p>
  *
- * Controller (this class) is a layer upon CrawlController. The primary purpose
- * is to set up the Part collection and retrieving it from the crawler.
- *
- * ExtendedCrawler is a layer upon WebCrawler. The primary purpose is to
- * include functionality for adding parts to a collection while crawling.
+ * <p>ExtendedCrawler is a layer upon WebCrawler. The primary purpose is to
+ * include functionality for adding parts to a collection while crawling.</p>
  */
 
 public class Controller<T extends ExtendedCrawler> {
@@ -31,10 +28,10 @@ public class Controller<T extends ExtendedCrawler> {
     private T crawler;
     private CrawlController controller;
 
-    /* should probably not be configurable as we don't really want to run
+    /* This should probably not be configurable as we don't really want to run
      * the controllers multi-threaded; the crawler implementations are not
-     * quite thread-safe.
-     * (see the configure method, which sets a static field ...).
+     * quite written for thread-safety anyway.
+     * (see the configure method).
      */
     private static final int NUMBER_OF_CRAWLERS = 1;
 
@@ -63,11 +60,11 @@ public class Controller<T extends ExtendedCrawler> {
 
     /**
      * Runs the crawler. Blocking operation.
-     * @return  The collection of parts found by the crawler.
+     * @return  The set of parts found by the crawler.
      */
-    public List<Part> crawl() {
+    public Set<Part> crawl() {
 
-        List<Part> parts = new ArrayList<Part>();
+        Set<Part> parts = new HashSet<Part>();
         crawler.configure(parts);
         controller.start(crawler.getClass(), NUMBER_OF_CRAWLERS);
         return parts;
@@ -75,7 +72,8 @@ public class Controller<T extends ExtendedCrawler> {
     }
 
     /**
-     * Safely stops the crawl controller.
+     * Safely stops the crawl controller. Cleans up resources, most useful when
+     * the CrawlController is multi-threaded, so not too relevant for us.
      */
     public void stop() {
         controller.shutdown();

@@ -15,7 +15,7 @@ import edu.uci.ics.crawler4j.url.WebURL;
 
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
-import java.util.List;
+import java.util.Set;
 
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -48,10 +48,10 @@ public class SeagateCrawler extends ExtendedCrawler {
             Pattern.compile("(("+ F +")( )(MM|IN)) (.*)")
     };
 
-    /* This is the stream that we manipulate via side effects.
+    /* This is the set that we manipulate via side effects.
      * Note that if used, it HAS to be assigned with configure method.
      */
-    private static List<Part> parts;
+    private static Set<Part> parts;
 
     /* Vendor specific unique id */
     private String manufacturerId;
@@ -80,7 +80,7 @@ public class SeagateCrawler extends ExtendedCrawler {
      * {@inheritDoc}
      */
     @Override
-    public void configure(List<Part> parts) {
+    public void configure(Set<Part> parts) {
         this.parts = parts;
     }
 
