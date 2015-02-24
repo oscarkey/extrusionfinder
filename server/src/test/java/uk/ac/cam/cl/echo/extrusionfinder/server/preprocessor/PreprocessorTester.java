@@ -22,9 +22,9 @@ public class PreprocessorTester {
 
         ProfileDetector detector = new ProfileDetector();
 
-        GrayscaleImageData outData = detector.process(new RGBImageData(inData, in.rows(), in.cols()));
+        GrayscaleImageData outData = detector.process(new RGBImageData(inData, in.cols(), in.rows()));
         
-        Mat out = new Mat(outData.width, outData.height, CvType.CV_8UC1);
+        Mat out = new Mat(outData.height, outData.width, CvType.CV_8UC1);
         out.put(0, 0, outData.data);
         Highgui.imwrite(outFile, out);
     }
@@ -36,7 +36,7 @@ public class PreprocessorTester {
         byte[] inData = new byte[in.rows() * in.cols()];
         in.get(0, 0, inData);
 
-        ProfileFitting fitting = new ProfileFitting(new GrayscaleImageData(inData, in.rows(), in.cols()));
+        ProfileFitting fitting = new ProfileFitting(new GrayscaleImageData(inData, in.cols(), in.rows()));
 
         Point2D centre = fitting.getCentre();
         System.out.printf("Centre: (%s, %s)\nSize: %s\n", centre.getX(), centre.getY(), fitting.getRadius());

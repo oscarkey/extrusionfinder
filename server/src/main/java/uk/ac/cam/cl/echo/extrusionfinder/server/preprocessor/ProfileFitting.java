@@ -43,7 +43,7 @@ public class ProfileFitting {
         width = input.width;
         height = input.height;
 
-        Mat imageIn = new Mat(width, height, CvType.CV_8UC1);
+        Mat imageIn = new Mat(height, width, CvType.CV_8UC1);
         imageIn.put(0, 0, input.data);
 
         // Find image size and centre.
