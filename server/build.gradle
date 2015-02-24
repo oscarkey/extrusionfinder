@@ -26,6 +26,14 @@ dependencies {
     // MongoJack (used for converting Java objects into MongoDB's format)
     compile 'org.mongojack:mongojack:2.0.0'
 
-    // OpenCV, (used for image preprocessing)
-    compile 'nu.pattern:opencv:2.4.9-5'
+    // OpenCV (used for image preprocessing)
+    compile 'nu.pattern:opencv:2.4.9-7'
+
+    // Batik (SVG manipulation library)
+    compile 'batik:batik:1.5'
+    compile 'batik:batik-svg-dom:1.6-1'
+    compile 'batik:batik-svggen:1.6-1'
+    compile('batik:batik-transcoder:1.6-1') {
+        exclude group: 'fop', module: 'fop' // Program crashes if this dependency is included
+    }
 }
