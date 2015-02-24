@@ -53,7 +53,8 @@ public class CommsService extends IntentService {
     }
 
     public CommsService() {
-        super("CommsService");
+        // init the superclass giving the name we want for the worker thread
+        super(LOG_TAG);
     }
 
     @Override
