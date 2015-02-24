@@ -53,8 +53,8 @@ public class ResultsActivity extends ActionBarActivity {
         listView = (ListView) findViewById(R.id.resultsListView);
 
         // initially show a progress bar/spinner
-        ProgressBar progressBar = (ProgressBar) findViewById(R.id.resultsProgressBar);
-        listView.setEmptyView(progressBar);
+        ProgressBar progressSpinner = (ProgressBar) findViewById(R.id.resultsProgressBar);
+        listView.setEmptyView(progressSpinner);
 
         // set up a broadcast receiver so we are notified when new results arrive
         setupBroadcastReceiver();
