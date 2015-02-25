@@ -5,7 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import uk.ac.cam.cl.groupecho.extrusionfinder.R;
 
@@ -14,7 +17,7 @@ import uk.ac.cam.cl.groupecho.extrusionfinder.R;
  * Subclass of ArrayAdapter for connecting an array of Results to a list view
  */
 public class ResultsAdapter extends ArrayAdapter<Result> {
-    private final Result[] results;
+    private Result[] results;
     private final LayoutInflater layoutInflater;
 
     public ResultsAdapter(Context context, Result[] results) {
@@ -40,8 +43,25 @@ public class ResultsAdapter extends ArrayAdapter<Result> {
             convertView = layoutInflater.inflate(R.layout.list_item_results, null);
         }
 
+        Result result = results[position];
+
+        // set the part id/name
         TextView partIdText = (TextView) convertView.findViewById(R.id.resultListItemPartName);
-        partIdText.setText(results[position].getId());
+        partIdText.setText(result.getId());
+
+        // set the image
+        ImageView imageView = (ImageView)convertView.findViewById(R.id.resultListItemImage);
+        if(result.hasImageLink()) {
+            // use picasso to display the image
+            Picasso.with(getContext())
+                    .load(result.getImageLink())
+                    .placeholder(R.drawable.blank)
+                    .into(imageView);
+        }
+        else {
+            // use a placeholder
+            imageView.setImageResource(R.drawable.blank);
+        }
 
         return convertView;
     }

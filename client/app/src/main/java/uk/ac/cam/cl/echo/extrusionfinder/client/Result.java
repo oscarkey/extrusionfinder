@@ -9,6 +9,7 @@ import java.io.Serializable;
  * Basic, immutable data structure to hold the part data of one result
  */
 public class Result implements Serializable {
+    // properties given by server
     @SerializedName("_id")
     private final String id;
     private String manufacturerId;
@@ -39,6 +40,10 @@ public class Result implements Serializable {
 
     public String getImageLink() {
         return imageLink;
+    }
+
+    public boolean hasImageLink() {
+        return (imageLink != null);
     }
 
     public String getDescription() {
