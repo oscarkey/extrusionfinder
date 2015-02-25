@@ -19,14 +19,9 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.zernike.Zernike;
 import uk.ac.cam.cl.echo.extrusionfinder.server.zernike.ZernikeMap;
 import uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor.ProfileFitting;
 import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.GrayscaleImageData;
+import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.ImageLoadException;
 import uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor.web.SeagatePDFProcessor;
 import uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor.web.ProfileNotFoundException;
-
-import org.opencv.core.Core;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.highgui.Highgui;
-import org.opencv.imgproc.Imgproc;
 import java.awt.geom.Point2D;
 
 import org.slf4j.Logger;
@@ -190,19 +185,14 @@ public class PartSourcer {
                     SeagatePDFProcessor.process(pdfPath, imgPath);
 
                     // create grayscaleimage from the png image
-                    Mat input = Highgui.imread(imgPath);
-                    Mat output = new Mat();
-                    Imgproc.cvtColor(input, output, Imgproc.COLOR_RGB2GRAY);
-                    byte[] inData = new byte[output.rows() * output.cols()];
-                    output.get(0, 0, inData);
-
-                    gsid = new GrayscaleImageData(inData, output.cols(), output.rows());
+                    gsid = GrayscaleImageData.load(imgPath);
 
                 } catch (IOException
                         |FileUtilityException
                         |TranscoderException
                         |InterruptedException
-                        |ProfileNotFoundException e) {
+                        |ProfileNotFoundException
+                        |ImageLoadException e) {
 
                    logger.error(e.getMessage());
                 }
