@@ -47,8 +47,11 @@ public class Servlet implements IServlet {
 
         System.out.println("returning");
         List<MatchedPart> results = new LinkedList<>();
-        results.add(new MatchedPart(new Part("SG00", "SG", "00", "link", "imagelink"), 0.05));
-        results.add(new MatchedPart(new Part("SG01", "SG", "01", "link", "imagelink"), 0.09));
+        results.add(new MatchedPart(new Part("SG1971", "SG", "1971", "link",
+                "http://seagateplastics.com/stock_plastics_catalog/images_catalog/sg1971.jpg"), 0.05));
+        results.add(new MatchedPart(new Part("SG2022", "SG", "2022", "link",
+                "http://seagateplastics.com/stock_plastics_catalog/images_catalog/sg2022.jpg"), 0.23));
+        results.add(new MatchedPart(new Part("SG01", "SG", "01", "link", null), 0.09));
         return results;
     }
 }
