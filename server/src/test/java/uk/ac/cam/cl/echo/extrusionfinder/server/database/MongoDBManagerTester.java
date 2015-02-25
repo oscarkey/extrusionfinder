@@ -155,37 +155,44 @@ public class MongoDBManagerTester {
     }
 
     @Test
-    public void testSaveList() {
+    public void testSaveSet() {
         dbManager.clearDatabase();
 
-        // Save a list of parts into the database
-        List<Part> parts = new ArrayList<>();
-        parts.add(new Part("id_test0", "", "", "link", "imageL"));
-        parts.add(new Part("id_test1", "", "", "link", "imageL"));
+        // Save a set of parts into the database
+        Set<Part> parts = new HashSet<>();
+        Part p0 = new Part("id", "test0", "link", "image");
+        Part p1 = new Part("id", "test1", "link", "image");
+        Part p2 = new Part("id", "test2", "link", "image");
+        Part p3 = new Part("id", "test0", "link", "imagel");
+
+        parts.add(p0);
+        parts.add(p1);
         dbManager.saveParts(parts);
 
         // test that the parts can now be correctly loaded from the database
         try {
-            Part loadedPart = dbManager.loadPart("id_test0");
-            assertTrue(loadedPart.equals(parts.get(0)));
-            loadedPart = dbManager.loadPart("id_test1");
-            assertTrue(loadedPart.equals(parts.get(1)));
+            Part loadedPart = dbManager.loadPart("idtest0");
+            assertTrue(loadedPart.equals(p0));
+            loadedPart = dbManager.loadPart("idtest1");
+            assertTrue(loadedPart.equals(p1));
         } catch (ItemNotFoundException e) {
             fail("Part just saved not found in database");
         }
 
-        // Check that saving the same parts does not now cause an error
-        parts.add(new Part("id_test2", "", "", "link", "imageL"));
+        // Check that saving a duplicate id part does not now cause an error
+        parts.add(p2);
+   //     parts.add(p3);
         dbManager.saveParts(parts);
 
         // test that the parts can now be correctly loaded from the database
+        // and that the duplicate overwrote the original entry
         try {
-            Part loadedPart = dbManager.loadPart("id_test0");
-            assertTrue(loadedPart.equals(parts.get(0)));
-            loadedPart = dbManager.loadPart("id_test1");
-            assertTrue(loadedPart.equals(parts.get(1)));
-            loadedPart = dbManager.loadPart("id_test2");
-            assertTrue(loadedPart.equals(parts.get(2)));
+            Part loadedPart = dbManager.loadPart("idtest0");
+            assertTrue(loadedPart.equals(p0));
+            loadedPart = dbManager.loadPart("idtest1");
+  //          assertTrue(loadedPart.equals(p3)); // duplicate overwrite!
+            loadedPart = dbManager.loadPart("idtest2");
+            assertTrue(loadedPart.equals(p2));
         } catch (ItemNotFoundException e) {
             fail("Part just saved not found in database");
         }

@@ -15,11 +15,14 @@ import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
  */
 public class CrawlControllerFactory {
 
+    private CrawlControllerFactory(){}
+
     /**
      * @param storageFolder Path to the directory where the intermediate crawl data is stored.
      * @param maxCrawlDepth Maximum recursion level allowed. -1 for unlimited.
      * @param maxCrawlPages Maximum number of pages to be visited. -1 for unlimited.
      * @return  Standard crawlcontroller
+     * @throws CrawlerException If the CrawlController constructor failed
      */
     public static CrawlController get(
         String storageFolder,

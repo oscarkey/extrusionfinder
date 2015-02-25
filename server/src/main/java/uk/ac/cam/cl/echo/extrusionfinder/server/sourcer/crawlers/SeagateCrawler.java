@@ -6,8 +6,8 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size.Unit;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Manufacturer;
-import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.metadata.MetadataParser;
-import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.metadata.MetadataParserException;
+import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.util.MetadataParser;
+import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.util.MetadataParserException;
 
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
@@ -118,7 +118,8 @@ public class SeagateCrawler extends ExtendedCrawler {
         }
     }
 
-    /* Extracts metadata from the page. Add found parts to the internal list
+    /**
+     * Extracts metadata from the page. Add found parts to the internal list
      * of parts.
      */
     private void extractData(MetadataParser mp) {

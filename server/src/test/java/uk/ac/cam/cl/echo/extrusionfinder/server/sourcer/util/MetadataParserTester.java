@@ -1,4 +1,4 @@
-package uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.metadata;
+package uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.util;
 
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size.Unit;
 

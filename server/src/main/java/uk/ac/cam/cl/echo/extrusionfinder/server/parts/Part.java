@@ -21,6 +21,8 @@ public class Part implements DatabaseItem {
      * @param partId         Part identifier used by manufacturer
      * @param link           Link to part on manufacturer's website
      * @param imageLink      Link to an image of the parts
+     * @param size           Size of the part
+     * @param description    Miscellaneous metadata information
      */
     @JsonCreator
     public Part(@JsonProperty("_id") String _id,
@@ -118,7 +120,7 @@ public class Part implements DatabaseItem {
 
     @Override
     public String toString() {
-        return String.format("EXTRUSION-ID: %s; Description: %s, Size: %s",
+        return String.format("EXTRUSION-ID: %s; Description: %s; Size: %s",
             _id, description, size);
     }
 }

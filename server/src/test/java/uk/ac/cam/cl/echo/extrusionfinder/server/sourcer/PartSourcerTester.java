@@ -11,6 +11,7 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.Controller;
 import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.CrawlControllerFactory;
 import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.CrawlerException;
 import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.ExtendedCrawler;
+import uk.ac.cam.cl.echo.extrusionfinder.server.zernike.ZernikeMap;
 
 import edu.uci.ics.crawler4j.crawler.CrawlController;
 import java.util.ArrayList;
@@ -80,7 +81,8 @@ public class PartSourcerTester {
         // assert that the required methods are invoked
         verify(c1).crawl();
         verify(c2).crawl();
-        verify(dbManager, times(2)).savePart(part);
+        verify(dbManager, times(2)).saveParts(fakeparts);
+        verify(dbManager, times(2)).saveZernikeMap(any(ZernikeMap.class));
     }
 
     /**

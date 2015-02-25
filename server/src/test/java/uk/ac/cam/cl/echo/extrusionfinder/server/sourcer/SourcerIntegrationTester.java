@@ -12,6 +12,7 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Manufacturer;
 import uk.ac.cam.cl.echo.extrusionfinder.server.database.MongoDBManager;
 import uk.ac.cam.cl.echo.extrusionfinder.server.database.IDBManager;
 import uk.ac.cam.cl.echo.extrusionfinder.server.database.ItemNotFoundException;
+import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.util.FileUtility;
 
 import edu.uci.ics.crawler4j.crawler.CrawlController;
 import java.util.Collection;
@@ -48,14 +49,12 @@ public class SourcerIntegrationTester {
     private static final String TEMP_FOLDER = "crawlerdata/crawlertest";
     private static final String DB_NAME = "test";
     private MongoDBManager dbManager;
-    private File folder;
 
     @Before
     public void setUp() throws UnknownHostException {
         dbManager = new MongoDBManager(DB_NAME);
         dbManager.clearDatabase();
-        folder = new File(TEMP_FOLDER);
-        folder.mkdir();
+        FileUtility.makeDir(TEMP_FOLDER);
     }
 
     /**
@@ -72,6 +71,7 @@ public class SourcerIntegrationTester {
 
         mockStatic(Configuration.class);
 
+        expect(Configuration.getCrawlStorageFolder()).andReturn(TEMP_FOLDER);
         expect(Configuration.getCrawlStorageFolder()).andReturn(TEMP_FOLDER);
         expect(Configuration.getMaxCrawlDepth()).andReturn(-1);
         expect(Configuration.getMaxCrawlPages()).andReturn(20);
@@ -121,26 +121,7 @@ public class SourcerIntegrationTester {
     @After
     public void tearDown() {
         dbManager.clearDatabase();
-        delete(folder);
-    }
-
-    // delete a directory: http://stackoverflow.com/a/3775718
-    private static void delete(File path) {
-        if (path.exists()) {
-            File[] files = path.listFiles();
-
-            if (files != null) {
-                for (int i = 0; i < files.length; i++) {
-
-                    if(files[i].isDirectory()) {
-                        delete(files[i]);
-                    } else {
-                        files[i].delete();
-                    }
-                }
-            }
-        }
-        path.delete();
+        FileUtility.delete(TEMP_FOLDER);
     }
 }
 

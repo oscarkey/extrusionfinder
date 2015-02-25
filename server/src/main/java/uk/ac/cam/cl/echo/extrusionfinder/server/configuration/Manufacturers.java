@@ -40,7 +40,7 @@ public class Manufacturers {
     }
 
     /**
-     * @param   Name of the manufacturer company.
+     * @param name  Name of the manufacturer company.
      * @return  Manufacturer instance of the company.
      */
     public static Manufacturer get(Name name) {

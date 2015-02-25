@@ -1,4 +1,4 @@
-package uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.metadata;
+package uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.util;
 
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size.Unit;
 
@@ -74,8 +74,9 @@ public class MetadataParser {
      * @param attr      Name of the attribute
      * @return          The attribute value of the first found result for the
      *                  given selector. If none found, the empty string.
-     *                  E.g. element contains <div data="hey">This is a value</div>
+     *                  E.g. element contains [div data="hey"]This is a value[/div]
      *                  and select is "div" will return "hey".
+     *                  (pretend [ and ] are pointy brackets in the above example)
      */
     public String selectSingleAttr(Element element, String select, String attr) {
 
@@ -116,6 +117,7 @@ public class MetadataParser {
     }
 
     /**
+     * @param s String to convert to float
      * @return  Float parsed from the string.
      * @throws MetadataParserException  if it was not possible to parse the string.
      */
@@ -135,6 +137,7 @@ public class MetadataParser {
     }
 
     /**
+     * @param s String to convert to int
      * @return  Int parsed from the string.
      * @throws MetadataParserException  if it was not possible to parse the string.
      */
@@ -154,6 +157,7 @@ public class MetadataParser {
     }
 
     /**
+     * @param s String to convert to unit
      * @return  Size.Unit corresponding to the string.
      */
     public static Unit stringToUnit(String s) {

@@ -11,7 +11,7 @@ import java.util.Set;
 public abstract class ExtendedCrawler extends WebCrawler {
 
     /**
-     * @param parts The set that extrusion parts are added to.
+     * @param parts         The set that extrusion parts are added to.
      * Should update subclass with the parts set such that the subclass puts
      * its results in the set. Kind of hacky, but necessary due to the
      * staticness of the crawler4j implementation.

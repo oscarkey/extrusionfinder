@@ -92,7 +92,7 @@ public class Size {
     }
 
     /**
-     * @ return Unit of the size measurements.
+     * @return Unit of the size measurements.
      */
     public Unit getUnit() {
         return unit;

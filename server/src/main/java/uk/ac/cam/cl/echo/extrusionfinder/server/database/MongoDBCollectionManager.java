@@ -3,7 +3,9 @@ package uk.ac.cam.cl.echo.extrusionfinder.server.database;
 import com.mongodb.BasicDBObject;
 import org.mongojack.JacksonDBCollection;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Provides facilities for saving and loading objects of type T from a specified MongoDB
@@ -34,15 +36,18 @@ class MongoDBCollectionManager<T extends DatabaseItem> {
     }
 
     /**
-     * Saves a list of items into the MongoDB collection
-     * @param items List of items to save
+     * Saves a set of items into the MongoDB collection
+     * @param items Set of items to save
      */
-    public void save(List<T> items) {
+    public void save(Set<T> items) {
         for (T item : items) {
             collection.removeById(item.get_id());
         }
 
-        collection.insert(items);
+        List<T> list = new ArrayList<>();
+        list.addAll(items);
+
+        collection.insert(list);
     }
 
     /**

@@ -6,12 +6,16 @@ import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.powermock.api.easymock.PowerMock.*;
 
 
@@ -29,6 +33,25 @@ import static org.powermock.api.easymock.PowerMock.*;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(CrawlControllerFactory.class)
 public class CrawlControllerFactoryTester {
+
+    /**
+     * <p>
+     * Tests constructor for full intellij coverage.
+     * Note that it doesn't check for privacy; this is because the PrepareForTest
+     * annotation sets all private constructors to public for, well, testing purposes.
+     * PrepareForTest is needed for the other tests.
+     * </p>
+     * Besides, unit testing is really for runtime testing, and instantiating
+     * a CrawlControllerFactory elsewhere would create a compile-time error.
+     */
+    @Test
+    public void testConstructor() throws Exception {
+
+        Constructor constructor = CrawlControllerFactory.class.getDeclaredConstructor();
+        Object c = constructor.newInstance();
+        assertTrue(c instanceof CrawlControllerFactory);
+
+    }
 
     /**
      * Tests that the CrawlController getter calls all the expected methods
