@@ -7,8 +7,8 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
 import uk.ac.cam.cl.echo.extrusionfinder.server.zernike.ZernikeMap;
 
 import java.net.UnknownHostException;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -16,6 +16,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  * This implementation uses MongoDB. Many instances of MongoDBManager can be created; all will share the
  * same connection. This manager keeps a static, in-memory thread-safe cache of zernike maps
+ *
+ * @author as2388
  */
 public class MongoDBManager implements IDBManager {
     private final String databaseName;
@@ -60,7 +62,7 @@ public class MongoDBManager implements IDBManager {
      * @param parts List of parts to insert.
      */
     @Override
-    public void saveParts(List<Part> parts) {
+    public void saveParts(Set<Part> parts) {
         partManager.save(parts);
     }
 
