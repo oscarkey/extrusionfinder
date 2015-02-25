@@ -39,7 +39,9 @@ public class Servlet implements IServlet {
                 uploadedImage.getData(), uploadedImage.getWidth(), uploadedImage.getHeight()
         );
 
-	System.out.println("decoded");
+        rgbImage.save("test.png");
+
+        System.out.println("decoded");
 
         // Find and return the best matches
         return ExtrusionFinder.findMatches(
