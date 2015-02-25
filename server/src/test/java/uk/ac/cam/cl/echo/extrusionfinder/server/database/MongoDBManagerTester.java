@@ -5,6 +5,8 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Configuration;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size;
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size.Unit;
 import uk.ac.cam.cl.echo.extrusionfinder.server.zernike.ZernikeMap;
 
 import java.lang.reflect.Constructor;
@@ -50,7 +52,8 @@ public class MongoDBManagerTester {
         }
 
         // create a new part and insert it into the database
-        Part part = new Part("id_test", "", "", "link", "imageL");
+        Size size = new Size(2.3f, 0.856f, Unit.IN);
+        Part part = new Part("id_test", "", "", "link", "imageL", size, "");
         dbManager.savePart(part);
 
         // test that the part can now be correctly loaded from the database
@@ -62,7 +65,7 @@ public class MongoDBManagerTester {
         }
 
         // insert a new part which has the same identifier. This should succeed: test by loading from database
-        part = new Part("id_test", "", "", "link2", "imageLink2");
+        part = new Part("id_test", "", "", "link2", "imageLink2", new Size(), "");
         dbManager.savePart(part);
         try {
             Part loadedPart = dbManager.loadPart("id_test");
@@ -155,38 +158,41 @@ public class MongoDBManagerTester {
     public void testSaveSet() {
         dbManager.clearDatabase();
 
-        // Save a list of parts into the database
+        // Save a set of parts into the database
         Set<Part> parts = new HashSet<>();
-        parts.add(new Part("id_test0", "", "", "link", "imageL"));
-        parts.add(new Part("id_test1", "", "", "link", "imageL"));
-        parts.add(new Part("id_test0", "", "", "link", "imageL"));
+        Part p0 = new Part("id", "test0", "link", "image");
+        Part p1 = new Part("id", "test1", "link", "image");
+        Part p2 = new Part("id", "test2", "link", "image");
+        Part p3 = new Part("id", "test0", "link", "imagel");
+
+        parts.add(p0);
+        parts.add(p1);
         dbManager.saveParts(parts);
 
         // test that the parts can now be correctly loaded from the database
         try {
-            Part loadedPart = dbManager.loadPart("id_test0");
-            assertTrue(loadedPart.equals(parts.toArray()[0]) || loadedPart.equals(parts.toArray()[1]));
-            loadedPart = dbManager.loadPart("id_test1");
-            assertTrue(loadedPart.equals(parts.toArray()[0]) || loadedPart.equals(parts.toArray()[1]));
+            Part loadedPart = dbManager.loadPart("idtest0");
+            assertTrue(loadedPart.equals(p0));
+            loadedPart = dbManager.loadPart("idtest1");
+            assertTrue(loadedPart.equals(p1));
         } catch (ItemNotFoundException e) {
             fail("Part just saved not found in database");
         }
 
-        // Check that saving the same parts does not now cause an error
-        parts.add(new Part("id_test2", "", "", "link", "imageL"));
+        // Check that saving a duplicate id part does not now cause an error
+        parts.add(p2);
+   //     parts.add(p3);
         dbManager.saveParts(parts);
 
         // test that the parts can now be correctly loaded from the database
+        // and that the duplicate overwrote the original entry
         try {
-            Part loadedPart = dbManager.loadPart("id_test0");
-            assertTrue(loadedPart.equals(parts.toArray()[0]) || loadedPart.equals(parts.toArray()[1]) ||
-                    loadedPart.equals(parts.toArray()[2]));
-            loadedPart = dbManager.loadPart("id_test1");
-            assertTrue(loadedPart.equals(parts.toArray()[0]) || loadedPart.equals(parts.toArray()[1]) ||
-                    loadedPart.equals(parts.toArray()[2]));
-            loadedPart = dbManager.loadPart("id_test2");
-            assertTrue(loadedPart.equals(parts.toArray()[0]) || loadedPart.equals(parts.toArray()[1]) ||
-                    loadedPart.equals(parts.toArray()[2]));
+            Part loadedPart = dbManager.loadPart("idtest0");
+            assertTrue(loadedPart.equals(p0));
+            loadedPart = dbManager.loadPart("idtest1");
+  //          assertTrue(loadedPart.equals(p3)); // duplicate overwrite!
+            loadedPart = dbManager.loadPart("idtest2");
+            assertTrue(loadedPart.equals(p2));
         } catch (ItemNotFoundException e) {
             fail("Part just saved not found in database");
         }
@@ -217,3 +223,4 @@ public class MongoDBManagerTester {
         dbManager.clearDatabase();
     }
 }
+

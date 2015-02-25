@@ -14,7 +14,9 @@ public class MatchedPart extends Part {
                 p.getManufacturerId(),
                 p.getPartId(),
                 p.getLink(),
-                p.getImageLink()
+                p.getImageLink(),
+                p.getSize(),
+                p.getDescription()
         );
 
         this.confidence = confidence;

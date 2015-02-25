@@ -58,7 +58,7 @@ public class ExtrusionFinder {
         Point2D center = fitter.getCentre();
 
         // Having processed the image, find matches
-        return findMatches(new ImageMatcher(grayscaleImageData, Configuration.DEFULT_ZERNIKE_DEGREE, center, radius),
+        return findMatches(new ImageMatcher(grayscaleImageData, Configuration.DEFAULT_ZERNIKE_DEGREE, center, radius),
                 database, maxResults);
     }
 

@@ -20,7 +20,7 @@ public class SeagatePDFProcessorTester {
      * @throws TranscoderException
      * @throws IOException
      */
-    @Test
+//    @Test
     public void testSVG() throws InterruptedException, XMLStreamException, ProfileNotFoundException,
             TranscoderException, IOException {
         SeagatePDFProcessor.process("src/test/resources/in.pdf", "profile.png");

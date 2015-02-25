@@ -32,7 +32,12 @@ public class SeagatePDFProcessor {
     private SeagatePDFProcessor() {}
 
     static {
-        nu.pattern.OpenCV.loadShared();
+	System.out.println("here is a loading message definitely produced by me");
+        try {
+		nu.pattern.OpenCV.loadShared();
+	} catch (Throwable e) {
+		System.out.println("actually, was already loaded. for grep: loading");
+	}
     }
 
     /**
@@ -49,6 +54,8 @@ public class SeagatePDFProcessor {
      */
     public static void process(String inputPDFPath, String outputPNGPath) throws IOException, TranscoderException,
             InterruptedException, ProfileNotFoundException {
+	System.out.println("Processing " + inputPDFPath);
+
         // Convert the pdf to an svg file written to 'intermediate.svg'. This svg has yet to be cleaned
         convertPdfToSvg(inputPDFPath, "intermediate.svg");
 
@@ -84,6 +91,8 @@ public class SeagatePDFProcessor {
         Mat profile = fillProfile(croppedImage);
 
         Highgui.imwrite(outputPNGPath, profile);
+
+	System.out.println("Processed " + inputPDFPath);
     }
 
     /**
