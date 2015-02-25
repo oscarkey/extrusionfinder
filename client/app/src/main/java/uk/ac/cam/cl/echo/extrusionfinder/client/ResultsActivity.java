@@ -115,7 +115,7 @@ public class ResultsActivity extends ActionBarActivity {
     private void displayResults(List<Result> results) {
         // create a list adapter with the results and attach it to the list
         ResultsAdapter resultsAdapter = new ResultsAdapter(this,
-                results.toArray(new Result[results.size()]));
+                results.toArray(new Result[0]));
         listView.setAdapter(resultsAdapter);
     }
 
@@ -173,14 +173,15 @@ public class ResultsActivity extends ActionBarActivity {
             public void onReceive(Context context, Intent intent) {
                 // determine the action of the intent
                 switch(intent.getAction()) {
-                    case CommsService.ACTION_RESULTS_RECEIVED:
+                    case CommsService.ACTION_RESULTS_RECEIVED: {
                         // check that the results are the ones we want
                         if(resultsCache.hasResults(requestUuid)) {
                             // display them
                             displayResults(resultsCache.getResults(requestUuid));
                         }
                         break;
-                    case CommsService.ACTION_REQUEST_ERROR:
+                    }
+                    case CommsService.ACTION_REQUEST_ERROR: {
                         // check that this error is about a request we care about
                         String uuid = intent.getStringExtra(CommsService.EXTRA_REQUEST_UUID);
                         if(uuid.equals(requestUuid)) {
@@ -188,6 +189,8 @@ public class ResultsActivity extends ActionBarActivity {
                                     CommsService.EXTRA_REQUEST_ERROR_TYPE, -1);
                             displayError(errorType);
                         }
+                        break;
+                    }
                 }
 
             }

@@ -43,7 +43,8 @@ public class CommsService extends IntentService {
      * Starts this service to request results with the given image. If
      * the service is already performing a task this action will be queued.
      *
-     * @see IntentService
+     * @param context
+     * @param uuid id of the request to load results for
      */
     public static void startActionRequestResults(Context context, String uuid) {
         Intent intent = new Intent(context, CommsService.class);
@@ -81,9 +82,12 @@ public class CommsService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
             final String action = intent.getAction();
-            if (ACTION_REQUEST_RESULTS.equals(action)) {
-                final String uuid = intent.getStringExtra(EXTRA_REQUEST_UUID);
-                handleActionRequestResults(uuid);
+            switch(action) {
+                case ACTION_REQUEST_RESULTS: {
+                    String uuid = intent.getStringExtra(EXTRA_REQUEST_UUID);
+                    handleActionRequestResults(uuid);
+                    break;
+                }
             }
         }
     }
