@@ -23,6 +23,15 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.GrayscaleImageData;
  * Extracts extrusion cross-section profile.
  */
 public class ProfileDetector {
+    static {
+        System.out.println("here is a loading message definitely produced by me");
+        try {
+            nu.pattern.OpenCV.loadShared();
+        } catch (Throwable e) {
+            System.out.println("actually, was already loaded. for grep: loading");
+        }
+    }
+
     /**
      * Creates a profile detector.
      * <p>

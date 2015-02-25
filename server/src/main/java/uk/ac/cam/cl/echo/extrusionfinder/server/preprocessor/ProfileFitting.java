@@ -23,6 +23,15 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.GrayscaleImageData;
  * Finds profile centre and radius.
  */
 public class ProfileFitting {
+    static {
+        System.out.println("here is a loading message definitely produced by me");
+        try {
+            nu.pattern.OpenCV.loadShared();
+        } catch (Throwable e) {
+            System.out.println("actually, was already loaded. for grep: loading");
+        }
+    }
+
     private int width;
     private int height;
     private Point centre;
