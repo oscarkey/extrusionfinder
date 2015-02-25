@@ -39,19 +39,21 @@ public class Servlet implements IServlet {
                 uploadedImage.getData(), uploadedImage.getWidth(), uploadedImage.getHeight()
         );
 
-        // Find and return the best matches
-//        return ExtrusionFinder.findMatches(
-//                rgbImage, new MongoDBManager(Configuration.DEFAULT_DATABASE_NAME),
-//                Configuration.DEFAULT_NUMBER_OF_MATCHES
-//        );
+	System.out.println("decoded");
 
-        System.out.println("returning");
+        // Find and return the best matches
+        return ExtrusionFinder.findMatches(
+                rgbImage, new MongoDBManager(Configuration.DEFAULT_DATABASE_NAME),
+                Configuration.DEFAULT_NUMBER_OF_MATCHES
+        );
+
+/*        System.out.println("returning");
         List<MatchedPart> results = new LinkedList<>();
         results.add(new MatchedPart(new Part("SG1971", "SG", "1971", "link",
                 "http://seagateplastics.com/stock_plastics_catalog/images_catalog/sg1971.jpg"), 0.05));
         results.add(new MatchedPart(new Part("SG2022", "SG", "2022", "link",
                 "http://seagateplastics.com/stock_plastics_catalog/images_catalog/sg2022.jpg"), 0.23));
         results.add(new MatchedPart(new Part("SG01", "SG", "01", "link", null), 0.09));
-        return results;
+        return results;*/
     }
 }
