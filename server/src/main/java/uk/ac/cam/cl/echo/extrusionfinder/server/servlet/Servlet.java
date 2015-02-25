@@ -31,6 +31,13 @@ public class Servlet implements IServlet {
     public List<MatchedPart> findMatches(String jsonImage) throws IOException, ItemNotFoundException {
         System.out.println("Endpoint hit");
 
+        try {
+            nu.pattern.OpenCV.loadShared();
+        } catch (Throwable e) {}
+
+
+        System.out.println("library loaded");
+
         // Deserialize the uploaded json to an UploadedImage
         ObjectMapper mapper = new ObjectMapper();
         UploadedImage uploadedImage = mapper.readValue(jsonImage, UploadedImage.class);
