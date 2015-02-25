@@ -1,11 +1,21 @@
 apply plugin: 'java'
-apply plugin: 'war'
+//apply plugin: 'war'
 
 sourceCompatibility = 1.8
 version = '1.0'
 
 repositories {
     mavenCentral()
+}
+
+jar {
+    archiveName = "crawler.jar"
+    from {configurations.compile.collect {it.isDirectory() ? it : zipTree(it) }}
+
+    manifest {
+        attributes 'Main-Class' : 'uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.PartSourcer'
+    }
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
 }
 
 dependencies {
