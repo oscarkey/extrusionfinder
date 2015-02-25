@@ -14,6 +14,8 @@ import org.opencv.imgproc.Imgproc;
  * Pixels are stored row by row in left-to-right, top-to-bottom order.
  */
 public class RGBImageData extends ImageData<byte[]> {
+
+
     /**
      * Construct an image with the given RGB byte data, width and height.
      *
@@ -52,6 +54,10 @@ public class RGBImageData extends ImageData<byte[]> {
      * @param filename Path to save the image to. Extension implies image format.
      */
     public void save(String filename) {
+        try {
+            nu.pattern.OpenCV.loadShared();
+        } catch (Throwable e) {}
+
         // This might fail silently. I don't know yet.
         Mat output = new Mat(height, width, CvType.CV_8UC3);
         output.put(0, 0, data);
