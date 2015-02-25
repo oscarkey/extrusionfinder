@@ -43,7 +43,7 @@ public class Servlet implements IServlet {
         } catch (Throwable e) {}
 
 
-        System.out.println("library loaded");
+        logger.debug("library loaded");
 
         // Deserialize the uploaded json to an UploadedImage
         ObjectMapper mapper = new ObjectMapper();
@@ -60,7 +60,7 @@ public class Servlet implements IServlet {
         logger.debug("Saved uploaded image to test.png");
 
         // Find and return the best matches
-        List<MatchedPart> matchedParts ExtrusionFinder.findMatches(
+        List<MatchedPart> matchedParts = ExtrusionFinder.findMatches(
                 rgbImage, new MongoDBManager(Configuration.DEFAULT_DATABASE_NAME),
                 Configuration.DEFAULT_NUMBER_OF_MATCHES
         );
@@ -68,5 +68,7 @@ public class Servlet implements IServlet {
         logger.debug("found matches");
 
         logger.info("Returning match data");
+
+        return matchedParts;
     }
 }
