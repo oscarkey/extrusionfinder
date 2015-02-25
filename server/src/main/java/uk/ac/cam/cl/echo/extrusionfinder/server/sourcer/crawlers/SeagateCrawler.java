@@ -114,7 +114,6 @@ public class SeagateCrawler extends ExtendedCrawler {
             String html = htmlParseData.getHtml();
             MetadataParser mp = new MetadataParser(html, url);
             extractData(mp);
-            System.out.println(url);
         }
     }
 
@@ -151,7 +150,6 @@ public class SeagateCrawler extends ExtendedCrawler {
                 Part p = new Part(manufacturerId, productId, link, image, size,
                     description);
                 parts.add(p);
-                System.out.println(p);
             }
         }
     }
