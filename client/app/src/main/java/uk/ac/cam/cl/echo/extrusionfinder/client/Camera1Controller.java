@@ -1,10 +1,15 @@
 package uk.ac.cam.cl.echo.extrusionfinder.client;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
@@ -18,13 +23,14 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
 @SuppressWarnings("deprecation") // good idea?
 public class Camera1Controller implements CameraController {
     private static final String LOG_TAG = "Camera1Controller";
+    private static final int PICTURE_MIN_WIDTH = 600;
+    private static final int PICTURE_MIN_HEIGHT = 600;
 
     private boolean isSetup;
     private boolean isPreviewing;
     private SurfaceHolder previewSurface;
     private CameraCallback callback;
     private Dimension desiredPreviewSize;
-    private Dimension pictureSize;
     private Dimension previewSize;
     private Camera camera;
 
@@ -55,11 +61,12 @@ public class Camera1Controller implements CameraController {
 
         parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
 
-        Camera.Size defaultPictureSize = parameters.getPictureSize();
-        pictureSize = new Dimension(defaultPictureSize.width, defaultPictureSize.height);
+
+        Camera.Size bestPictureSize = getBestPictureSize(parameters.getSupportedPictureSizes());
+        parameters.setPictureSize(bestPictureSize.width, bestPictureSize.height);
 
         // work out how big the preview should be and report this
-        Dimension size = getBestSize(desiredPreviewSize, parameters.getSupportedPreviewSizes());
+        Dimension size = getBestPreviewSize(desiredPreviewSize, parameters.getSupportedPreviewSizes());
         previewSize = size;
         callback.onSetPreviewSize(size);
         // have to swap the width and height because the camera assumes it is in landscape
@@ -141,8 +148,25 @@ public class Camera1Controller implements CameraController {
     private final Camera.PictureCallback pictureCallback = new Camera.PictureCallback() {
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
-            callback.onImageCaptured(new RGBImageData(data,
-                    pictureSize.getWidth(), pictureSize.getHeight()));
+            Bitmap image = BitmapFactory.decodeByteArray(data, 0,data.length);
+            image.copy(Bitmap.Config.ARGB_8888, false);
+
+            ByteBuffer byteBuffer = ByteBuffer.allocate(image.getByteCount());
+            image.copyPixelsToBuffer(byteBuffer);
+
+            int width = image.getWidth();
+            int height = image.getHeight();
+
+            byte[] rgbData = byteBuffer.array();
+            for (int input = 0, output = 0; output < 4 * width * height; output++) {
+                rgbData[input++] = rgbData[output++];
+                rgbData[input++] = rgbData[output++];
+                rgbData[input++] = rgbData[output++];
+            }
+
+            RGBImageData rgb = new RGBImageData(rgbData, width, height);
+
+            callback.onImageCaptured(rgb);
         }
     };
 
@@ -161,12 +185,34 @@ public class Camera1Controller implements CameraController {
      * @param options A List of Camera.Size options for the size of the preview (in landscape form)
      * @return The best size picked from the list (in portrait form)
      */
-    private Dimension getBestSize(Dimension target, List<Camera.Size> options) {
+    private Dimension getBestPreviewSize(Dimension target, List<Camera.Size> options) {
         //TODO pick the best size
         // for now just pick the first size
         // switch width and height to convert between portrait and landscape
         int width = options.get(0).height;
         int height = options.get(0).width;
         return new Dimension(width, height);
+    }
+
+    /**
+     * Choose the best picture size from a list of options
+     * @param options List of Sizes to choose from
+     * @return The best Size in the list
+     */
+    private Camera.Size getBestPictureSize(List<Camera.Size> options) {
+        Collections.sort(options, new Comparator<Camera.Size>() {
+            @Override
+            public int compare(Camera.Size lhs, Camera.Size rhs) {
+                return (lhs.width * lhs.height) - (rhs.width * rhs.height);
+            }
+        });
+
+        for(Camera.Size size : options) {
+            if(size.width > PICTURE_MIN_WIDTH && size.height > PICTURE_MIN_HEIGHT) {
+                return size;
+            }
+        }
+
+        return options.get(options.size() - 1);
     }
 }
