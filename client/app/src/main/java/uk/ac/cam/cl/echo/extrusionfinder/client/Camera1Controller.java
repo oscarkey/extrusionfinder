@@ -47,8 +47,10 @@ public class Camera1Controller implements CameraController {
             camera = Camera.open();
         }
         catch(RuntimeException e) {
+            // report the error and then give up starting
             Log.e(LOG_TAG, "Failed to open camera: " + e);
             callback.onError(CameraController.ERROR_TYPE_START);
+            return;
         }
 
         camera.setPreviewCallback(previewCallback);
