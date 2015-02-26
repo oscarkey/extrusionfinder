@@ -65,4 +65,13 @@ public class ResultsAdapter extends ArrayAdapter<Result> {
 
         return convertView;
     }
+
+    /**
+     * Get the string id of a part at a given position in the list
+     * @param position The position of the part in the result list
+     * @return The String id of the part given by Result.getId()
+     */
+    public String getPartId(int position) {
+        return results[position].getId();
+    }
 }

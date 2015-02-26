@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
@@ -21,8 +23,10 @@ public class ResultsActivity extends ActionBarActivity {
 
     private static final String LOG_TAG = "ResultsActivity";
 
-    private static final String EXTRA_REQUEST_UUID
+    public static final String EXTRA_REQUEST_UUID
             = "uk.ac.cam.cl.echo.extrusionfinder.client.extra.REQUEST_UUID";
+    public static final String EXTRA_PART_ID
+            = "uk.ac.cam.cl.echo.extrusionfinder.client.extra.EXTRA_PART_ID";
 
     private Context context;
     private String requestUuid;
@@ -55,6 +59,9 @@ public class ResultsActivity extends ActionBarActivity {
         // initially show a progress bar/spinner
         ProgressBar progressSpinner = (ProgressBar) findViewById(R.id.resultsProgressBar);
         listView.setEmptyView(progressSpinner);
+
+        // add an event listener to the list to detect when a result is clicked on
+        listView.setOnItemClickListener(onItemClickListener);
 
         // set up a broadcast receiver so we are notified when new results arrive
         setupBroadcastReceiver();
@@ -115,7 +122,7 @@ public class ResultsActivity extends ActionBarActivity {
     private void displayResults(List<Result> results) {
         // create a list adapter with the results and attach it to the list
         ResultsAdapter resultsAdapter = new ResultsAdapter(this,
-                results.toArray(new Result[0]));
+                results.toArray(new Result[results.size()]));
         listView.setAdapter(resultsAdapter);
     }
 
@@ -202,4 +209,19 @@ public class ResultsActivity extends ActionBarActivity {
 
         localBroadcastManager.registerReceiver(broadcastReceiver, filter);
     }
+
+    private AdapterView.OnItemClickListener onItemClickListener
+            = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            // get the id of the part
+            String partId = ((ResultsAdapter)listView.getAdapter()).getPartId(position);
+
+            // launch the detail activity
+            Intent intent = new Intent(context, PartDetailActivity.class);
+            intent.putExtra(EXTRA_REQUEST_UUID, requestUuid);
+            intent.putExtra(EXTRA_PART_ID, partId);
+            context.startActivity(intent);
+        }
+    };
 }
