@@ -13,9 +13,11 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.database.MongoDBManager;
 import uk.ac.cam.cl.echo.extrusionfinder.server.database.IDBManager;
 import uk.ac.cam.cl.echo.extrusionfinder.server.database.ItemNotFoundException;
 import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.util.FileUtility;
+import uk.ac.cam.cl.echo.extrusionfinder.server.zernike.ZernikeMap;
 
 import edu.uci.ics.crawler4j.crawler.CrawlController;
 import java.util.Collection;
+import java.util.Map;
 import java.io.File;
 import java.net.UnknownHostException;
 import java.lang.Thread;
@@ -74,29 +76,29 @@ public class SourcerIntegrationTester {
         expect(Configuration.getCrawlStorageFolder()).andReturn(TEMP_FOLDER);
         expect(Configuration.getCrawlStorageFolder()).andReturn(TEMP_FOLDER);
         expect(Configuration.getMaxCrawlDepth()).andReturn(-1);
-        expect(Configuration.getMaxCrawlPages()).andReturn(20);
+        expect(Configuration.getMaxCrawlPages()).andReturn(10);
 
         replayAll();
 
         PartSourcer.main(new String[] { DB_NAME });
         try {
-            Part p1= dbManager.loadPart("SG000SG1551");
-            Part p2= dbManager.loadPart("SG000SG1222");
-            Part p3= dbManager.loadPart("SG000SG1678");
-            Part p4= dbManager.loadPart("SG000SG2511");
-            Part p5= dbManager.loadPart("SG000SG1832");
+            Part p1= dbManager.loadPart("SG000SG2002");
+            Part p2= dbManager.loadPart("SG000SG1776");
+            Part p3= dbManager.loadPart("SG000SG1316");
+            Part p4= dbManager.loadPart("SG000SG1697");
+            Part p5= dbManager.loadPart("SG000SG1523");
 
-            Size s1 = new Size(2.340f, Unit.IN);
-            Size s2 = new Size();
-            Size s3 = new Size(0.120f, Unit.IN);
-            Size s4 = new Size(1.880f, 1.500f, Unit.IN );
-            Size s5 = new Size(3f, Unit.MM);
+            Size s1 = new Size(1.0f, 1.0f, Unit.IN);
+            Size s2 = new Size(8.0f, 3.0f, Unit.IN);
+            Size s3 = new Size(2.0f, Unit.MM);
+            Size s4 = new Size();
+            Size s5 = new Size(2.0f, Unit.IN);
 
-            String pdf1 = "http://seagateplastics.com/stock_plastics_catalog/images_catalog/sg1551 pdf (1).pdf";
-            String pdf2 = "http://seagateplastics.com/stock_plastics_catalog/images_catalog/sg1222 pdf (1).pdf";
-            String pdf3 = "http://seagateplastics.com/stock_plastics_catalog/images_catalog/sg1678 pdf (1).pdf";
-            String pdf4 = "http://seagateplastics.com/stock_plastics_catalog/images_catalog/sg2511 pdf (1).pdf";
-            String pdf5 = "http://seagateplastics.com/stock_plastics_catalog/images_catalog/sg1832 pdf (1).pdf";
+            String pdf1 = "http://seagateplastics.com/stock_plastics_catalog/images_catalog/sg2002 pdf (1).pdf";
+            String pdf2 = "http://seagateplastics.com/stock_plastics_catalog/images_catalog/sg1776 pdf (1).pdf";
+            String pdf3 = "http://seagateplastics.com/stock_plastics_catalog/images_catalog/sg1316 pdf (1).pdf";
+            String pdf4 = "http://seagateplastics.com/stock_plastics_catalog/images_catalog/sg1697 pdf (1).pdf";
+            String pdf5 = "http://seagateplastics.com/stock_plastics_catalog/images_catalog/sg1523 pdf (1).pdf";
 
             assertEquals(s1, p1.getSize());
             assertEquals(s2, p2.getSize());
@@ -109,6 +111,15 @@ public class SourcerIntegrationTester {
             assertEquals(pdf3, p3.getLink());
             assertEquals(pdf4, p4.getLink());
             assertEquals(pdf5, p5.getLink());
+
+            // test the zernike moments!
+
+            Map<String, double[]> zm = dbManager.loadZernikeMap().getZernikeMap();
+            assertNotNull(zm.get(p1.get_id()));
+            assertNotNull(zm.get(p2.get_id()));
+            assertNotNull(zm.get(p3.get_id()));
+            assertNotNull(zm.get(p4.get_id()));
+            assertNotNull(zm.get(p5.get_id()));
 
         } catch (ItemNotFoundException e) {
             fail(e.getMessage());

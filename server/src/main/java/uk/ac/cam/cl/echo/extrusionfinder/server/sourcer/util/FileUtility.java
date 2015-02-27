@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.ConnectException;
  
 /**
  * Utility class for various file system related methods.
@@ -27,7 +28,7 @@ public class FileUtility {
      * http://www.codejava.net/java-se/networking/use-httpurlconnection-to-download-file-from-an-http-url
      */
     public static String downloadFile(String fileURL, String saveDir)
-        throws IOException, FileUtilityException {
+        throws IOException, ConnectException {
 
         fileURL = fileURL.replace(" ", "%20");
 
@@ -77,7 +78,7 @@ public class FileUtility {
             String msg = "No file to download. Server replied HTTP code: " +
                 responseCode + " on url " + fileURL;
             httpConn.disconnect();
-            throw new FileUtilityException(msg);
+            throw new ConnectException(msg);
 
         }
     }

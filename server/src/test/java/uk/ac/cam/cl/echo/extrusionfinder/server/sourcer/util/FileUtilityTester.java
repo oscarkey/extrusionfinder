@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.ConnectException;
 import java.lang.reflect.Constructor;
 
 import static org.junit.Assert.*;
@@ -83,7 +84,7 @@ public class FileUtilityTester {
     /**
      * Tests exception thrown if http did not connect successfully.
      */
-    @Test(expected = FileUtilityException.class)
+    @Test(expected = ConnectException.class)
     public void testDownloadFileFailure() throws Exception {
 
         final String url = "http://extrusionfinder.com/file.png";
