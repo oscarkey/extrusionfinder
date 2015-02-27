@@ -57,7 +57,7 @@ public class ColorSpaceConversion {
     }
 
     /**
-     * The f⁻¹(t) function from wikipedia.org/wiki/Lab_color_space#Reverse_transformation
+     * The f^-1(t) function from wikipedia.org/wiki/Lab_color_space#Reverse_transformation
      */
     private static double f_inv(double t) {
         if (t > 6 / 29.0) {

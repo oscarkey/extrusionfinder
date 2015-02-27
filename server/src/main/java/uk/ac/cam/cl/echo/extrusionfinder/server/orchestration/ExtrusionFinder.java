@@ -52,7 +52,7 @@ public class ExtrusionFinder {
         int radius = 1;
         Point2D center = new Point2D.Double(0.0, 0.0);
 
-        return findMatches(new ImageMatcher(inputImage, Configuration.DEFULT_ZERNIKE_DEGREE, center, radius),
+        return findMatches(new ImageMatcher(inputImage, Configuration.DEFAULT_ZERNIKE_DEGREE, center, radius),
                 database, maxResults);
     }
 
