@@ -1,5 +1,7 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.orchestration;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Configuration;
 import uk.ac.cam.cl.echo.extrusionfinder.server.database.IDBManager;
 import uk.ac.cam.cl.echo.extrusionfinder.server.database.ItemNotFoundException;
@@ -22,6 +24,9 @@ import java.util.*;
 public class ExtrusionFinder {
 
     private ExtrusionFinder(){}
+
+    private static final Logger logger =
+            LoggerFactory.getLogger(ExtrusionFinder.class);
 
     static class CorrelationPair implements Comparable<CorrelationPair> {
         private final String id;
@@ -51,12 +56,16 @@ public class ExtrusionFinder {
             throws ItemNotFoundException {
         String uuid = String.valueOf(System.currentTimeMillis());
 
-        inputImage.save("image-logs/" + uuid + "-0raw.png");
+        String savelocation = System.getProperty("user.home") + uuid + "-0raw.png";
+        logger.info(savelocation);
+        inputImage.save(savelocation);
 
         // Call preprocessor to clean up inputImage before proceeding
         GrayscaleImageData grayscaleImageData = new ProfileDetector().process(inputImage);
 
-        grayscaleImageData.save("image-logs/" + uuid + "-1preprocessed.png");
+        savelocation = System.getProperty("user.home") + "image-logs/" + uuid + "-1preprocessed.png";
+        logger.info(savelocation);
+        grayscaleImageData.save(savelocation);
 
         // Call preprocessor for center and radius data
         ProfileFitting fitter = new ProfileFitting(grayscaleImageData);
