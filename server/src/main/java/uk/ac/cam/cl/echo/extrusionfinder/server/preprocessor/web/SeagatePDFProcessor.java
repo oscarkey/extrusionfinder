@@ -9,6 +9,8 @@ import org.apache.batik.util.XMLResourceDescriptor;
 import org.opencv.core.*;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGPathElement;
@@ -18,6 +20,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Objects;
 
 /**
  * Provides facilites for coverting a pdf to a preprocessed svg.
@@ -28,6 +31,9 @@ import java.io.OutputStream;
 public class SeagatePDFProcessor {
 
     private SeagatePDFProcessor() {}
+
+    private static final Logger logger =
+            LoggerFactory.getLogger(SeagatePDFProcessor.class);
 
     static {
         try {
@@ -51,7 +57,7 @@ public class SeagatePDFProcessor {
      */
     public static void process(String inputPDFPath, String outputPNGPath) throws IOException, TranscoderException,
             InterruptedException, ProfileNotFoundException {
-	System.out.println("Processing " + inputPDFPath);
+        logger.info("Processing " + inputPDFPath);
 
         // Convert the pdf to an svg file written to 'intermediate.svg'. This svg has yet to be cleaned
         convertPdfToSvg(inputPDFPath, "intermediate.svg");
@@ -89,7 +95,7 @@ public class SeagatePDFProcessor {
 
         Highgui.imwrite(outputPNGPath, profile);
 
-	System.out.println("Processed " + inputPDFPath);
+        logger.info("Processed " + inputPDFPath);
     }
 
     /**
@@ -121,18 +127,28 @@ public class SeagatePDFProcessor {
             if (child instanceof SVGPathElement) {
                 SVGPathElement element = (SVGPathElement) child;
                 String styleText = element.getAttribute("style");
-                if (styleText.contains("stroke-width:0.2399") ||styleText.contains("fill:#000000")) {
+                if (styleText == null) {
+                    removeLabels(child);
+                } else if (styleText.contains("stroke-width:0.2399") ||styleText.contains("fill:#000000")) {
                     // If the path looks like a label, delete the path
                     parent.removeChild(child);
-
-                    // If the path's container element is now empty, may as well delete that too
-                    if (!parent.hasChildNodes()) {
-                        parent.getParentNode().removeChild(parent);
-                    }
                 } else {
+                    // Otherwise, assume the path is a line on the extrusion. Replace its stroke thickness
+                    // to thin the SVG
+                    String newStyleText = styleText.replaceAll("stroke-width:[0-9]*\\.[0-9]*;", "");
+
+                    // If newStyleText is not empty, append a semicolon.
+                    if (!newStyleText.isEmpty()) {
+                        newStyleText = newStyleText + ";";
+                    }
+                    newStyleText = newStyleText + "stroke-width:" + Configuration.PDF_THINNED_EDGE_THICKNESS;
+                    element.setAttribute("style", newStyleText);
+
+                    // Recursively explore the rest of the SVGOM
                     removeLabels(child);
                 }
             } else {
+                // Recursively explore the rest of the SVGOM
                 removeLabels(child);
             }
         }
@@ -192,7 +208,7 @@ public class SeagatePDFProcessor {
                 }
             }
         }
-        
+
         Mat cropped = new Mat(newHeight, newWidth, CvType.CV_8UC1);
 
         cropped.put(0, 0, pData);
@@ -220,7 +236,7 @@ public class SeagatePDFProcessor {
         Mat backgroundFill = input.clone();
         Imgproc.floodFill(backgroundFill, mask, new Point(0, 0), new Scalar(255));
         mask.setTo(new Scalar(0));
-        
+
         Mat shellRemove = backgroundFill.clone();
         Imgproc.floodFill(shellRemove, mask, new Point(0, 0), new Scalar(0));
         mask.setTo(new Scalar(0));

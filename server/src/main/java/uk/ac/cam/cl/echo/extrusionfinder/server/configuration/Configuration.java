@@ -19,6 +19,8 @@ public class Configuration {
     public static final int PROFILE_DETECTION_STANDARD_BILATERAL_FILTER_BLUR_DIAMETER = 8;
     public static final int PROFILE_DETECTION_STANDARD_BILATERAL_FILTER_SIGMA = 15;
 
+    public static final float PDF_THINNED_EDGE_THICKNESS = 0.1f;
+
     /* Crawler configuration.
      * Need to have getters to allow mocking in tests.
      * Max crawl depth and max crawl pages can be -1 if there is no upper limit.
