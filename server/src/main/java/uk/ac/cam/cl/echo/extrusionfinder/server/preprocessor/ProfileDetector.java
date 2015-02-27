@@ -15,11 +15,10 @@ import java.util.List;
  */
 public class ProfileDetector {
     static {
-        System.out.println("here is a loading message definitely produced by me");
         try {
             nu.pattern.OpenCV.loadShared();
         } catch (Throwable e) {
-            System.out.println("actually, was already loaded. for grep: loading");
+            // Assume library already loaded, and ignore the error
         }
     }
 

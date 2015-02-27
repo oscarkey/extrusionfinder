@@ -30,12 +30,11 @@ public class SeagatePDFProcessor {
     private SeagatePDFProcessor() {}
 
     static {
-	System.out.println("here is a loading message definitely produced by me");
         try {
-		nu.pattern.OpenCV.loadShared();
-	} catch (Throwable e) {
-		System.out.println("actually, was already loaded. for grep: loading");
-	}
+            nu.pattern.OpenCV.loadShared();
+        } catch (Throwable e) {
+            // Assume library already loaded, and ignore the error
+        }
     }
 
     /**

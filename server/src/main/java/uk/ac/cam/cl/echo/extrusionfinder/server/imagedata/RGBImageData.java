@@ -55,7 +55,9 @@ public class RGBImageData extends ImageData<byte[]> {
     public void save(String filename) {
         try {
             nu.pattern.OpenCV.loadShared();
-        } catch (Throwable e) {}
+        } catch (Throwable e) {
+            // Assume library already loaded, and ignore the error
+        }
 
         // This might fail silently. I don't know yet.
         Mat output = new Mat(height, width, CvType.CV_8UC3);
