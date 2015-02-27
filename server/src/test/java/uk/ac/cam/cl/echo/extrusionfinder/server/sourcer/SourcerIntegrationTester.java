@@ -1,35 +1,25 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.sourcer;
 
-import org.junit.Test;
-import org.junit.Before;
 import org.junit.After;
-
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Configuration;
+import uk.ac.cam.cl.echo.extrusionfinder.server.database.ItemNotFoundException;
+import uk.ac.cam.cl.echo.extrusionfinder.server.database.MongoDBManager;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size.Unit;
-import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Manufacturer;
-import uk.ac.cam.cl.echo.extrusionfinder.server.database.MongoDBManager;
-import uk.ac.cam.cl.echo.extrusionfinder.server.database.IDBManager;
-import uk.ac.cam.cl.echo.extrusionfinder.server.database.ItemNotFoundException;
 import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.util.FileUtility;
-import uk.ac.cam.cl.echo.extrusionfinder.server.zernike.ZernikeMap;
 
-import edu.uci.ics.crawler4j.crawler.CrawlController;
-import java.util.Collection;
-import java.util.Map;
-import java.io.File;
 import java.net.UnknownHostException;
-import java.lang.Thread;
+import java.util.Map;
 
-import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.modules.junit4.PowerMockRunner;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 import static org.easymock.EasyMock.expect;
+import static org.junit.Assert.*;
 import static org.powermock.api.easymock.PowerMock.*;
 
 /**

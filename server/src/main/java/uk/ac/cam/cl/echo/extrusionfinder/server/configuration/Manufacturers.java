@@ -20,7 +20,7 @@ public class Manufacturers {
     private static final Map<Name, Manufacturer> MANUFACTURERS;
     static
     {
-        MANUFACTURERS = new HashMap<Name, Manufacturer>();
+        MANUFACTURERS = new HashMap<>();
         MANUFACTURERS.put(Name.SEAGATE, new Manufacturer(
                 "SG000",
                 "SeaGate Plastics",

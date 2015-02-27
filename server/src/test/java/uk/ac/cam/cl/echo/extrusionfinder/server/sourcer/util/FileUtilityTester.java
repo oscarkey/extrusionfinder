@@ -1,7 +1,5 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.util;
 
-import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size.Unit;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -11,15 +9,16 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.ConnectException;
-import java.lang.reflect.Constructor;
 
-import static org.junit.Assert.*;
-import static org.powermock.api.easymock.PowerMock.*;
-import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.expect;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.powermock.api.easymock.PowerMock.*;
 
 /**
  * Unit tests the metadata parser (using EasyMock and PowerMock).

@@ -111,12 +111,12 @@ public class FileUtility {
             File[] files = path.listFiles();
 
             if (files != null) {
-                for (int i = 0; i < files.length; i++) {
+                for (File file : files) {
 
-                    if(files[i].isDirectory()) {
-                        delete(files[i]);
+                    if (file.isDirectory()) {
+                        delete(file);
                     } else {
-                        files[i].delete();
+                        file.delete();
                     }
                 }
             }

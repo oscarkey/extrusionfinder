@@ -76,7 +76,7 @@ public class PartSourcer {
 
         // initialise collection of website crawlers
         Collection<Controller<? extends ExtendedCrawler>> controllers =
-            new ArrayList<Controller<? extends ExtendedCrawler>>();
+            new ArrayList<>();
 
         // get config options from Configuration file
         String dir = Configuration.getCrawlStorageFolder();
@@ -96,7 +96,7 @@ public class PartSourcer {
             // instance. (crawlcontroller is the crawler4j controller)
 
             Controller<? extends ExtendedCrawler> c =
-                new Controller<ExtendedCrawler>(
+                new Controller<>(
                     CrawlControllerFactory.get(dir, maxDepth, maxPages),
                     crawler,
                     seeds
@@ -154,8 +154,8 @@ public class PartSourcer {
      */
     private static void saveParts(String tempFolder, IDBManager dbManager, Set<Part> parts) {
 
-        ZernikeMap map = new ZernikeMap(new HashMap<String, double[]>());
-        Set<Part> partz = new HashSet<Part>();
+        ZernikeMap map = new ZernikeMap(new HashMap<>());
+        Set<Part> partz = new HashSet<>();
 
         for (Part p : parts) {
 

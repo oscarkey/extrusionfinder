@@ -142,8 +142,8 @@ public class ProfileDetector {
         Mat c1 = new Mat(input.rows(), input.cols(), CvType.CV_8UC1);
         Mat c2 = new Mat(input.rows(), input.cols(), CvType.CV_8UC1);
         Mat c3 = new Mat(input.rows(), input.cols(), CvType.CV_8UC1);
-        List<Mat> matSrc = new ArrayList<Mat>(3);
-        List<Mat> matDst = new ArrayList<Mat>(3);
+        List<Mat> matSrc = new ArrayList<>(3);
+        List<Mat> matDst = new ArrayList<>(3);
         MatOfInt fromTo = new MatOfInt(0, 0, 1, 1, 2, 2);
         matSrc.add(input);
         matDst.add(c1);
@@ -229,7 +229,7 @@ public class ProfileDetector {
      */
     private static Mat largestContourMask(Mat input) {
         Mat output = new Mat(input.rows(), input.cols(), CvType.CV_8UC1);
-        List<MatOfPoint> contours = new LinkedList<MatOfPoint>();
+        List<MatOfPoint> contours = new LinkedList<>();
         Mat hierarchy = new Mat();
         Imgproc.findContours(
             input.clone(),
@@ -251,7 +251,7 @@ public class ProfileDetector {
         output.setTo(new Scalar(0));
         if (largestContour != null) {
             // Could be done using the original list and an index.
-            List<MatOfPoint> list = new ArrayList<MatOfPoint>(1);
+            List<MatOfPoint> list = new ArrayList<>(1);
             list.add(largestContour);
             Imgproc.drawContours(output, list, 0, new Scalar(255), -1);
         }

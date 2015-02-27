@@ -1,21 +1,11 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers;
 
-import org.junit.After;
-import org.junit.Before;
+import edu.uci.ics.crawler4j.crawler.CrawlController;
 import org.junit.Test;
 
-import edu.uci.ics.crawler4j.crawler.CrawlController;
-import edu.uci.ics.crawler4j.crawler.Page;
-import edu.uci.ics.crawler4j.url.WebURL;
-
-import java.io.File;
-import java.lang.IllegalArgumentException;
-import java.util.List;
 import java.util.Set;
 
-import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
 
 /**
@@ -39,7 +29,7 @@ public class ControllerTester {
         String[] seeds = new String[] { "foo" };
 
         Controller controller =
-            new Controller<ExtendedCrawler>(crawlController, crawler, seeds);
+            new Controller<>(crawlController, crawler, seeds);
 
         // test running the controller - invoking the right methods
         Set st = controller.crawl();
@@ -70,6 +60,6 @@ public class ControllerTester {
         String[] seeds = new String[] {};
 
         Controller controller =
-            new Controller<ExtendedCrawler>(crawlController, crawler, seeds);
+            new Controller<>(crawlController, crawler, seeds);
     }
 }

@@ -9,7 +9,6 @@ import javax.imageio.ImageIO;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 

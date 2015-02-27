@@ -1,10 +1,5 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.orchestration;
 
-import static junit.framework.TestCase.assertTrue;
-import static org.easymock.EasyMock.*;
-import static org.powermock.api.easymock.PowerMock.createMock;
-import static org.powermock.api.easymock.PowerMock.replay;
-
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
@@ -23,6 +18,11 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static junit.framework.TestCase.assertTrue;
+import static org.easymock.EasyMock.expect;
+import static org.powermock.api.easymock.PowerMock.createMock;
+import static org.powermock.api.easymock.PowerMock.replay;
 
 /**
 * Tests for class ExtrusionFinder

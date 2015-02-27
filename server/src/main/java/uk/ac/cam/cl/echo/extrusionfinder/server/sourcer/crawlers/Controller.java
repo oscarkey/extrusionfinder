@@ -62,7 +62,7 @@ public class Controller<T extends ExtendedCrawler> {
      */
     public Set<Part> crawl() {
 
-        Set<Part> parts = new HashSet<Part>();
+        Set<Part> parts = new HashSet<>();
         crawler.configure(parts);
         controller.start(crawler.getClass(), NUMBER_OF_CRAWLERS);
         return parts;

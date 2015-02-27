@@ -3,9 +3,8 @@ package uk.ac.cam.cl.echo.extrusionfinder.server.parts;
 import org.junit.Test;
 import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.SeagateCrawler;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Unit tests for Manufacturer.

@@ -1,7 +1,6 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor.web;
 
 import org.apache.batik.transcoder.TranscoderException;
-import org.junit.Test;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
