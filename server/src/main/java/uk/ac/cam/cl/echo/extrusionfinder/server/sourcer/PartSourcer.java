@@ -12,7 +12,6 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.CrawlController
 import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.CrawlerException;
 import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.ExtendedCrawler;
 import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.util.FileUtility;
-import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.util.FileUtilityException;
 import org.apache.batik.transcoder.TranscoderException;
 
 import uk.ac.cam.cl.echo.extrusionfinder.server.zernike.Zernike;
@@ -29,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.net.ConnectException;
 import java.util.Collection;
 import java.util.Set;
 import java.util.ArrayList;
@@ -188,7 +188,6 @@ public class PartSourcer {
                     gsid = GrayscaleImageData.load(imgPath);
 
                 } catch (IOException
-                        |FileUtilityException
                         |TranscoderException
                         |InterruptedException
                         |ProfileNotFoundException
@@ -202,11 +201,14 @@ public class PartSourcer {
 
                 // compute the zernike moment
                 ProfileFitting pf = new ProfileFitting(gsid);
-                final int degree = Configuration.DEFAULT_ZERNIKE_DEGREE;
-                Point2D center = pf.getCentre();
-                double radius = pf.getRadius();
+
                 double[] zernikem = Zernike.zernikeMoments(
-                    gsid.data, gsid.width, degree, center, radius);
+                    gsid.data,
+                    gsid.width,
+                    Configuration.DEFAULT_ZERNIKE_DEGREE,
+                    pf.getCentre(),
+                    pf.getRadius()
+                );
 
                 map.add(p.get_id(), zernikem);
 
