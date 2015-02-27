@@ -49,8 +49,14 @@ public class ExtrusionFinder {
      */
     public static List<MatchedPart> findMatches(RGBImageData inputImage, IDBManager database, int maxResults)
             throws ItemNotFoundException {
+        String uuid = String.valueOf(System.currentTimeMillis());
+
+        inputImage.save("image-logs/" + uuid + "-0raw.png");
+
         // Call preprocessor to clean up inputImage before proceeding
         GrayscaleImageData grayscaleImageData = new ProfileDetector().process(inputImage);
+
+        grayscaleImageData.save("image-logs/" + uuid + "-1preprocessed.png");
 
         // Call preprocessor for center and radius data
         ProfileFitting fitter = new ProfileFitting(grayscaleImageData);
