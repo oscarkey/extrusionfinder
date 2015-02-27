@@ -45,7 +45,7 @@ public class ResultsAdapter extends ArrayAdapter<Result> {
 
         // set the image
         ImageView imageView = (ImageView)convertView;
-        if(!result.hasImageLink()) {
+        if(result.hasImageLink()) {
             // use picasso to display the image
             Picasso.with(getContext())
                     .load(result.getImageLink())
