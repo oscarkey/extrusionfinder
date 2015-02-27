@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
@@ -103,13 +104,8 @@ public class ResultsActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case android.R.id.home:
-                // when the home button is pressed go back to the image capture activity
-                Intent homeIntent = new Intent(this, ImageCaptureActivity.class);
-                // make such we remove the results activity from the stack
-                homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(homeIntent);
+                NavUtils.navigateUpFromSameTask(this);
                 return true;
-
             default:
                 return super.onOptionsItemSelected(item);
         }

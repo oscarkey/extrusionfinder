@@ -28,6 +28,9 @@
             android:label="@string/title_activity_results"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="uk.ac.cam.cl.echo.extrusionfinder.client.ImageCaptureActivity" />
         </activity>
 
         <service
