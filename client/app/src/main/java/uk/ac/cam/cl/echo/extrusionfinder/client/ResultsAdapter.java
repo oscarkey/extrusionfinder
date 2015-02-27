@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
@@ -26,7 +25,6 @@ public class ResultsAdapter extends ArrayAdapter<Result> {
         this.results = results;
 
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
     }
 
     /**
@@ -45,13 +43,9 @@ public class ResultsAdapter extends ArrayAdapter<Result> {
 
         Result result = results[position];
 
-        // set the part id/name
-        TextView partIdText = (TextView) convertView.findViewById(R.id.resultListItemPartName);
-        partIdText.setText(result.getId());
-
         // set the image
-        ImageView imageView = (ImageView)convertView.findViewById(R.id.resultListItemImage);
-        if(result.hasImageLink()) {
+        ImageView imageView = (ImageView)convertView;
+        if(!result.hasImageLink()) {
             // use picasso to display the image
             Picasso.with(getContext())
                     .load(result.getImageLink())

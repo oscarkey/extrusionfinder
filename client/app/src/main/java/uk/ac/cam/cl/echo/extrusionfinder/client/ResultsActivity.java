@@ -12,7 +12,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.GridView;
 import android.widget.ProgressBar;
 
 import java.util.List;
@@ -32,7 +32,7 @@ public class ResultsActivity extends ActionBarActivity {
     private String requestUuid;
     private ResultsCache resultsCache;
     private BroadcastReceiver broadcastReceiver;
-    private ListView listView;
+    private GridView gridView;
 
     /**
      * Send an intent to start the ResultsActivity
@@ -54,14 +54,14 @@ public class ResultsActivity extends ActionBarActivity {
         context = this;
 
         // get a reference to the list view
-        listView = (ListView) findViewById(R.id.resultsListView);
+        gridView = (GridView) findViewById(R.id.resultsGridView);
 
         // initially show a progress bar/spinner
         ProgressBar progressSpinner = (ProgressBar) findViewById(R.id.resultsProgressBar);
-        listView.setEmptyView(progressSpinner);
+        gridView.setEmptyView(progressSpinner);
 
         // add an event listener to the list to detect when a result is clicked on
-        listView.setOnItemClickListener(onItemClickListener);
+        gridView.setOnItemClickListener(onItemClickListener);
 
         // set up a broadcast receiver so we are notified when new results arrive
         setupBroadcastReceiver();
@@ -123,7 +123,7 @@ public class ResultsActivity extends ActionBarActivity {
         // create a list adapter with the results and attach it to the list
         ResultsAdapter resultsAdapter = new ResultsAdapter(this,
                 results.toArray(new Result[results.size()]));
-        listView.setAdapter(resultsAdapter);
+        gridView.setAdapter(resultsAdapter);
     }
 
     /**
@@ -215,7 +215,7 @@ public class ResultsActivity extends ActionBarActivity {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             // get the id of the part
-            String partId = ((ResultsAdapter)listView.getAdapter()).getPartId(position);
+            String partId = ((ResultsAdapter) gridView.getAdapter()).getPartId(position);
 
             // launch the detail activity
             Intent intent = new Intent(context, PartDetailActivity.class);
