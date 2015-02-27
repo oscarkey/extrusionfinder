@@ -56,7 +56,7 @@ public class ExtrusionFinder {
             throws ItemNotFoundException {
         String uuid = String.valueOf(System.currentTimeMillis());
 
-        String savelocation = System.getProperty("user.home") + "/" + uuid + "-0raw.png";
+        String savelocation = System.getProperty("user.home") + "/image-logs/" + uuid + "-0raw.png";
         logger.info(savelocation);
         inputImage.save(savelocation);
 
