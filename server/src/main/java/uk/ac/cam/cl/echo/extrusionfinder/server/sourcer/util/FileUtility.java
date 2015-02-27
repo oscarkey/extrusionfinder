@@ -23,7 +23,7 @@ public class FileUtility {
      * @param saveDir path of the directory to save the file
      * @return  Path to saved file
      * @throws IOException if writing to file system failed
-     * @throws FileUtilityException if the http url connection failed
+     * @throws ConnectException if the http url connection failed
      * slightly modified from:
      * http://www.codejava.net/java-se/networking/use-httpurlconnection-to-download-file-from-an-http-url
      */
