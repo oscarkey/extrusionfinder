@@ -9,6 +9,8 @@ import org.apache.batik.util.XMLResourceDescriptor;
 import org.opencv.core.*;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGPathElement;
@@ -29,6 +31,9 @@ import java.util.Objects;
 public class SeagatePDFProcessor {
 
     private SeagatePDFProcessor() {}
+
+    private static final Logger logger =
+            LoggerFactory.getLogger(SeagatePDFProcessor.class);
 
     static {
         try {
@@ -52,7 +57,7 @@ public class SeagatePDFProcessor {
      */
     public static void process(String inputPDFPath, String outputPNGPath) throws IOException, TranscoderException,
             InterruptedException, ProfileNotFoundException {
-        System.out.println("Processing " + inputPDFPath);
+        logger.info("Processing " + inputPDFPath);
 
         // Convert the pdf to an svg file written to 'intermediate.svg'. This svg has yet to be cleaned
         convertPdfToSvg(inputPDFPath, "intermediate.svg");
@@ -90,7 +95,7 @@ public class SeagatePDFProcessor {
 
         Highgui.imwrite(outputPNGPath, profile);
 
-        System.out.println("Processed " + inputPDFPath);
+        logger.info("Processed " + inputPDFPath);
     }
 
     /**
