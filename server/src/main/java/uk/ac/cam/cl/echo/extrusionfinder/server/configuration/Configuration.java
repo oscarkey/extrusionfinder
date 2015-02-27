@@ -13,6 +13,8 @@ public class Configuration {
 
     public static final String OPENCV_LIBRARY_NAME = "opencv_java249";
 
+    public static final String IMAGE_LOG_PATH = System.getProperty("user.home") + "/image-logs/";
+
     public static final int PROFILE_DETECTION_STANDARD_IMAGE_SIZE = 200;
     public static final int PROFILE_DETECTION_STANDARD_BILATERAL_FILTER_BLUR_DIAMETER = 8;
     public static final int PROFILE_DETECTION_STANDARD_BILATERAL_FILTER_SIGMA = 15;
