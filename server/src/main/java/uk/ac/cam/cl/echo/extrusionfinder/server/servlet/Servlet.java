@@ -41,6 +41,8 @@ public class Servlet implements IServlet {
 
         logger.debug("Decoded");
 
+        rgbImage.save("test.png");
+
         // Find and return the best matches
         List<MatchedPart> matchedParts = ExtrusionFinder.findMatches(
                 rgbImage, new MongoDBManager(Configuration.DEFAULT_DATABASE_NAME),

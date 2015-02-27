@@ -56,14 +56,14 @@ public class ExtrusionFinder {
             throws ItemNotFoundException {
         String uuid = String.valueOf(System.currentTimeMillis());
 
-        String savelocation = System.getProperty("user.home") + uuid + "-0raw.png";
+        String savelocation = System.getProperty("user.home") + "/" + uuid + "-0raw.png";
         logger.info(savelocation);
         inputImage.save(savelocation);
 
         // Call preprocessor to clean up inputImage before proceeding
         GrayscaleImageData grayscaleImageData = new ProfileDetector().process(inputImage);
 
-        savelocation = System.getProperty("user.home") + "image-logs/" + uuid + "-1preprocessed.png";
+        savelocation = System.getProperty("user.home") + "/image-logs/" + uuid + "-1preprocessed.png";
         logger.info(savelocation);
         grayscaleImageData.save(savelocation);
 
