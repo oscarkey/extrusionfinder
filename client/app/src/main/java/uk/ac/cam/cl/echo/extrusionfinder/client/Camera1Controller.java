@@ -150,31 +150,31 @@ public class Camera1Controller implements CameraController {
     private final Camera.PictureCallback pictureCallback = new Camera.PictureCallback() {
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
-            Bitmap image = BitmapFactory.decodeByteArray(data, 0,data.length);
-            image.copy(Bitmap.Config.ARGB_8888, false);
-
-            ByteBuffer byteBuffer = ByteBuffer.allocate(image.getByteCount());
-            image.copyPixelsToBuffer(byteBuffer);
-
-            int width = image.getWidth();
-            int height = image.getHeight();
-
-            byte[] rgbData = byteBuffer.array();
-            for (int input = 0, output = 0; output < 4 * width * height; output++) {
-                rgbData[input++] = rgbData[output++];
-                rgbData[input++] = rgbData[output++];
-                rgbData[input++] = rgbData[output++];
-            }
-
-            RGBImageData rgb = new RGBImageData(rgbData, width, height);
-
-            callback.onImageCaptured(rgb);
+            callback.onImageCaptured(data);
         }
     };
 
     private final Camera.PreviewCallback previewCallback = new Camera.PreviewCallback() {
         @Override
         public void onPreviewFrame(byte[] data, Camera camera) {
+//            Bitmap image = BitmapFactory.decodeByteArray(data, 0,data.length);
+//            image.copy(Bitmap.Config.ARGB_8888, false);
+//
+//            ByteBuffer byteBuffer = ByteBuffer.allocate(image.getByteCount());
+//            image.copyPixelsToBuffer(byteBuffer);
+//
+//            int width = image.getWidth();
+//            int height = image.getHeight();
+//
+//            byte[] rgbData = byteBuffer.array();
+//            for (int input = 0, output = 0; output < 4 * width * height; output++) {
+//                rgbData[input++] = rgbData[output++];  // red
+//                rgbData[input++] = rgbData[output++];  // green
+//                rgbData[input++] = rgbData[output++];  // blue
+//            }
+//
+//            RGBImageData rgb = new RGBImageData(rgbData, width, height);
+
             callback.onPreviewFrame(new RGBImageData(data,
                     previewSize.getWidth(), previewSize.getHeight()));
         }

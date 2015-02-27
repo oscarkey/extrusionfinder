@@ -14,9 +14,9 @@ public interface ResultsServiceAdapter {
 
     /**
      * Get the results for a given image. Blocks until completion
-     * @param image The NetworkImage to find results for encoded as a base64 string
+     * @param image The byte[] image to find results for encoded as a base64 string
      * @return A list of the results matched
      */
     @POST("/matches")
-    public List<Result> getMatches(@Body NetworkImage image);
+    public List<Result> getMatches(@Body byte[] image);
 }

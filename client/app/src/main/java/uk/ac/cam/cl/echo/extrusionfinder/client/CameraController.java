@@ -48,9 +48,9 @@ public interface CameraController {
     public interface CameraCallback {
         /**
          * Called when the image has been completely captured
-         * @param image ImageData of the image in a yet to be determined format
+         * @param image byte[] of the image as jpg
          */
-        public void onImageCaptured(RGBImageData image);
+        public void onImageCaptured(byte[] image);
 
         /**
          * Called every time a preview frame is delivered

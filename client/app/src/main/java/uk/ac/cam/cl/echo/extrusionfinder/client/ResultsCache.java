@@ -75,10 +75,10 @@ public class ResultsCache {
 
     /**
      * Store a new request in the cache
-     * @param image The ImageData to look up in this request
+     * @param image The byte[] image to look up in this request
      * @return the uuid of the new request
      */
-    public synchronized String putRequest(RGBImageData image) {
+    public synchronized String putRequest(byte[] image) {
         String uuid = UUID.randomUUID().toString();
         request = new ResultRequest(uuid, image);
         return uuid;
@@ -120,7 +120,7 @@ public class ResultsCache {
      * @param uuid id of the request
      * @return ImageData representing the image, null if we don't have this request
      */
-    public synchronized RGBImageData getImage(String uuid) {
+    public synchronized byte[] getImage(String uuid) {
         // only return the image if this is the right request
         if(isDesiredRequest(uuid)) {
             return request.getImage();
