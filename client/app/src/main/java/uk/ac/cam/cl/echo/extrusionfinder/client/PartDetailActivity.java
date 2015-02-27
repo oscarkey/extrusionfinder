@@ -34,8 +34,8 @@ public class PartDetailActivity extends ActionBarActivity {
         }
 
         // set the user interface fields
-        TextView nameText = (TextView) findViewById(R.id.partDetailName);
-        nameText.setText(result.getId());
+        ((TextView) findViewById(R.id.partDetailName)).setText(result.getPartId());
+        ((TextView) findViewById(R.id.partDetailDescription)).setText(result.getDescription());
 
         // check if we have an image link
         if(result.hasImageLink()) {

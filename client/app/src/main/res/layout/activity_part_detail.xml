@@ -22,5 +22,12 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@id/partDetailImage"
         android:textSize="18pt"/>
+    <TextView
+        android:id="@+id/partDetailDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/partDetailName"
+        android:textSize="14pt"/>
 
 </RelativeLayout>
