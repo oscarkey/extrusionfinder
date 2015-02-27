@@ -1,13 +1,13 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.imagematching;
 
-import uk.ac.cam.cl.echo.extrusionfinder.server.zernike.Zernike;
 import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.GrayscaleImageData;
+import uk.ac.cam.cl.echo.extrusionfinder.server.zernike.Zernike;
 
+import javax.imageio.ImageIO;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import javax.imageio.ImageIO;
 
 public class ImageMatcher {
 

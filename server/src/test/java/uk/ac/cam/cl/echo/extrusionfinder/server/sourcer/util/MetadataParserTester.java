@@ -1,20 +1,18 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.util;
 
-import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size.Unit;
-
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.jsoup.Jsoup;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size.Unit;
 
+import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.*;
 import static org.powermock.api.easymock.PowerMock.*;
-import static org.easymock.EasyMock.expect;
 
 /**
  * Unit tests the metadata parser (using EasyMock and PowerMock).

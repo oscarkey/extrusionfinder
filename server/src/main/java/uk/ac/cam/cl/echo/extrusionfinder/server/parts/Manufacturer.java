@@ -1,6 +1,7 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.parts;
 
 import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.ExtendedCrawler;
+
 import java.util.Arrays;
 
 /**

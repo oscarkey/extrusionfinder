@@ -1,8 +1,6 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.parts;
 
 import org.junit.Test;
-import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
-import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size.Unit;
 
 import static org.junit.Assert.assertTrue;

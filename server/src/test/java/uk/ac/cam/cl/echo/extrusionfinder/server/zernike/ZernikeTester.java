@@ -2,7 +2,6 @@ package uk.ac.cam.cl.echo.extrusionfinder.server.zernike;
 
 import org.apache.commons.io.FilenameUtils;
 import org.junit.Test;
-import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Configuration;
 
 import javax.imageio.ImageIO;
 import java.awt.geom.Point2D;
@@ -11,8 +10,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;

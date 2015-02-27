@@ -1,18 +1,18 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor;
 
-import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.highgui.Highgui;
-import java.awt.geom.Point2D;
 import org.opencv.imgproc.Imgproc;
-
 import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Configuration;
-import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
 import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.GrayscaleImageData;
+import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
+
+import java.awt.geom.Point2D;
 
 public class PreprocessorTester {
-    private PreprocessorTester() {};
+    private PreprocessorTester() {}
+
     public static void detector(String inFile, String outFile) {
         System.loadLibrary(Configuration.OPENCV_LIBRARY_NAME);
 

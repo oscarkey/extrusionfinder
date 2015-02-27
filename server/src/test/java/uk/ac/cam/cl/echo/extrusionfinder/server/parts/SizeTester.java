@@ -1,14 +1,9 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.parts;
 
 import org.junit.Test;
-import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size.Unit;
 
-import java.lang.IllegalArgumentException;
-
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 /**
  * Unit tests for Size.

@@ -6,11 +6,7 @@ import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.batik.util.XMLResourceDescriptor;
-import org.opencv.core.Core;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Scalar;
+import org.opencv.core.*;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 import org.w3c.dom.Node;
@@ -18,8 +14,10 @@ import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGPathElement;
 import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Configuration;
 
-import javax.xml.stream.XMLStreamException;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Provides facilites for coverting a pdf to a preprocessed svg.
@@ -32,12 +30,11 @@ public class SeagatePDFProcessor {
     private SeagatePDFProcessor() {}
 
     static {
-	System.out.println("here is a loading message definitely produced by me");
         try {
-		nu.pattern.OpenCV.loadShared();
-	} catch (Throwable e) {
-		System.out.println("actually, was already loaded. for grep: loading");
-	}
+            nu.pattern.OpenCV.loadShared();
+        } catch (Throwable e) {
+            // Assume library already loaded, and ignore the error
+        }
     }
 
     /**

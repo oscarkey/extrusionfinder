@@ -1,11 +1,5 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.configuration;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.ExtendedCrawler;
-import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.SeagateCrawler;
-
 public class Configuration {
     public static final String MONGO_HOST = "localhost";
     public static final int MONGO_PORT = 27017;
@@ -18,6 +12,8 @@ public class Configuration {
     public static final String INKSCAPE_LOCATION = "inkscape";
 
     public static final String OPENCV_LIBRARY_NAME = "opencv_java249";
+
+    public static final String IMAGE_LOG_PATH = System.getProperty("user.home") + "/image-logs/";
 
     public static final int PROFILE_DETECTION_STANDARD_IMAGE_SIZE = 200;
     public static final int PROFILE_DETECTION_STANDARD_BILATERAL_FILTER_BLUR_DIAMETER = 8;

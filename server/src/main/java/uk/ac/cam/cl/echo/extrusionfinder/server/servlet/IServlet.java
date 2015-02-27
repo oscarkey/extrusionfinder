@@ -11,6 +11,7 @@ import java.util.List;
 
 /**
  * Provides a RESTful API to clients for requesting potential matches to a given image
+ *
  * @author as2388
  */
 @Path("/MatchServlet/")
@@ -19,5 +20,5 @@ public interface IServlet {
 
     @POST
     @Path("/matches/")
-    public abstract List<MatchedPart> findMatches(String image) throws IOException, ItemNotFoundException;
+    public abstract List<MatchedPart> findMatches(String jsonImage) throws IOException, ItemNotFoundException;
 }

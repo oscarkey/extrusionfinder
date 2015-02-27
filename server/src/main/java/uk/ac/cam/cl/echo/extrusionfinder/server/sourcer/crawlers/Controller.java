@@ -1,12 +1,10 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers;
 
+import edu.uci.ics.crawler4j.crawler.CrawlController;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
 
-import edu.uci.ics.crawler4j.crawler.CrawlController;
-
-import java.lang.IllegalArgumentException;
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * <p>Controller for any web crawler. Manages configuration and parts stream.</p>
@@ -64,7 +62,7 @@ public class Controller<T extends ExtendedCrawler> {
      */
     public Set<Part> crawl() {
 
-        Set<Part> parts = new HashSet<Part>();
+        Set<Part> parts = new HashSet<>();
         crawler.configure(parts);
         controller.start(crawler.getClass(), NUMBER_OF_CRAWLERS);
         return parts;

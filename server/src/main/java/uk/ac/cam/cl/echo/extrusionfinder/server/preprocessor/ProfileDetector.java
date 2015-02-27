@@ -1,28 +1,27 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor;
 
-import org.opencv.core.Core;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfInt;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.core.Size;
-import org.opencv.highgui.Highgui;
+import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
-import java.io.IOException;
-import java.util.List;
-import java.util.LinkedList;
-import java.util.ArrayList;
-
 import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Configuration;
-import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
 import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.GrayscaleImageData;
+import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Extracts extrusion cross-section profile.
  */
 public class ProfileDetector {
+    static {
+        try {
+            nu.pattern.OpenCV.loadShared();
+        } catch (Throwable e) {
+            // Assume library already loaded, and ignore the error
+        }
+    }
+
     /**
      * Creates a profile detector.
      * <p>
@@ -142,8 +141,8 @@ public class ProfileDetector {
         Mat c1 = new Mat(input.rows(), input.cols(), CvType.CV_8UC1);
         Mat c2 = new Mat(input.rows(), input.cols(), CvType.CV_8UC1);
         Mat c3 = new Mat(input.rows(), input.cols(), CvType.CV_8UC1);
-        List<Mat> matSrc = new ArrayList<Mat>(3);
-        List<Mat> matDst = new ArrayList<Mat>(3);
+        List<Mat> matSrc = new ArrayList<>(3);
+        List<Mat> matDst = new ArrayList<>(3);
         MatOfInt fromTo = new MatOfInt(0, 0, 1, 1, 2, 2);
         matSrc.add(input);
         matDst.add(c1);
@@ -194,7 +193,7 @@ public class ProfileDetector {
                 // How much of the pixel (fraction) to keep.
                 double keep = maximum - (Math.hypot(x-r, y-r) / diameter);
                 // How much of the pixel (fraction*255) to keep.
-                bytes[i] = (byte)(keep < 0 ? 0 : (byte)(keep * 255.0));
+                bytes[i] = keep < 0 ? 0 : (byte)(keep * 255.0);
             }
         }
 
@@ -229,7 +228,7 @@ public class ProfileDetector {
      */
     private static Mat largestContourMask(Mat input) {
         Mat output = new Mat(input.rows(), input.cols(), CvType.CV_8UC1);
-        List<MatOfPoint> contours = new LinkedList<MatOfPoint>();
+        List<MatOfPoint> contours = new LinkedList<>();
         Mat hierarchy = new Mat();
         Imgproc.findContours(
             input.clone(),
@@ -251,7 +250,7 @@ public class ProfileDetector {
         output.setTo(new Scalar(0));
         if (largestContour != null) {
             // Could be done using the original list and an index.
-            List<MatOfPoint> list = new ArrayList<MatOfPoint>(1);
+            List<MatOfPoint> list = new ArrayList<>(1);
             list.add(largestContour);
             Imgproc.drawContours(output, list, 0, new Scalar(255), -1);
         }

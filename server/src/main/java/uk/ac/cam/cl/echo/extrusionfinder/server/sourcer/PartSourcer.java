@@ -1,41 +1,31 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.sourcer;
 
+import org.apache.batik.transcoder.TranscoderException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Configuration;
 import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Manufacturers;
 import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Manufacturers.Name;
 import uk.ac.cam.cl.echo.extrusionfinder.server.database.IDBManager;
 import uk.ac.cam.cl.echo.extrusionfinder.server.database.MongoDBManager;
-import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
+import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.GrayscaleImageData;
+import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.ImageLoadException;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Manufacturer;
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
+import uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor.ProfileFitting;
+import uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor.web.ProfileNotFoundException;
+import uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor.web.SeagatePDFProcessor;
 import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.Controller;
 import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.CrawlControllerFactory;
 import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.CrawlerException;
 import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.ExtendedCrawler;
 import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.util.FileUtility;
-import org.apache.batik.transcoder.TranscoderException;
-
 import uk.ac.cam.cl.echo.extrusionfinder.server.zernike.Zernike;
 import uk.ac.cam.cl.echo.extrusionfinder.server.zernike.ZernikeMap;
-import uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor.ProfileFitting;
-import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.GrayscaleImageData;
-import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.ImageLoadException;
-import uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor.web.SeagatePDFProcessor;
-import uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor.web.ProfileNotFoundException;
-import java.awt.geom.Point2D;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.net.ConnectException;
-import java.util.Collection;
-import java.util.Set;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 /**
  * Program that crawls plastic extrusion vendors for information about the
@@ -86,7 +76,7 @@ public class PartSourcer {
 
         // initialise collection of website crawlers
         Collection<Controller<? extends ExtendedCrawler>> controllers =
-            new ArrayList<Controller<? extends ExtendedCrawler>>();
+            new ArrayList<>();
 
         // get config options from Configuration file
         String dir = Configuration.getCrawlStorageFolder();
@@ -106,7 +96,7 @@ public class PartSourcer {
             // instance. (crawlcontroller is the crawler4j controller)
 
             Controller<? extends ExtendedCrawler> c =
-                new Controller<ExtendedCrawler>(
+                new Controller<>(
                     CrawlControllerFactory.get(dir, maxDepth, maxPages),
                     crawler,
                     seeds
@@ -164,8 +154,8 @@ public class PartSourcer {
      */
     private static void saveParts(String tempFolder, IDBManager dbManager, Set<Part> parts) {
 
-        ZernikeMap map = new ZernikeMap(new HashMap<String, double[]>());
-        Set<Part> partz = new HashSet<Part>();
+        ZernikeMap map = new ZernikeMap(new HashMap<>());
+        Set<Part> partz = new HashSet<>();
 
         for (Part p : parts) {
 

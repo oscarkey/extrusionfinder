@@ -1,7 +1,8 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers;
 
-import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
+
 import java.util.Set;
 
 /**
