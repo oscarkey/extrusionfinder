@@ -72,15 +72,17 @@ public class SeagatePDFProcessor {
         // measurement lines, or arrows
         removeLabels(svg);
 
-        // Rasterize, and write out to file system as a png
+        // Rasterize, and write out to file system as a png.
         OutputStream os = new FileOutputStream("cleaned.png");
         try {
             PNGTranscoder transcoder = new PNGTranscoder();
-            transcoder.addTranscodingHint(PNGTranscoder.KEY_WIDTH, (float) 4096); //scale to increase resolution
-            transcoder.addTranscodingHint(PNGTranscoder.KEY_HEIGHT, (float) 4096);
+
+            // Scale the size of the rasterized png
+            transcoder.addTranscodingHint(PNGTranscoder.KEY_WIDTH, Configuration.PDF_RASTERIZATION_DIMENSIONS);
+            transcoder.addTranscodingHint(PNGTranscoder.KEY_HEIGHT, Configuration.PDF_RASTERIZATION_DIMENSIONS);
+
             TranscoderInput input = new TranscoderInput(svg);
             TranscoderOutput output = new TranscoderOutput(os);
-
             transcoder.transcode(input, output);
         } finally {
             os.flush();

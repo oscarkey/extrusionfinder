@@ -3,7 +3,6 @@ package uk.ac.cam.cl.echo.extrusionfinder.server.configuration;
 public class Configuration {
     public static final String MONGO_HOST = "localhost";
     public static final int MONGO_PORT = 27017;
-
     public static final String ZERNIKE_MAP_ID = "zernike";
     public static final String DEFAULT_DATABASE_NAME = "extrusionDB";
     public static final int DEFAULT_NUMBER_OF_MATCHES = 15;
@@ -20,6 +19,9 @@ public class Configuration {
     public static final int PROFILE_DETECTION_STANDARD_BILATERAL_FILTER_SIGMA = 15;
 
     public static final float PDF_THINNED_EDGE_THICKNESS = 0.1f;
+
+    // Width/height of square png image to rasterize the pdf to
+    public static final float PDF_RASTERIZATION_DIMENSIONS = 2048f;
 
     /* Crawler configuration.
      * Need to have getters to allow mocking in tests.
