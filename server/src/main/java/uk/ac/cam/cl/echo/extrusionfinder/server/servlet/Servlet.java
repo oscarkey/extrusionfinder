@@ -35,15 +35,7 @@ public class Servlet implements IServlet {
      */
     @Override
     public List<MatchedPart> findMatches(String jsonImage) throws IOException, ItemNotFoundException {
-        System.out.println("Endpoint hit");
         logger.info("Endpoint hit");
-
-        try {
-            nu.pattern.OpenCV.loadShared();
-        } catch (Throwable e) {}
-
-
-        logger.debug("library loaded");
 
         // Deserialize the uploaded json to an UploadedImage
         ObjectMapper mapper = new ObjectMapper();
@@ -65,7 +57,7 @@ public class Servlet implements IServlet {
                 Configuration.DEFAULT_NUMBER_OF_MATCHES
         );
 
-        logger.debug("found matches");
+        logger.debug("Found matches");
 
         logger.info("Returning match data");
 
