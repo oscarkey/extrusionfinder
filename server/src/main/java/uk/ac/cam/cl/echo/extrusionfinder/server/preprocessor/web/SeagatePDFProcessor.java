@@ -130,9 +130,17 @@ public class SeagatePDFProcessor {
                         parent.getParentNode().removeChild(parent);
                     }
                 } else {
+                    // Otherwise, assume the path is a line on the extrusion. Replace its stroke thickness
+                    // to thin the SVG
+                    String newStyleText = styleText.replaceAll("stroke-width:[0-9]*\\.[0-9]*;", "");
+                    newStyleText = newStyleText + ";stroke-width:" + Configuration.PDF_THINNED_EDGE_THICKNESS;
+                    element.setAttribute("style", newStyleText);
+
+                    // Recursively explore remained of the SVGOM
                     removeLabels(child);
                 }
             } else {
+                // Recursively explore remained of the SVGOM
                 removeLabels(child);
             }
         }
