@@ -1,17 +1,12 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.util;
 
-import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size.Unit;
-
-import java.lang.Float;
-import java.lang.Integer;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.jsoup.Jsoup;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size.Unit;
 
 /**
  * A very thin, non-transparent layer upon Jsoup. Not meant to abstract fully

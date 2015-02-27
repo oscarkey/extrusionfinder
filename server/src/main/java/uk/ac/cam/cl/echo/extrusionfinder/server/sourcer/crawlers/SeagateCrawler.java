@@ -1,24 +1,22 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers;
 
-import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Manufacturers;
-import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Manufacturers.Name;
-import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
-import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size.Unit;
-import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size;
-import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Manufacturer;
-import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.util.MetadataParser;
-import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.util.MetadataParserException;
-
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.url.WebURL;
-
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-import java.util.Set;
-
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Manufacturers;
+import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Manufacturers.Name;
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Manufacturer;
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size;
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size.Unit;
+import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.util.MetadataParser;
+import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.util.MetadataParserException;
+
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Seagate Plastics specific crawler (part sourcer).
@@ -81,7 +79,7 @@ public class SeagateCrawler extends ExtendedCrawler {
      */
     @Override
     public void configure(Set<Part> parts) {
-        this.parts = parts;
+        SeagateCrawler.parts = parts;
     }
 
     /**

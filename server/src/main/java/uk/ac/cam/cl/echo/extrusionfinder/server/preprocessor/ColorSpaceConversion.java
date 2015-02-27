@@ -1,7 +1,5 @@
 package uk.ac.cam.echo.extrusionfinder.preprocessor;
 
-import java.lang.Math;
-
 import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.LabImageData;
 import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
 import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.XYZImageData;

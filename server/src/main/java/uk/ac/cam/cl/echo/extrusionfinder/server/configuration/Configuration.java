@@ -1,11 +1,5 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.configuration;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.ExtendedCrawler;
-import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.SeagateCrawler;
-
 public class Configuration {
     public static final String MONGO_HOST = "localhost";
     public static final int MONGO_PORT = 27017;

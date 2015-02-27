@@ -1,7 +1,5 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.parts;
 
-import java.lang.IllegalArgumentException;
-
 public class Size {
 
     public enum Unit {

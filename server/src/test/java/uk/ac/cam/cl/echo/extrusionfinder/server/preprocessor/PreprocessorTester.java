@@ -12,7 +12,8 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
 import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.GrayscaleImageData;
 
 public class PreprocessorTester {
-    private PreprocessorTester() {};
+    private PreprocessorTester() {}
+
     public static void detector(String inFile, String outFile) {
         System.loadLibrary(Configuration.OPENCV_LIBRARY_NAME);
 

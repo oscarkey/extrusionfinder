@@ -3,8 +3,8 @@ package uk.ac.cam.cl.echo.extrusionfinder.server.configuration;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Manufacturer;
 import uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers.SeagateCrawler;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Static getters for manufacturers. In here, we configure which manufacturers

@@ -1,23 +1,14 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor;
 
-import org.opencv.core.Core;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfInt;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.core.Size;
-import org.opencv.highgui.Highgui;
+import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
-import java.io.IOException;
-import java.util.List;
-import java.util.LinkedList;
-import java.util.ArrayList;
-
 import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Configuration;
-import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
 import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.GrayscaleImageData;
+import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Extracts extrusion cross-section profile.
@@ -203,7 +194,7 @@ public class ProfileDetector {
                 // How much of the pixel (fraction) to keep.
                 double keep = maximum - (Math.hypot(x-r, y-r) / diameter);
                 // How much of the pixel (fraction*255) to keep.
-                bytes[i] = (byte)(keep < 0 ? 0 : (byte)(keep * 255.0));
+                bytes[i] = keep < 0 ? 0 : (byte)(keep * 255.0);
             }
         }
 

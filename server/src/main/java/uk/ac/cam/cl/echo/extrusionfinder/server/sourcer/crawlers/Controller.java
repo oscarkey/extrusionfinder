@@ -1,12 +1,10 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.crawlers;
 
+import edu.uci.ics.crawler4j.crawler.CrawlController;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
 
-import edu.uci.ics.crawler4j.crawler.CrawlController;
-
-import java.lang.IllegalArgumentException;
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * <p>Controller for any web crawler. Manages configuration and parts stream.</p>
