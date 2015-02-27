@@ -29,7 +29,7 @@ public class Configuration {
      */
     private static final String CRAWL_STORAGE_FOLDER = "crawlerdata/root";
     private static final int MAX_CRAWL_DEPTH = 5;
-    private static final int MAX_CRAWL_PAGES = -1;
+    private static final int MAX_CRAWL_PAGES = 20;
 
 
     private Configuration(){}
