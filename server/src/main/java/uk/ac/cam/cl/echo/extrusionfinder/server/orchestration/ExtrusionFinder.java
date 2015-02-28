@@ -1,5 +1,6 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.orchestration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Configuration;
@@ -14,6 +15,8 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor.ProfileDetector;
 import uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor.ProfileFitting;
 
 import java.awt.geom.Point2D;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -73,8 +76,18 @@ public class ExtrusionFinder {
         Point2D center = fitter.getCentre();
 
         // Having processed the image, find matches
-        return findMatches(new ImageMatcher(grayscaleImageData, Configuration.DEFAULT_ZERNIKE_DEGREE, center, radius),
-                database, maxResults);
+        List<MatchedPart> matches = findMatches(new ImageMatcher(grayscaleImageData,
+                        Configuration.DEFAULT_ZERNIKE_DEGREE, center, radius),
+                        database, maxResults);
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            mapper.writeValue(new File(Configuration.IMAGE_LOG_PATH + uuid + "-2results"), matches);
+        } catch (IOException e) {
+            logger.info("Unable to serialize results");
+        }
+
+        return matches;
     }
 
     /**
