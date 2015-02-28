@@ -3,6 +3,7 @@ package uk.ac.cam.cl.echo.extrusionfinder.server.database;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
 import uk.ac.cam.cl.echo.extrusionfinder.server.zernike.ZernikeMap;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -22,10 +23,12 @@ public interface IDBManager {
 
     /**
      * Inserts a set of parts into the database
-     * If any of the parts with the same ._id property already exist in the database, those will be overwritten.
-     * @param parts Set of parts to insert.
+     * If any of the parts with the same _id property already exist in the database, those will be overwritten.
+     * If the collection has multiple parts with the same _id property, one of those will be selected at random for
+     * insertion.
+     * @param parts Collection of parts to insert.
      */
-    public void saveParts(Set<Part> parts);
+    public void saveParts(Collection<Part> parts);
 
     /**
      * Loads the part with the specified identifier from the database
