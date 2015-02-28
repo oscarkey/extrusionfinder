@@ -57,9 +57,6 @@ public class MongoDBManager implements IDBManager {
 
     /**
      * {@inheritDoc}
-     * <p>
-     * This implementation only makes one database call, so is more efficient than making successive savePart() calls
-     * @param parts List of parts to insert.
      */
     @Override
     public void saveParts(Collection<Part> parts) {
