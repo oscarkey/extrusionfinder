@@ -10,6 +10,7 @@ import java.util.List;
 
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
+import retrofit.mime.TypedByteArray;
 import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
 
 /**
@@ -110,7 +111,7 @@ public class CommsService extends IntentService {
         // blocking doesn't matter as we have our own thread
         List<Result> results;
         try {
-            results = resultsServiceAdapter.getMatches(image);
+            results = resultsServiceAdapter.getMatches(new TypedByteArray("image/jpeg", image));
         }
         catch(RetrofitError e) {
             // print out the error

@@ -113,6 +113,10 @@ public class Camera1Controller implements CameraController {
         previewSurface.addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+                if (camera == null) {
+                    return;
+                }
+
                 // reattach the surface to the camera
                 camera.stopPreview();
                 try {

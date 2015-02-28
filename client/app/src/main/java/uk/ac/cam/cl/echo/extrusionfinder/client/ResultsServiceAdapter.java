@@ -4,6 +4,7 @@ import java.util.List;
 
 import retrofit.http.Body;
 import retrofit.http.POST;
+import retrofit.mime.TypedByteArray;
 
 /**
  * Created by oscar on 10/02/15.
@@ -14,9 +15,9 @@ public interface ResultsServiceAdapter {
 
     /**
      * Get the results for a given image. Blocks until completion
-     * @param image The byte[] image to find results for encoded as a base64 string
+     * @param image The TypedByteArray image to find results for encoded as a base64 string
      * @return A list of the results matched
      */
     @POST("/matches")
-    public List<Result> getMatches(@Body byte[] image);
+    public List<Result> getMatches(@Body TypedByteArray image);
 }

@@ -1,2 +1,9 @@
 *.iml
 server/.idea/*
+*/.gradle/*
+*/build/*
+*/gradle/*
+*/target/*
+*~
+*/crawlerdata/*
+*/gradlew*
