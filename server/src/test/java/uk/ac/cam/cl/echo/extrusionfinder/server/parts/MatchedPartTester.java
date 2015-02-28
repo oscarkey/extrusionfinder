@@ -16,15 +16,16 @@ public class MatchedPartTester {
      */
     @Test
     public void testEquals() {
-        MatchedPart a = new MatchedPart(new Part("a", "b", "c", "d"), 0.02);
+        MatchedPart a = new MatchedPart(new Part("a", "b", "c", "d", "e"), 0.02);
 
-        assertTrue(new MatchedPart(new Part("a", "b", "c", "d"), 0.02).equals(a));
+        assertTrue(new MatchedPart(new Part("a", "b", "c", "d", "e"), 0.02).equals(a));
 
-        assertTrue(!new MatchedPart(new Part("A", "b", "c", "d"), 0.02).equals(a));
-        assertTrue(!new MatchedPart(new Part("b", "B", "c", "d"), 0.02).equals(a));
-        assertTrue(!new MatchedPart(new Part("b", "b", "C", "d"), 0.02).equals(a));
-        assertTrue(!new MatchedPart(new Part("b", "b", "c", "D"), 0.02).equals(a));
-        assertTrue(!new MatchedPart(new Part("b", "b", "c", "d"), 0.03).equals(a));
+        assertTrue(!new MatchedPart(new Part("A", "b", "c", "d", "e"), 0.02).equals(a));
+        assertTrue(!new MatchedPart(new Part("a", "B", "c", "d", "e"), 0.02).equals(a));
+        assertTrue(!new MatchedPart(new Part("a", "b", "C", "d", "e"), 0.02).equals(a));
+        assertTrue(!new MatchedPart(new Part("a", "b", "c", "D", "e"), 0.02).equals(a));
+        assertTrue(!new MatchedPart(new Part("a", "b", "c", "d", "E"), 0.02).equals(a));
+        assertTrue(!new MatchedPart(new Part("a", "b", "c", "d", "e"), 0.03).equals(a));
 
         assertTrue(!a.equals(new Object()));
     }

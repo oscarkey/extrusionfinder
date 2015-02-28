@@ -18,17 +18,18 @@ public class PartTester {
      */
     @Test
     public void testEquals() {
-        Part a = new Part("a", "b", "c", "d", new Size(), "desc");
+        Part a = new Part("a", "b", "c", "d", "e", new Size(), "desc");
 
-        assertTrue(new Part("a", "b", "c", "d", new Size(), "desc").equals(a));
+        assertTrue(new Part("a", "b", "c", "d", "e", new Size(), "desc").equals(a));
 
-        assertTrue(!new Part("a", "b", "c", "d").equals(a));
-        assertTrue(!new Part("A", "b", "c", "d", new Size(), "desc").equals(a));
-        assertTrue(!new Part("b", "B", "c", "d", new Size(), "desc").equals(a));
-        assertTrue(!new Part("b", "b", "C", "d", new Size(), "desc").equals(a));
-        assertTrue(!new Part("b", "b", "c", "D", new Size(), "desc").equals(a));
-        assertTrue(!new Part("a", "b", "c", "d", new Size(1.0f, 2.0f, Unit.IN), "desc").equals(a));
-        assertTrue(!new Part("a", "b", "c", "d", new Size(), "bla").equals(a));
+        assertTrue(!new Part("a", "b", "c", "d", "e").equals(a));
+        assertTrue(!new Part("A", "b", "c", "d", "e", new Size(), "desc").equals(a));
+        assertTrue(!new Part("b", "B", "c", "d", "e", new Size(), "desc").equals(a));
+        assertTrue(!new Part("b", "b", "C", "d", "e", new Size(), "desc").equals(a));
+        assertTrue(!new Part("b", "b", "c", "D", "e", new Size(), "desc").equals(a));
+        assertTrue(!new Part("a", "b", "c", "d", "e", new Size(1.0f, 2.0f, Unit.IN), "desc").equals(a));
+        assertTrue(!new Part("a", "b", "c", "d", "e", new Size(), "bla").equals(a));
+        assertTrue(!new Part("a", "b", "c", "d", "E", new Size(), "desc").equals(a));
 
         assertTrue(!a.equals(new Object()));
     }

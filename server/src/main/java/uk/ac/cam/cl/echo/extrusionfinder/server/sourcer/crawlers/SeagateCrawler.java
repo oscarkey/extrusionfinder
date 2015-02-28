@@ -139,14 +139,18 @@ public class SeagateCrawler extends ExtendedCrawler {
             String image = mp.selectSingleAttr(productNode, "img[src]", "abs:src");
             image = image.toLowerCase();
 
+            // link to order the part: either this or mp.getUrl() which is the
+            // parent page ...
+            String order = "http://seagateplastics.com/order.html";
+
             // get the metadata of the product
             String description =
                 mp.selectSingleText(productNode, "div.product-description");
             Size size = extractSize(description);
 
             if (parts != null) {
-                Part p = new Part(manufacturerId, productId, link, image, size,
-                    description);
+                Part p = new Part(manufacturerId, productId, link, image, order,
+                    size, description);
                 parts.add(p);
             }
         }
