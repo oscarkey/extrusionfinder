@@ -15,6 +15,7 @@ public class MatchedPart extends Part {
                 p.getPartId(),
                 p.getLink(),
                 p.getImageLink(),
+                p.getOrderLink(),
                 p.getSize(),
                 p.getDescription()
         );
@@ -35,6 +36,7 @@ public class MatchedPart extends Part {
                     part.partId.equals(partId) &&
                     part.link.equals(link) &&
                     part.imageLink.equals(imageLink) &&
+                    part.orderLink.equals(orderLink) &&
                     Objects.equals(part.getConfidence(), confidence);
         } else {
             return false;

@@ -71,11 +71,7 @@ public class MongoDBManager implements IDBManager {
      */
     @Override
     public Part loadPart(String _id) throws ItemNotFoundException {
-            Part p = partManager.load(_id);
-
-            System.out.print(p);
-
-            return p;
+        return partManager.load(_id);
     }
 
     /**

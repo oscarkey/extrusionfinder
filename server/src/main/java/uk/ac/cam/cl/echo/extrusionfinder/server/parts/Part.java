@@ -11,9 +11,9 @@ public class Part implements DatabaseItem {
     protected String partId;
     protected String link;
     protected String imageLink;
+    protected String orderLink;
     protected Size size;
     protected String description;
-    protected String orderLink;
 
     /**
      * Constructor to be used by MongoJack only
@@ -32,9 +32,9 @@ public class Part implements DatabaseItem {
                 @JsonProperty("partId") String partId,
                 @JsonProperty("link") String link,
                 @JsonProperty("imageLink") String imageLink,
+                @JsonProperty("orderLink") String orderLink,
                 @JsonProperty("size") Size size,
-                @JsonProperty("description") String description,
-                @JsonProperty("orderLink") String orderLink) {
+                @JsonProperty("description") String description) {
         this._id = _id;
         this.manufacturerId = manufacturerId;
         this.partId = partId;
@@ -55,7 +55,7 @@ public class Part implements DatabaseItem {
      */
     public Part(String manufacturerId, String partId, String link, String imageLink, String orderLink) {
         this(manufacturerId + partId, manufacturerId, partId, link, imageLink,
-            new Size(), "", orderLink);
+            orderLink, new Size(), "");
     }
 
     /**
@@ -72,7 +72,7 @@ public class Part implements DatabaseItem {
         String imageLink, String orderLink, Size size, String description) {
 
         this(manufacturerId + partId, manufacturerId, partId, link, imageLink,
-            size, description, orderLink);
+            orderLink, size, description);
     }
 
     @Override
@@ -86,6 +86,10 @@ public class Part implements DatabaseItem {
 
     public String getImageLink() {
         return imageLink;
+    }
+
+    public String getOrderLink() {
+        return orderLink;
     }
 
     public String getManufacturerId() {
@@ -102,10 +106,6 @@ public class Part implements DatabaseItem {
 
     public String getDescription() {
         return description;
-    }
-
-    public String getOrderLink() {
-        return orderLink;
     }
 
     @Override
@@ -133,6 +133,6 @@ public class Part implements DatabaseItem {
     @Override
     public String toString() {
         return String.format("EXTRUSION-ID: %s; ManId: %s; PartId: %s; Description: %s; Size: %s; PDF Link: %s; ImageLink: %s, OrderLink: %s",
-            _id, manufacturerId, partId, description, size, link, imageLink, orderLink);
+                _id, manufacturerId, partId, description, size, link, imageLink, orderLink);
     }
 }
