@@ -56,3 +56,13 @@ dependencies {
     // jsoup for html parsing in the crawler
     compile 'org.jsoup:jsoup:1.7.2'
 }
+
+test {
+    maxParallelForks = 2;
+    exclude "**/SourcerIntegrationTester.class"
+}
+
+task integrationTest(type: Test) {
+    maxParallelForks = 2;
+    include "**/SourcerIntegrationTester.class"
+}
