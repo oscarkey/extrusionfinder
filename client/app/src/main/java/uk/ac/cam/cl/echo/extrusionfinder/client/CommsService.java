@@ -10,6 +10,7 @@ import java.util.List;
 
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
+import retrofit.mime.TypedByteArray;
 import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
 
 /**
@@ -104,16 +105,13 @@ public class CommsService extends IntentService {
         }
 
         // get the image from the cache
-        RGBImageData image = resultsCache.getImage(uuid);
-
-        // encode the image for the network
-        NetworkImage networkImage = NetworkImage.fromRGBImageData(image);
+        byte[] image = resultsCache.getImage(uuid);
 
         // send a blocking request to the server to get results
         // blocking doesn't matter as we have our own thread
         List<Result> results;
         try {
-            results = resultsServiceAdapter.getMatches(networkImage);
+            results = resultsServiceAdapter.getMatches(new TypedByteArray("image/jpeg", image));
         }
         catch(RetrofitError e) {
             // print out the error

@@ -10,8 +10,11 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
 import uk.ac.cam.cl.echo.extrusionfinder.server.orchestration.ExtrusionFinder;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.MatchedPart;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
+import javax.imageio.ImageIO;
 
 /**
  * {@inheritDoc}
@@ -28,16 +31,33 @@ public class Servlet implements IServlet {
      * {@inheritDoc}
      */
     @Override
-    public List<MatchedPart> findMatches(String jsonImage) throws IOException, ItemNotFoundException {
+    public List<MatchedPart> findMatches(byte[] jpegData) throws IOException, ItemNotFoundException {
         logger.info("Endpoint hit");
 
-        // Deserialize the uploaded json to an UploadedImage
-        ObjectMapper mapper = new ObjectMapper();
-        UploadedImage uploadedImage = mapper.readValue(jsonImage, UploadedImage.class);
+        // Decode the JPEG
+        BufferedImage image = ImageIO.read(new ByteArrayInputStream(jpegData));
 
-        RGBImageData rgbImage = new RGBImageData(
-                uploadedImage.getData(), uploadedImage.getWidth(), uploadedImage.getHeight()
+        // Remove the alpha component
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        int[] pixels = image.getRGB(
+            0, 0,           // Top left to read from
+            width, height,  // How much to read 
+            null,           // Preallocated array
+            0,              // How much of preallocated array to skip
+            width           // Stride of preallocated array
         );
+
+        // Decompress pixels and remove alpha
+        RGBImageData rgbImage = new RGBImageData(new byte[3 * width * height], width, height);
+
+        int output = 0;
+        for (int pixel : pixels) {
+            rgbImage.data[output++] = (byte)(pixel >> 16);  // red
+            rgbImage.data[output++] = (byte)(pixel >>  8);  // green
+            rgbImage.data[output++] = (byte)(pixel >>  0);  // blue
+        }
 
         logger.debug("Decoded");
 

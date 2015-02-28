@@ -11,10 +11,10 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
  */
 public class ResultRequest implements Serializable {
     private final String requestUuid;
-    private final RGBImageData image;
+    private final byte[] image;
     private List<Result> results;
 
-    public ResultRequest(String requestId, RGBImageData image) {
+    public ResultRequest(String requestId, byte[] image) {
         this.requestUuid = requestId;
         this.image = image;
     }
@@ -23,7 +23,7 @@ public class ResultRequest implements Serializable {
         return requestUuid;
     }
 
-    public RGBImageData getImage() {
+    public byte[] getImage() {
         return image;
     }
 

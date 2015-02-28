@@ -97,7 +97,7 @@ public class ImageCaptureActivity extends ActionBarActivity {
             = new CameraController.CameraCallback() {
 
         @Override
-        public void onImageCaptured(RGBImageData image) {
+        public void onImageCaptured(byte[] image) {
             // save the request to the cache
             ResultsCache cache = ResultsCache.getInstance(context);
             String uuid = cache.putRequest(image);
