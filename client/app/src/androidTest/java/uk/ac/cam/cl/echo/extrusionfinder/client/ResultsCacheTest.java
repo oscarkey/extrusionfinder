@@ -34,7 +34,7 @@ public class ResultsCacheTest extends AndroidTestCase {
         ResultsCache cache = ResultsCache.getInstance(getContext());
 
         // create a new image and request
-        RGBImageData image = generateTestImage();
+        byte[] image = generateTestImage();
         String uuid = cache.putRequest(image);
 
         // check that we get correct image for a known uuid and get null for a random uuid
@@ -66,14 +66,14 @@ public class ResultsCacheTest extends AndroidTestCase {
     }
 
 
-    private RGBImageData generateTestImage() {
+    private byte[] generateTestImage() {
         //FIXME should probably generate a byte array that actually is an image
         // create a large byte array
         byte[] data = new byte[TEST_IMAGE_SIZE_BYTES];
         Random random = new Random();
         random.nextBytes(data);
 
-        return new RGBImageData(data, 1024, 1024);
+        return data;
     }
 
     private String generateTestUuid() {
