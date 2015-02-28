@@ -132,7 +132,7 @@ public class Part implements DatabaseItem {
 
     @Override
     public String toString() {
-        return String.format("EXTRUSION-ID: %s; ManId: %s; PartId: %s; Description: %s; Size: %s; PDF Link: %s; ImageLink: %s, OrderLink: %s",
+        return String.format("EXTRUSION-ID: %s; ManufacturerID: %s; PartID: %s; Description: %s; Size: %s; PDF Link: %s; ImageLink: %s, OrderLink: %s",
                 _id, manufacturerId, partId, description, size, link, imageLink, orderLink);
     }
 }
