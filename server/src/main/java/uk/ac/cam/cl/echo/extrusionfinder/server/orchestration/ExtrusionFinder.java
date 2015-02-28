@@ -82,7 +82,7 @@ public class ExtrusionFinder {
 
         ObjectMapper mapper = new ObjectMapper();
         try {
-            mapper.writeValue(new File(Configuration.IMAGE_LOG_PATH + uuid + "-2results"), matches);
+            mapper.writeValue(new File(Configuration.IMAGE_LOG_PATH + uuid + "-2results.txt"), matches);
         } catch (IOException e) {
             logger.info("Unable to serialize results");
         }
