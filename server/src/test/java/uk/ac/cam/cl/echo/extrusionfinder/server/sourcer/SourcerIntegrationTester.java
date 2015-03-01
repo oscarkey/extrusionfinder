@@ -57,7 +57,7 @@ public class SourcerIntegrationTester {
      * (unit) tests.
      * Currently only testing results of Seagate.
      */
-//    @Test
+    @Test
     public void testPartSourcer() {
 
         mockStatic(Configuration.class);
