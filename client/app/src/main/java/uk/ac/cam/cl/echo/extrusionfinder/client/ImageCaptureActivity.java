@@ -10,8 +10,8 @@ import android.view.Display;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
+import at.markushi.ui.CircleButton;
 import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
 import uk.ac.cam.cl.groupecho.extrusionfinder.R;
 
@@ -65,7 +65,7 @@ public class ImageCaptureActivity extends ActionBarActivity {
 
     private void addEventListeners() {
         // capture image button: take a picture
-        Button captureImageButton = (Button) findViewById(R.id.captureImageButton);
+        CircleButton captureImageButton = (CircleButton) findViewById(R.id.captureImageButton);
         captureImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View button) {
@@ -85,12 +85,12 @@ public class ImageCaptureActivity extends ActionBarActivity {
         // adjust the size of the surface to match the aspect ratio of the preview
         ViewGroup.LayoutParams layoutParams = previewSurface.getLayoutParams();
 
-        // set the width to that of the screen
-        layoutParams.width = screenSize.getWidth();
+        // set the height to that of the screen
+        layoutParams.height = screenSize.getHeight();
 
         // set the height to match the width
-        double height = ((double)aspectRatio.getHeight() / (double)aspectRatio.getWidth()) * (double)screenSize.getWidth();
-        layoutParams.height = (int) height;
+        double width = ((double)aspectRatio.getWidth() / (double)aspectRatio.getHeight()) * (double)screenSize.getHeight();
+        layoutParams.width = (int) width;
     }
 
     private final CameraController.CameraCallback cameraCallback
