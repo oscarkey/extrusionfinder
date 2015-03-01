@@ -16,6 +16,7 @@ public class Result implements Serializable {
     private String partId;
     private String link;
     private String imageLink;
+    private String orderLink;
     private String description;
 
     public Result(String id) {
@@ -40,6 +41,10 @@ public class Result implements Serializable {
 
     public String getImageLink() {
         return imageLink;
+    }
+
+    public String getOrderLink() {
+        return orderLink;
     }
 
     public boolean hasImageLink() {
