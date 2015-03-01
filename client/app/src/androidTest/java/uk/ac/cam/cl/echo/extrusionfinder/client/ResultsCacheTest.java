@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
-
 /**
  * Created by oscar on 08/02/15.
  * Tests for ResultsCache.
