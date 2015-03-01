@@ -24,11 +24,14 @@ public class Camera1Controller implements CameraController {
 
     private boolean isSetup;
     private boolean isPreviewing;
+
+    private Camera camera;
     private SurfaceHolder previewSurface;
-    private CameraCallback callback;
     private Dimension previewAspectRatio;
     private Dimension previewSize;
-    private Camera camera;
+
+    private CameraCallback callback;
+    private SurfaceHolder.Callback surfaceCallback;
 
     @Override
     public void startCamera() {
@@ -81,6 +84,9 @@ public class Camera1Controller implements CameraController {
             callback.onError(ERROR_TYPE_START);
         }
 
+        // register a callback on the surface
+        previewSurface.addCallback(surfaceCallback);
+
         camera.startPreview();
 
         isPreviewing = true;
@@ -90,6 +96,7 @@ public class Camera1Controller implements CameraController {
     public void stopCamera() {
         isPreviewing = false;
 
+        previewSurface.removeCallback(surfaceCallback);
         camera.stopPreview();
         camera.release();
     }
@@ -103,8 +110,8 @@ public class Camera1Controller implements CameraController {
         this.previewAspectRatio = previewAspectRatio;
 
 
-        // register a callback on the surface holder to update the camera whenever it changes
-        previewSurface.addCallback(new SurfaceHolder.Callback() {
+        // create a callback for the surface holder to update the camera whenever it changes
+        surfaceCallback = new SurfaceHolder.Callback() {
             @Override
             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
                 if (camera == null) {
@@ -129,7 +136,7 @@ public class Camera1Controller implements CameraController {
             public void surfaceCreated(SurfaceHolder holder) {}
             @Override
             public void surfaceDestroyed(SurfaceHolder holder) {}
-        });
+        };
 
         isSetup = true;
     }
