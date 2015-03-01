@@ -2,8 +2,6 @@ package uk.ac.cam.cl.echo.extrusionfinder.client;
 
 import android.view.SurfaceHolder;
 
-import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
-
 /**
  * Created by oscar on 05/02/15.
  * An interface to provide an abstraction over the two types of camera available depending on
@@ -28,10 +26,11 @@ public interface CameraController {
     /**
      * Must be called to set up the camera before starting it or taking a picture
      * @param previewSurface The surface where the preview from the camera should be displayed
-     * @param desiredPreviewSize A Dimension of the desired size of the preview
+     * @param previewAspectRatio A Dimension representing the aspect ratio that we would like the
+     *                           preview to be
      * @param cameraCallback Called when various camera events occur
      */
-    public void setupCamera(SurfaceHolder previewSurface, Dimension desiredPreviewSize,
+    public void setupCamera(SurfaceHolder previewSurface, Dimension previewAspectRatio,
                             CameraCallback cameraCallback);
 
     /**
@@ -54,16 +53,10 @@ public interface CameraController {
 
         /**
          * Called every time a preview frame is delivered
-         * @param image ImageData of the frame in a yet to be determined format
+         * @param image byte[] of the frame in YV12
+         * @param previewSize Dimension representing the size of the preview
          */
-        public void onPreviewFrame(RGBImageData image);
-
-        /**
-         * Called when the camera has been started and the preview size has been determined.
-         * Should be used to set the surface holding the preview to the correct aspect ratio.
-         * @param size The Dimension that has been chosen for the preview
-         */
-        public void onSetPreviewSize(Dimension size);
+        public void onPreviewFrame(byte[] image, Dimension previewSize);
 
         /**
          * Called when an error occurred with the camera
