@@ -164,7 +164,8 @@ public class Camera1Controller implements CameraController {
     private final Camera.PreviewCallback previewCallback = new Camera.PreviewCallback() {
         @Override
         public void onPreviewFrame(byte[] data, Camera camera) {
-            callback.onPreviewFrame(data, previewSize);
+            callback.onPreviewFrame(new NV21ImageData(data, previewSize.getWidth(),
+                    previewSize.getHeight()));
         }
     };
 

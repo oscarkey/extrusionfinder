@@ -123,13 +123,13 @@ public class ImageCaptureActivity extends Activity {
         }
 
         @Override
-        public void onPreviewFrame(byte[] image, Dimension size) {
+        public void onPreviewFrame(NV21ImageData image) {
             // check if the profile detection is ready
             // prevents attempting when busy or not loaded
             if(profileDetectionReady) {
                 // process the frame
                 profileDetectionReady = false;
-                executePreprocessAsyncTask(image, size);
+                executePreprocessAsyncTask(image);
             }
         }
 
@@ -189,26 +189,24 @@ public class ImageCaptureActivity extends Activity {
     /**
      * Creates and starts an async task to pre-process the image and draw the extrusion highlights
      * to a canvas.
-     * @param image byte[] NV21 image to pre-process
-     * @param size Dimension representing the size of the image
+     * @param image NV21ImageData representing the image
      */
-    private void executePreprocessAsyncTask(byte[] image, Dimension size) {
-        AsyncTask<Pair<Pair<byte[], Dimension>, SurfaceHolder>, Void, Void> preprocessAsyncTask
-                = new AsyncTask<Pair<Pair<byte[], Dimension>, SurfaceHolder>, Void, Void>() {
+    private void executePreprocessAsyncTask(NV21ImageData image) {
+        AsyncTask<Pair<NV21ImageData, SurfaceHolder>, Void, Void> preprocessAsyncTask
+                = new AsyncTask<Pair<NV21ImageData, SurfaceHolder>, Void, Void>() {
             @Override
-            protected Void doInBackground(Pair<Pair<byte[], Dimension>, SurfaceHolder>... params) {
-                for(Pair<Pair<byte[], Dimension>, SurfaceHolder> param : params) {
+            protected Void doInBackground(Pair<NV21ImageData, SurfaceHolder>... params) {
+                for(Pair<NV21ImageData, SurfaceHolder> param : params) {
                     // Unpack argument
-                    byte[] encodedPreviewYUV = param.first.first;
-                    Dimension previewSize = param.first.second;
+                    byte[] encodedPreviewYUV = param.first.data;
                     SurfaceHolder surfaceHolder = param.second;
 
                     // We have three sizes:
                     //     - The preview image, previewWidth x previewHeight
                     //     - The image after preprocessing, processedWidth x processedHeight
                     //     - The buffer we are rendering to, surfaceWidth x surfaceHeight
-                    int previewWidth  = previewSize.getWidth();
-                    int previewHeight = previewSize.getHeight();
+                    int previewWidth  = param.first.width;
+                    int previewHeight = param.first.height;
                     int minPreviewDim = Math.min(previewWidth, previewHeight);
 
                     int surfaceWidth  = surfaceHolder.getSurfaceFrame().width();
@@ -296,6 +294,6 @@ public class ImageCaptureActivity extends Activity {
         };
 
         preprocessAsyncTask.execute(
-                new Pair<>(new Pair<>(image, size), processedImageSurface.getHolder()));
+                new Pair<>(image, processedImageSurface.getHolder()));
     }
 }

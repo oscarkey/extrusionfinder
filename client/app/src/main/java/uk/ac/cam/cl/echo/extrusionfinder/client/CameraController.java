@@ -53,10 +53,9 @@ public interface CameraController {
 
         /**
          * Called every time a preview frame is delivered
-         * @param image byte[] of the frame in YV12
-         * @param previewSize Dimension representing the size of the preview
+         * @param image NV21ImageData representing the image
          */
-        public void onPreviewFrame(byte[] image, Dimension previewSize);
+        public void onPreviewFrame(NV21ImageData image);
 
         /**
          * Called when an error occurred with the camera
