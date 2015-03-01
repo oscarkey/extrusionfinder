@@ -190,8 +190,7 @@ public class Camera1Controller implements CameraController {
 
         // if we didn't find a size print an error and return null
         // TODO handle this gracefully
-        Log.e(LOG_TAG, "Could not get a preview size of the desired aspect ratio");
-        return null;
+        throw new NoSupportedPreviewSizeException();
     }
 
     /**
