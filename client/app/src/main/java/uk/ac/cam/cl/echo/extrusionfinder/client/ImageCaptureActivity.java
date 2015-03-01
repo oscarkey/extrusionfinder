@@ -198,84 +198,96 @@ public class ImageCaptureActivity extends Activity {
             @Override
             protected Void doInBackground(Pair<Pair<byte[], Dimension>, SurfaceHolder>... params) {
                 for(Pair<Pair<byte[], Dimension>, SurfaceHolder> param : params) {
-                    byte[] encodedImage = param.first.first;
-                    Dimension size = param.first.second;
+                    // Unpack argument
+                    byte[] encodedPreviewYUV = param.first.first;
+                    Dimension previewSize = param.first.second;
                     SurfaceHolder surfaceHolder = param.second;
-                    Canvas canvas = surfaceHolder.lockCanvas();
 
-                    // get the dimensions of the raw image
-                    int imWidth = size.getWidth();
-                    int imHeight = size.getHeight();
-                    int minDim = Math.min(imWidth, imHeight);
+                    // We have three sizes:
+                    //     - The preview image, previewWidth x previewHeight
+                    //     - The image after preprocessing, processedWidth x processedHeight
+                    //     - The buffer we are rendering to, surfaceWidth x surfaceHeight
+                    int previewWidth  = previewSize.getWidth();
+                    int previewHeight = previewSize.getHeight();
+                    int minPreviewDim = Math.min(previewWidth, previewHeight);
 
-                    // get the dimensions of the surface to draw on
-                    int surfaceWidth = surfaceHolder.getSurfaceFrame().width();
+                    int surfaceWidth  = surfaceHolder.getSurfaceFrame().width();
                     int surfaceHeight = surfaceHolder.getSurfaceFrame().height();
                     int minSurfaceDim = Math.min(surfaceWidth, surfaceHeight);
 
-                    // perform conversion to jpeg, output will be rotated incorrectly
-                    YuvImage yuv = new YuvImage(encodedImage, ImageFormat.NV21, imWidth, imHeight, null);
+                    int processedWidth  = Configuration.PROFILE_DETECTION_STANDARD_IMAGE_SIZE;
+                    int processedHeight = Configuration.PROFILE_DETECTION_STANDARD_IMAGE_SIZE;
+
+                    // The image data received is rotated relative to the device orientation
+                    // Unpack this from raw bytes to a JPEG stream to allow conversion to Bitmap.
+                    YuvImage previewYUV = new YuvImage(
+                            encodedPreviewYUV,
+                            ImageFormat.NV21, // The passed-in format
+                            previewWidth,     // YUV does not encode shape
+                            previewHeight,    // YUV does not encode shape
+                            null              // Strides deduced from data
+                    );
 
                     ByteArrayOutputStream jpegStream = new ByteArrayOutputStream();
-                    yuv.compressToJpeg(new Rect(0, 0, imWidth, imHeight), 100, jpegStream);
+                    previewYUV.compressToJpeg(
+                            new Rect(0, 0, previewWidth, previewHeight),
+                            100,        // Quality
+                            jpegStream  // Output stream
+                    );
 
+                    // Create a Bitmap and copy the bytes to it
                     Bitmap image = BitmapFactory.decodeByteArray(jpegStream.toByteArray(), 0, jpegStream.size());
 
-                    // get the jpeg pixels as a byte array
                     ByteBuffer byteBuffer = ByteBuffer.allocate(image.getByteCount());
                     image.copyPixelsToBuffer(byteBuffer);
 
-                    // remove the alpha component from the decoded jpeg
+                    // Remove the alpha component from the decoded, rotated JPEG
+                    // by ignoring every fourth byte
                     byte[] rgbData = byteBuffer.array();
-                    for (int input = 0, output = 0; input < 4 * imWidth * imHeight; input++) {
+                    for (int input = 0, output = 0; input < rgbData.length; /* alpha */ input++) {
                         rgbData[output++] = rgbData[input++];  // red
                         rgbData[output++] = rgbData[input++];  // green
                         rgbData[output++] = rgbData[input++];  // blue
                     }
 
-                    // convert the byte array into an image and call the processor
-                    RGBImageData rgbImage = new RGBImageData(rgbData, imWidth, imHeight);
+                    // Do the preprocessing on the decoded, rotated RGB image
+                    RGBImageData rgbImage = new RGBImageData(rgbData, previewWidth, previewHeight);
                     GrayscaleImageData processedImage = (new ProfileDetector()).process(rgbImage);
 
-                    // Scale it back up and output as int[], still rotated
-                    int stride = Configuration.PROFILE_DETECTION_STANDARD_IMAGE_SIZE;
-
-                    int xOffset = 0;
-                    int yOffset = 0;
-                    if (surfaceWidth > surfaceHeight) {
-                        xOffset = (surfaceWidth - surfaceHeight) / 2;
-                    } else {
-                        yOffset = (surfaceHeight - surfaceWidth) / 2;
-                    }
-
-                    // Still rotated; convert grayscale to packed ARGB
+                    // Still rotated; convert grayscale to packed ARGB where the
+                    // image is inverted and brightness becomes the alpha channel.
+                    // The colour channels are completely black.
                     int[] rgbaData = new int[processedImage.data.length];
                     for (int i = 0; i < processedImage.data.length; i++) {
                         rgbaData[i] = (byte)(- processedImage.data[i] - 1) << 24;
                     }
 
-                    // Still rotated, scale bitmap up
-                    Bitmap output = Bitmap.createBitmap(rgbaData, stride, stride, Bitmap.Config.ARGB_8888);
-
-                    // Rotate the image to correct orientation
+                    // This allows us to create a bitmap which is then rotated
+                    // to the correct orientation and scaled.
                     Matrix rotate = new Matrix();
                     rotate.setRotate(90);
-                    rotate.postTranslate(minDim, 0);
-                    output = Bitmap.createBitmap(output, 0, 0, stride, stride, rotate, false);
+                    rotate.postTranslate(minPreviewDim, 0);
 
-                    // Scale to screen size
+                    // Generate, rotate, scale
+                    Bitmap output;
+                    output = Bitmap.createBitmap(rgbaData, processedWidth, processedWidth, Bitmap.Config.ARGB_8888);
+                    output = Bitmap.createBitmap(output, 0, 0, processedWidth, processedWidth, rotate, false);
                     output = Bitmap.createScaledBitmap(output, minSurfaceDim, minSurfaceDim, false);
 
-                    // output onto screen
+                    // Draw at 50% opacity, replacing the old image.
                     Paint translucent = new Paint();
                     translucent.setAlpha(128);
                     translucent.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
-                    canvas.drawBitmap(output, xOffset, yOffset, translucent);
 
-                    // draw the canvas
+                    // There need to be borders added to the larger axis.
+                    int oblongness = surfaceWidth - surfaceHeight;
+                    int xBorder = Math.max(0, +oblongness) / 2;
+                    int yBorder = Math.max(0, -oblongness) / 2;
+
+                    // Blit with borders onto the screen, display and unlock.
+                    Canvas canvas = surfaceHolder.lockCanvas();
+                    canvas.drawBitmap(output, xBorder, yBorder, translucent);
                     surfaceHolder.unlockCanvasAndPost(canvas);
-
-                    // flag that we are ready to proces another frame
                     profileDetectionReady = true;
                 }
 
