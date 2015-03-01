@@ -54,7 +54,7 @@ public class MongoDBManagerTester {
 
         // create a new part and insert it into the database
         Size size = new Size(2.3f, 0.856f, Unit.IN);
-        Part part = new Part("id_test", "", "", "link", "imageL", size, "");
+        Part part = new Part("id_test", "", "", "link", "imageL", "ol", size, "");
         dbManager.savePart(part);
 
         // test that the part can now be correctly loaded from the database
@@ -66,7 +66,7 @@ public class MongoDBManagerTester {
         }
 
         // insert a new part which has the same identifier. This should succeed: test by loading from database
-        part = new Part("id_test", "", "", "link2", "imageLink2", new Size(), "");
+        part = new Part("id_test", "", "", "link2", "imageLink2", "ol", new Size(), "");
         dbManager.savePart(part);
         try {
             Part loadedPart = dbManager.loadPart("id_test");
@@ -143,7 +143,7 @@ public class MongoDBManagerTester {
         MongoDBManager db1 = new MongoDBManager("test-2");
         MongoDBManager db2 = new MongoDBManager("test-2");
 
-        Part part = new Part("Mid", "Pid", "link", "imageL");
+        Part part = new Part("Mid", "Pid", "link", "imageL", "ol");
         db1.savePart(part);
 
         // test that the part can now be correctly loaded from the database
@@ -161,10 +161,10 @@ public class MongoDBManagerTester {
 
         // Save a set of parts into the database
         Set<Part> parts = new HashSet<>();
-        Part p0 = new Part("id", "test0", "link", "image");
-        Part p1 = new Part("id", "test1", "link", "image");
-        Part p2 = new Part("id", "test2", "link", "image");
-        Part p3 = new Part("id", "test0", "link", "imagel");
+        Part p0 = new Part("id", "test0", "link", "image", "ol");
+        Part p1 = new Part("id", "test1", "link", "image", "ol");
+        Part p2 = new Part("id", "test2", "link", "image", "ol");
+        Part p3 = new Part("id", "test0", "link", "imagel", "ol");
 
         parts.add(p0);
         parts.add(p1);

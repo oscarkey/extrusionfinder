@@ -11,6 +11,7 @@ public class Part implements DatabaseItem {
     protected String partId;
     protected String link;
     protected String imageLink;
+    protected String orderLink;
     protected Size size;
     protected String description;
 
@@ -21,6 +22,7 @@ public class Part implements DatabaseItem {
      * @param partId         Part identifier used by manufacturer
      * @param link           Link to part on manufacturer's website
      * @param imageLink      Link to an image of the parts
+     * @param orderLink      Link to order the part
      * @param size           Size of the part
      * @param description    Miscellaneous metadata information
      */
@@ -30,6 +32,7 @@ public class Part implements DatabaseItem {
                 @JsonProperty("partId") String partId,
                 @JsonProperty("link") String link,
                 @JsonProperty("imageLink") String imageLink,
+                @JsonProperty("orderLink") String orderLink,
                 @JsonProperty("size") Size size,
                 @JsonProperty("description") String description) {
         this._id = _id;
@@ -37,6 +40,7 @@ public class Part implements DatabaseItem {
         this.partId = partId;
         this.link = link;
         this.imageLink = imageLink;
+        this.orderLink = orderLink;
         this.size = size;
         this.description = description;
     }
@@ -47,9 +51,11 @@ public class Part implements DatabaseItem {
      * @param partId         Part identifier used by manufacturer
      * @param link           Link to part on manufacturer's website
      * @param imageLink      Link to an image of the parts
+     * @param orderLink      Link to order the part
      */
-    public Part(String manufacturerId, String partId, String link, String imageLink) {
-        this(manufacturerId + partId, manufacturerId, partId, link, imageLink, new Size(), "");
+    public Part(String manufacturerId, String partId, String link, String imageLink, String orderLink) {
+        this(manufacturerId + partId, manufacturerId, partId, link, imageLink,
+            orderLink, new Size(), "");
     }
 
     /**
@@ -58,14 +64,15 @@ public class Part implements DatabaseItem {
      * @param partId         Part identifier used by manufacturer
      * @param link           Link to part on manufacturer's website
      * @param imageLink      Link to an image of the parts
+     * @param orderLink      Link to order the part
      * @param size           Size of the part as listed by the manufacturer
      * @param description    Miscellaneous metadata
      */
     public Part(String manufacturerId, String partId, String link,
-        String imageLink, Size size, String description) {
+        String imageLink, String orderLink, Size size, String description) {
 
         this(manufacturerId + partId, manufacturerId, partId, link, imageLink,
-            size, description);
+            orderLink, size, description);
     }
 
     @Override
@@ -79,6 +86,10 @@ public class Part implements DatabaseItem {
 
     public String getImageLink() {
         return imageLink;
+    }
+
+    public String getOrderLink() {
+        return orderLink;
     }
 
     public String getManufacturerId() {
@@ -106,6 +117,7 @@ public class Part implements DatabaseItem {
                     part.partId.equals(partId) &&
                     part.link.equals(link) &&
                     part.imageLink.equals(imageLink) &&
+                    part.orderLink.equals(orderLink) &&
                     part.size.equals(size) &&
                     part.description.equals(description);
         } else {
@@ -120,7 +132,7 @@ public class Part implements DatabaseItem {
 
     @Override
     public String toString() {
-        return String.format("EXTRUSION-ID: %s; Description: %s; Size: %s",
-            _id, description, size);
+        return String.format("EXTRUSION-ID: %s; ManufacturerID: %s; PartID: %s; Description: %s; Size: %s; PDF Link: %s; ImageLink: %s, OrderLink: %s",
+                _id, manufacturerId, partId, description, size, link, imageLink, orderLink);
     }
 }

@@ -23,7 +23,6 @@ import android.view.Display;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.widget.Button;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.OpenCVLoader;
@@ -31,6 +30,7 @@ import org.opencv.android.OpenCVLoader;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 
+import at.markushi.ui.CircleButton;
 import uk.ac.cam.cl.echo.extrusionfinder.client.servercopies.configuration.Configuration;
 import uk.ac.cam.cl.echo.extrusionfinder.client.servercopies.imagedata.GrayscaleImageData;
 import uk.ac.cam.cl.echo.extrusionfinder.client.servercopies.imagedata.RGBImageData;
@@ -97,7 +97,7 @@ public class ImageCaptureActivity extends Activity {
 
     private void addEventListeners() {
         // capture image button: take a picture
-        Button captureImageButton = (Button) findViewById(R.id.captureImageButton);
+        CircleButton captureImageButton = (CircleButton) findViewById(R.id.captureImageButton);
         captureImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View button) {

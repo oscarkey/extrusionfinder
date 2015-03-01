@@ -7,8 +7,8 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
 import uk.ac.cam.cl.echo.extrusionfinder.server.zernike.ZernikeMap;
 
 import java.net.UnknownHostException;
+import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -57,12 +57,9 @@ public class MongoDBManager implements IDBManager {
 
     /**
      * {@inheritDoc}
-     * <p>
-     * This implementation only makes one database call, so is more efficient than making successive savePart() calls
-     * @param parts List of parts to insert.
      */
     @Override
-    public void saveParts(Set<Part> parts) {
+    public void saveParts(Collection<Part> parts) {
         partManager.save(parts);
     }
 
@@ -71,7 +68,7 @@ public class MongoDBManager implements IDBManager {
      */
     @Override
     public Part loadPart(String _id) throws ItemNotFoundException {
-            return partManager.load(_id);
+        return partManager.load(_id);
     }
 
     /**

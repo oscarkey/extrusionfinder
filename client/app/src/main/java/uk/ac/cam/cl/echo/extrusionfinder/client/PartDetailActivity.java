@@ -1,10 +1,14 @@
 package uk.ac.cam.cl.echo.extrusionfinder.client;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,16 +30,25 @@ public class PartDetailActivity extends ActionBarActivity {
         // get the request id from the intent
         String uuid = getIntent().getStringExtra(ResultsActivity.EXTRA_REQUEST_UUID);
         String partId = getIntent().getStringExtra(ResultsActivity.EXTRA_PART_ID);
-        Result result = getResult(uuid, partId);
+        final Result result = getResult(uuid, partId);
 
         if(result == null) {
             // give up
             finish();
         }
 
+        final Button button = (Button) findViewById(R.id.partOrderButton);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(result.getOrderLink()));
+                startActivity(browserIntent);
+            }
+        });
+
         // set the user interface fields
-        ((TextView) findViewById(R.id.partDetailName)).setText(result.getPartId());
-        ((TextView) findViewById(R.id.partDetailDescription)).setText(result.getDescription());
+        setTitle(result.getPartId());
+        ((TextView) findViewById(R.id.partDetailDescription)).setText(result.getDescription().toLowerCase());
 
         // check if we have an image link
         if(result.hasImageLink()) {

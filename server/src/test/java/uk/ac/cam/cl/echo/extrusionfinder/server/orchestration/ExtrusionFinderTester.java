@@ -44,22 +44,22 @@ public class ExtrusionFinderTester {
         List<MatchedPart> matchedParts = testFindMatchesWorker(new double[]{0.1, 0.0, 0.5, 0.7, 0.4, 1.0, 0.15, 0.05});
         assertTrue(matchedParts.size() == 3);
         assertTrue(matchedParts.get(0).equals(new MatchedPart(
-                new Part("p", "1", "l", "il"), 0.0
+                new Part("p", "1", "l", "il", "ol"), 0.0
         )));
         assertTrue(matchedParts.get(1).equals(new MatchedPart(
-                new Part("p", "7", "l", "il"), 0.05
+                new Part("p", "7", "l", "il", "ol"), 0.05
         )));
         assertTrue(matchedParts.get(2).equals(new MatchedPart(
-                new Part("p", "0", "l", "il"), 0.1
+                new Part("p", "0", "l", "il", "ol"), 0.1
         )));
 
         matchedParts = testFindMatchesWorker(new double[]{0.1, 0.0});
         assertTrue(matchedParts.size() == 2);
         assertTrue(matchedParts.get(0).equals(new MatchedPart(
-                new Part("p", "1", "l", "il"), 0.0
+                new Part("p", "1", "l", "il", "ol"), 0.0
         )));
         assertTrue(matchedParts.get(1).equals(new MatchedPart(
-                new Part("p", "0", "l", "il"), 0.1
+                new Part("p", "0", "l", "il", "ol"), 0.1
         )));
 
         matchedParts = testFindMatchesWorker(new double[]{});
@@ -77,7 +77,7 @@ public class ExtrusionFinderTester {
             double[] values = {(double) i};
             zernikeMomentsMap.put("p" + i, values);
             expect(imageMatcher.compare(values)).andReturn(confidences[i]);
-            expect(database.loadPart("p" + i)).andReturn(new Part("p", Integer.toString(i), "l", "il"));
+            expect(database.loadPart("p" + i)).andReturn(new Part("p", Integer.toString(i), "l", "il", "ol"));
         }
 
         ZernikeMap zernikeMap = createMock(ZernikeMap.class);
