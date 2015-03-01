@@ -77,7 +77,6 @@ public class Camera1Controller implements CameraController {
             camera.setPreviewDisplay(previewSurface);
         }
         catch(IOException e) {
-            //TODO display this error in a user friendly fashion
             Log.e(LOG_TAG, "Could not start the camera: " + e);
             callback.onError(ERROR_TYPE_START);
         }
@@ -97,7 +96,7 @@ public class Camera1Controller implements CameraController {
 
     @Override
     public void setupCamera(SurfaceHolder previewSurface, Dimension previewAspectRatio,
-                            CameraCallback callback) {
+                            final CameraCallback callback) {
         // save references for later
         this.previewSurface = previewSurface;
         this.callback = callback;
@@ -119,8 +118,9 @@ public class Camera1Controller implements CameraController {
                     camera.setPreviewDisplay(holder);
                 }
                 catch(IOException e) {
-                    //TODO display this error in a user friendly fashion
                     Log.e(LOG_TAG, "Could not reattach the preview to the camera: " + e);
+                    callback.onError(ERROR_TYPE_START);
+                    return;
                 }
                 camera.startPreview();
             }
