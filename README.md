@@ -3,7 +3,7 @@ Extrusion Finder
 
 ---
 
-Description:
+Description
 ------------
 Did your favourite extrusion break? Are you in dire need of a Triple Wall H-Channel or a 2-inch Dunnage Retainer?
 
@@ -11,43 +11,37 @@ Fear not, Extrusion Finder has the solution to your problems! With the click of 
 
 ---
 
-Installation:
+Installation
 -------------
 
-How to install on Android phone?  
-To use the application, you need a phone with a camera and Android v.4.4+.
+Android app: Install from source in extrusionfinder/client. Supports Android 4.1+ (Jelly Bean or later).
 
 ---
 
-Usage:
+Usage
 ------
 
-Pictures?
-
-1.  The application will activate your phone's camera. Take a picture of the extrusion you want to find online. Make sure the extrusion is centered in the picture, the image is focused, and that the picture is taken as directly in front of the shape as possible. Click the round capture button to send the image.
-2.  Extrusion Finder will take you to a results page with the similar extrusions we could find online, sorted in order of likeness.
-3.  Click on an extrusion image that you think is fitting. You can see the details about the extrusion.
-4.  If the extrusion matches, click the order link at the bottom, which will take you to the website's order page!
-
-Yes, it is _that_ easy.
+Take a photo. An overlay highlights what the application is currently interpreting as the extrusion.
 
 ---
 
-Development:
+Building the Server
 -------------
 
-For development on the project, you need the following:
+Prerequisites
 -  Java Development Kit 8 for compiling and running the project ([http://www.oracle.com/technetwork/java/index.html](http://www.oracle.com/technetwork/java/index.html))
--  Gradle v.2.3 for building the project ([https://gradle.org/](https://gradle.org/))
--  Android Studio v.?.?
+-  Gradle 2.3 for building the server ([https://gradle.org/](https://gradle.org/))
+-  Android Studio
 -  MongoDB
--  Not a Windows machine (openCV?)
+-  Inkscape
+-  Java server e.g. Jetty
+-  OpenCV native libraries (not supported on Windows)
 
-To do a complete build of the project and run unit tests, run the following command in a terminal:
+To do a complete build of the server and run unit tests, run the following command in folder extrusionfinder/server. This places a web archive at build/libs/extrusionFinder-1.0.war.
 
 	gradle build
 
-To compile the Javadoc documentation (the documentation html files can be found in documentation/), run
+To compile the Javadoc documentation (the documentation html files can be found in build/docs/javadoc), run
 
 	gradle javadoc
 
@@ -59,14 +53,19 @@ To run the integration tests (might take a while), run
 
 	gradle integration
 
-To compile and run the Part Sourcer (crawler that populates database), run
+To compile and run the Part Sourcer, which populates the database:
 
 	gradle jar
     java -jar build/libs/crawler.jar
 
+To run on a server, the web archive needs the name "extrusionFinder.war"
+
+
+Configuration settings, such as the address of the Mongo server and the path to Inkscape can be set in Configuration.java
+
 ---
 
-Contents:
+Contents
 ---------
 -  **client/app/src/main/java** contains the source code of the Android application
 -  **client/app/src/androidTest/java** contains the tests for the Android code
