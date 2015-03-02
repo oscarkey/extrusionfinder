@@ -29,15 +29,14 @@ Building the Server
 -------------
 
 Prerequisites
--  Java Development Kit 8 for compiling and running the project ([http://www.oracle.com/technetwork/java/index.html](http://www.oracle.com/technetwork/java/index.html))
+-  Java Development Kit 8 ([http://www.oracle.com/technetwork/java/index.html](http://www.oracle.com/technetwork/java/index.html))
 -  Gradle 2.3 ([https://gradle.org/](https://gradle.org/))
 -  Android Studio ([http://developer.android.com/tools/studio/index.html](http://developer.android.com/tools/studio/index.html])
 -  MongoDB ([http://www.mongodb.org/](http://www.mongodb.org/))
 -  Inkscape ([https://inkscape.org/en/](https://inkscape.org/en/])
 -  Java server e.g. Jetty ([http://eclipse.org/jetty/](http://eclipse.org/jetty/))
--  OpenCV native libraries. This does not need to be installed as it will handle by gradle dependences, but it is **not supported on Windows**. ([http://opencv.org/](http://opencv.org/))  
 
-Gradle will automatically download all other dependencies.
+Gradle will automatically download all other dependencies. Note that the OpenCV dependency only supports OSX and Linux
 
 To do a complete build of the server and run unit tests, run the following command in folder extrusionfinder/server. This places a web archive at build/libs/extrusionFinder-1.0.war.
 
