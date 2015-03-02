@@ -31,9 +31,9 @@ Building the Server
 Prerequisites
 -  Java Development Kit 8 ([http://www.oracle.com/technetwork/java/index.html](http://www.oracle.com/technetwork/java/index.html))
 -  Gradle 2.3 ([https://gradle.org/](https://gradle.org/))
--  Android Studio ([http://developer.android.com/tools/studio/index.html](http://developer.android.com/tools/studio/index.html])
+-  Android Studio ([http://developer.android.com/tools/studio/index.html](http://developer.android.com/tools/studio/index.html]))
 -  MongoDB ([http://www.mongodb.org/](http://www.mongodb.org/))
--  Inkscape ([https://inkscape.org/en/](https://inkscape.org/en/])
+-  Inkscape ([https://inkscape.org/en/](https://inkscape.org/en/]))
 -  Java server e.g. Jetty ([http://eclipse.org/jetty/](http://eclipse.org/jetty/))
 
 Gradle will automatically download all other dependencies. Note that the OpenCV dependency only supports OSX and Linux
