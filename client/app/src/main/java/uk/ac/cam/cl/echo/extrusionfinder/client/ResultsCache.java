@@ -14,8 +14,6 @@ import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.UUID;
 
-import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
-
 //TODO check/improve thread safety
 
 /**

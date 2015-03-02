@@ -11,7 +11,6 @@ import java.util.List;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.mime.TypedByteArray;
-import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
 
 /**
  * An {@link IntentService} for submitting an image and loading results from the server
@@ -44,7 +43,7 @@ public class CommsService extends IntentService {
      * Starts this service to request results with the given image. If
      * the service is already performing a task this action will be queued.
      *
-     * @param context
+     * @param context Android Context to start in
      * @param uuid id of the request to load results for
      */
     public static void startActionRequestResults(Context context, String uuid) {

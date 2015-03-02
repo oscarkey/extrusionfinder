@@ -1,4 +1,4 @@
-package uk.ac.cam.cl.echo.extrusionfinder.server.configuration;
+package uk.ac.cam.cl.echo.extrusionfinder.client.servercopies.configuration;
 
 public class Configuration {
     public static final String MONGO_HOST = "localhost";
@@ -18,8 +18,7 @@ public class Configuration {
     public static final int PROFILE_DETECTION_STANDARD_BILATERAL_FILTER_BLUR_DIAMETER = 8;
     public static final int PROFILE_DETECTION_STANDARD_BILATERAL_FILTER_SIGMA = 15;
 
-    // Thicknesses lower than about 0.3 cause disjoints in the outlines.
-    public static final float PDF_THINNED_EDGE_THICKNESS = 0.3f;
+    public static final float PDF_THINNED_EDGE_THICKNESS = 0.1f;
 
     // Width/height of square png image to rasterize the pdf to
     public static final float PDF_RASTERIZATION_DIMENSIONS = 2048f;

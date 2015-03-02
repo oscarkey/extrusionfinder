@@ -1,18 +1,14 @@
 package uk.ac.cam.cl.echo.extrusionfinder.client;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
 
 /**
  * Created by oscar on 05/02/15.
@@ -28,11 +24,14 @@ public class Camera1Controller implements CameraController {
 
     private boolean isSetup;
     private boolean isPreviewing;
-    private SurfaceHolder previewSurface;
-    private CameraCallback callback;
-    private Dimension desiredPreviewSize;
-    private Dimension previewSize;
+
     private Camera camera;
+    private SurfaceHolder previewSurface;
+    private Dimension previewAspectRatio;
+    private Dimension previewSize;
+
+    private CameraCallback callback;
+    private SurfaceHolder.Callback surfaceCallback;
 
     @Override
     public void startCamera() {
@@ -53,26 +52,25 @@ public class Camera1Controller implements CameraController {
             return;
         }
 
-        camera.setPreviewCallback(previewCallback);
         // default orientation is landscape, so rotate this to portrait
         camera.setDisplayOrientation(90);
 
+        // set up the preview
+        camera.setPreviewCallback(previewCallback);
 
         // get the parameters, change them and then put them back again
         Camera.Parameters parameters = camera.getParameters();
 
         parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
 
-
         Camera.Size bestPictureSize = getBestPictureSize(parameters.getSupportedPictureSizes());
         parameters.setPictureSize(bestPictureSize.width, bestPictureSize.height);
 
         // work out how big the preview should be and report this
-        Dimension size = getBestPreviewSize(desiredPreviewSize, parameters.getSupportedPreviewSizes());
+        Dimension size = getBestPreviewSize(previewAspectRatio, parameters.getSupportedPreviewSizes());
         previewSize = size;
-        callback.onSetPreviewSize(size);
-        // have to swap the width and height because the camera assumes it is in landscape
-        parameters.setPreviewSize(size.getHeight(), size.getWidth());
+        parameters.setPreviewSize(size.getWidth(), size.getHeight());
+        parameters.setPreviewFormat(ImageFormat.NV21);
 
         camera.setParameters(parameters);
 
@@ -82,10 +80,12 @@ public class Camera1Controller implements CameraController {
             camera.setPreviewDisplay(previewSurface);
         }
         catch(IOException e) {
-            //TODO display this error in a user friendly fashion
             Log.e(LOG_TAG, "Could not start the camera: " + e);
             callback.onError(ERROR_TYPE_START);
         }
+
+        // register a callback on the surface
+        previewSurface.addCallback(surfaceCallback);
 
         camera.startPreview();
 
@@ -96,21 +96,22 @@ public class Camera1Controller implements CameraController {
     public void stopCamera() {
         isPreviewing = false;
 
+        previewSurface.removeCallback(surfaceCallback);
         camera.stopPreview();
         camera.release();
     }
 
     @Override
-    public void setupCamera(SurfaceHolder previewSurface, Dimension desiredPreviewSize,
-                            CameraCallback callback) {
+    public void setupCamera(SurfaceHolder previewSurface, Dimension previewAspectRatio,
+                            final CameraCallback callback) {
         // save references for later
         this.previewSurface = previewSurface;
         this.callback = callback;
-        this.desiredPreviewSize = desiredPreviewSize;
+        this.previewAspectRatio = previewAspectRatio;
 
 
-        // register a callback on the surface holder to update the camera whenever it changes
-        previewSurface.addCallback(new SurfaceHolder.Callback() {
+        // create a callback for the surface holder to update the camera whenever it changes
+        surfaceCallback = new SurfaceHolder.Callback() {
             @Override
             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
                 if (camera == null) {
@@ -120,11 +121,13 @@ public class Camera1Controller implements CameraController {
                 // reattach the surface to the camera
                 camera.stopPreview();
                 try {
+                    camera.setPreviewCallback(previewCallback);
                     camera.setPreviewDisplay(holder);
                 }
                 catch(IOException e) {
-                    //TODO display this error in a user friendly fashion
                     Log.e(LOG_TAG, "Could not reattach the preview to the camera: " + e);
+                    callback.onError(ERROR_TYPE_START);
+                    return;
                 }
                 camera.startPreview();
             }
@@ -133,7 +136,7 @@ public class Camera1Controller implements CameraController {
             public void surfaceCreated(SurfaceHolder holder) {}
             @Override
             public void surfaceDestroyed(SurfaceHolder holder) {}
-        });
+        };
 
         isSetup = true;
     }
@@ -161,43 +164,41 @@ public class Camera1Controller implements CameraController {
     private final Camera.PreviewCallback previewCallback = new Camera.PreviewCallback() {
         @Override
         public void onPreviewFrame(byte[] data, Camera camera) {
-//            Bitmap image = BitmapFactory.decodeByteArray(data, 0,data.length);
-//            image.copy(Bitmap.Config.ARGB_8888, false);
-//
-//            ByteBuffer byteBuffer = ByteBuffer.allocate(image.getByteCount());
-//            image.copyPixelsToBuffer(byteBuffer);
-//
-//            int width = image.getWidth();
-//            int height = image.getHeight();
-//
-//            byte[] rgbData = byteBuffer.array();
-//            for (int input = 0, output = 0; output < 4 * width * height; output++) {
-//                rgbData[input++] = rgbData[output++];  // red
-//                rgbData[input++] = rgbData[output++];  // green
-//                rgbData[input++] = rgbData[output++];  // blue
-//            }
-//
-//            RGBImageData rgb = new RGBImageData(rgbData, width, height);
-
-            callback.onPreviewFrame(new RGBImageData(data,
-                    previewSize.getWidth(), previewSize.getHeight()));
+            callback.onPreviewFrame(new NV21ImageData(data, previewSize.getWidth(),
+                    previewSize.getHeight()));
         }
     };
 
     /**
-     * Choose the best preview size from a list of options given a target
+     * Choose the best preview size from a list of options given an aspect ratio
      * Note that target and return assume portrait display while options assumes landscape
-     * @param target Dimension representing the target size for the preview (in portrait form)
+     * @param aspectRatio Dimension representing the aspect ratio that the preview should be
      * @param options A List of Camera.Size options for the size of the preview (in landscape form)
      * @return The best size picked from the list (in portrait form)
      */
-    private Dimension getBestPreviewSize(Dimension target, List<Camera.Size> options) {
-        //TODO pick the best size
-        // for now just pick the first size
-        // switch width and height to convert between portrait and landscape
-        int width = options.get(0).height;
-        int height = options.get(0).width;
-        return new Dimension(width, height);
+    private Dimension getBestPreviewSize(Dimension aspectRatio, List<Camera.Size> options) {
+        // pick the smallest preview size that maintains the aspect ratio
+        // initially sort by size ascending
+        Collections.sort(options, new Comparator<Camera.Size>() {
+            @Override
+            public int compare(Camera.Size lhs, Camera.Size rhs) {
+                return (lhs.width * lhs.height) - (rhs.width * rhs.height);
+            }
+        });
+
+        // pick the first that matches the aspect ratio given
+        // have to swap width and height
+        double targetRatio = (double) aspectRatio.getHeight() / (double) aspectRatio.getWidth();
+        for(Camera.Size size : options) {
+            double sizeRatio = (double) size.width / (double) size.height;
+            if(targetRatio == sizeRatio) {
+                return new Dimension(size.width, size.height);
+            }
+        }
+
+        // if we didn't find a size print an error and return null
+        // TODO handle this gracefully
+        throw new NoSupportedPreviewSizeException();
     }
 
     /**
@@ -206,6 +207,7 @@ public class Camera1Controller implements CameraController {
      * @return The best Size in the list
      */
     private Camera.Size getBestPictureSize(List<Camera.Size> options) {
+        // sort the options in ascending order of size
         Collections.sort(options, new Comparator<Camera.Size>() {
             @Override
             public int compare(Camera.Size lhs, Camera.Size rhs) {
@@ -213,6 +215,7 @@ public class Camera1Controller implements CameraController {
             }
         });
 
+        // pick the first that is bigger than the given size
         for(Camera.Size size : options) {
             if(size.width > PICTURE_MIN_WIDTH && size.height > PICTURE_MIN_HEIGHT) {
                 return size;

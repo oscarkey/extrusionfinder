@@ -3,8 +3,6 @@ package uk.ac.cam.cl.echo.extrusionfinder.client;
 import java.io.Serializable;
 import java.util.List;
 
-import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
-
 /**
  * Created by oscar on 08/02/15.
  * Basic data structure containing the request id, image and results when they arrive
