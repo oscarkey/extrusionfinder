@@ -41,4 +41,12 @@ public class ZernikeMap implements DatabaseItem {
     public Map<String, double[]> getZernikeMap() {
         return zernikeMap;
     }
+
+    /**
+     * @param id            Id of the part which the Zernike Moment represents
+     * @param zernikeMoment Adds this Zernike Moment to the map
+     */
+    public void add(String id, double[] zernikeMoment) {
+        zernikeMap.put(id, zernikeMoment);
+    }
 }

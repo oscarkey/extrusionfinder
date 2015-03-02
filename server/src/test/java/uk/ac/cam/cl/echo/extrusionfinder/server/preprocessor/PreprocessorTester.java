@@ -1,18 +1,18 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor;
 
-import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.highgui.Highgui;
-import java.awt.geom.Point2D;
 import org.opencv.imgproc.Imgproc;
-
 import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Configuration;
-import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
 import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.GrayscaleImageData;
+import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
+
+import java.awt.geom.Point2D;
 
 public class PreprocessorTester {
-    private PreprocessorTester() {};
+    private PreprocessorTester() {}
+
     public static void detector(String inFile, String outFile) {
         System.loadLibrary(Configuration.OPENCV_LIBRARY_NAME);
 
@@ -20,10 +20,16 @@ public class PreprocessorTester {
         byte[] inData = new byte[in.rows() * in.cols() * 3];
         in.get(0, 0, inData);
 
+        for (int i = 0; i < inData.length; i += 3) {
+            byte tmp = inData[i + 0];
+            inData[i + 0] = inData[i + 2];
+            inData[i + 2] = tmp;
+        }
+
         ProfileDetector detector = new ProfileDetector();
 
-        GrayscaleImageData outData = detector.process(new RGBImageData(inData, in.rows(), in.cols()));
-        
+        GrayscaleImageData outData = detector.process(new RGBImageData(inData, in.cols(), in.rows()));
+
         Mat out = new Mat(outData.width, outData.height, CvType.CV_8UC1);
         out.put(0, 0, outData.data);
         Highgui.imwrite(outFile, out);
@@ -36,7 +42,7 @@ public class PreprocessorTester {
         byte[] inData = new byte[in.rows() * in.cols()];
         in.get(0, 0, inData);
 
-        ProfileFitting fitting = new ProfileFitting(new GrayscaleImageData(inData, in.rows(), in.cols()));
+        ProfileFitting fitting = new ProfileFitting(new GrayscaleImageData(inData, in.cols(), in.rows()));
 
         Point2D centre = fitting.getCentre();
         System.out.printf("Centre: (%s, %s)\nSize: %s\n", centre.getX(), centre.getY(), fitting.getRadius());

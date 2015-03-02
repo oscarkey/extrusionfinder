@@ -1,28 +1,26 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor;
 
-import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfInt;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.Scalar;
-import org.opencv.core.Size;
 import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
-import org.opencv.highgui.Highgui;
-import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
-import java.util.List;
-import java.util.LinkedList;
-import java.util.ArrayList;
-
 import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.GrayscaleImageData;
+
+import java.awt.geom.Point2D;
 
 /**
  * Finds profile centre and radius.
  */
 public class ProfileFitting {
+    static {
+        try {
+            nu.pattern.OpenCV.loadShared();
+        } catch (Throwable e) {
+            // Assume library already loaded, and ignore the error
+        }
+    }
+
     private int width;
     private int height;
     private Point centre;
@@ -43,7 +41,7 @@ public class ProfileFitting {
         width = input.width;
         height = input.height;
 
-        Mat imageIn = new Mat(width, height, CvType.CV_8UC1);
+        Mat imageIn = new Mat(height, width, CvType.CV_8UC1);
         imageIn.put(0, 0, input.data);
 
         // Find image size and centre.

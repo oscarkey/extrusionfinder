@@ -4,5 +4,6 @@ server/.idea/*
 */build/*
 */gradle/*
 */target/*
+*~
 */crawlerdata/*
 */gradlew*

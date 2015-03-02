@@ -1,14 +1,22 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.orchestration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Configuration;
 import uk.ac.cam.cl.echo.extrusionfinder.server.database.IDBManager;
 import uk.ac.cam.cl.echo.extrusionfinder.server.database.ItemNotFoundException;
+import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.GrayscaleImageData;
+import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
 import uk.ac.cam.cl.echo.extrusionfinder.server.imagematching.ImageMatcher;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.MatchedPart;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
+import uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor.ProfileDetector;
+import uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor.ProfileFitting;
 
 import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -19,6 +27,9 @@ import java.util.*;
 public class ExtrusionFinder {
 
     private ExtrusionFinder(){}
+
+    private static final Logger logger =
+            LoggerFactory.getLogger(ExtrusionFinder.class);
 
     static class CorrelationPair implements Comparable<CorrelationPair> {
         private final String id;
@@ -44,16 +55,39 @@ public class ExtrusionFinder {
      * @return             List of best matches found in the database
      * @throws ItemNotFoundException Thrown if the Zernike Map or a part referenced by the Zernike Map is not in DB
      */
-    public static List<MatchedPart> findMatches(BufferedImage inputImage, IDBManager database, int maxResults)
+    public static List<MatchedPart> findMatches(RGBImageData inputImage, IDBManager database, int maxResults)
             throws ItemNotFoundException {
-        // TODO: call preprocessor to clean up inputImage before proceeding
+        String uuid = String.valueOf(System.currentTimeMillis());
 
-        // TODO: call preprocessor for center and radius data
-        int radius = 1;
-        Point2D center = new Point2D.Double(0.0, 0.0);
+        String savelocation = Configuration.IMAGE_LOG_PATH + uuid + "-0raw.png";
+        logger.info("Saving raw rgb image to: " + savelocation);
+        inputImage.save(savelocation);
 
-        return findMatches(new ImageMatcher(inputImage, Configuration.DEFULT_ZERNIKE_DEGREE, center, radius),
-                database, maxResults);
+        // Call preprocessor to clean up inputImage before proceeding
+        GrayscaleImageData grayscaleImageData = new ProfileDetector().process(inputImage);
+
+        savelocation = Configuration.IMAGE_LOG_PATH + uuid + "-1preprocessed.png";
+        logger.info("Saving processed grayscale image to: " + savelocation);
+        grayscaleImageData.save(savelocation);
+
+        // Call preprocessor for center and radius data
+        ProfileFitting fitter = new ProfileFitting(grayscaleImageData);
+        double radius = fitter.getRadius();
+        Point2D center = fitter.getCentre();
+
+        // Having processed the image, find matches
+        List<MatchedPart> matches = findMatches(new ImageMatcher(grayscaleImageData,
+                        Configuration.DEFAULT_ZERNIKE_DEGREE, center, radius),
+                        database, maxResults);
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            mapper.writeValue(new File(Configuration.IMAGE_LOG_PATH + uuid + "-2results.txt"), matches);
+        } catch (IOException e) {
+            logger.info("Unable to serialize results");
+        }
+
+        return matches;
     }
 
     /**
@@ -64,7 +98,8 @@ public class ExtrusionFinder {
      * @return             List of best matches found in the database
      * @throws ItemNotFoundException Thrown if the Zernike Map or a part referenced by the Zernike Map is not in DB
      */
-    static List<MatchedPart> findMatches(ImageMatcher imageMatcher, IDBManager database, int maxResults) throws ItemNotFoundException {
+    static List<MatchedPart> findMatches(ImageMatcher imageMatcher, IDBManager database, int maxResults)
+            throws ItemNotFoundException {
         // Load the map of zernike moments from the database
         Set<Map.Entry<String, double[]>> zernikeMoments =
                 database.loadZernikeMap().getZernikeMap().entrySet();

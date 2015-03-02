@@ -1,22 +1,14 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor;
 
-import org.opencv.core.Core;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfInt;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.Scalar;
-import org.opencv.core.Size;
-import org.opencv.highgui.Highgui;
+import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
-import java.io.IOException;
-import java.util.List;
-import java.util.LinkedList;
-import java.util.ArrayList;
-
 import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Configuration;
-import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
 import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.GrayscaleImageData;
+import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import static uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor.LabSpaceThresholder.labSpaceThreshold;
 
@@ -24,6 +16,14 @@ import static uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor.LabSpaceThre
  * Extracts extrusion cross-section profile.
  */
 public class ProfileDetector {
+    static {
+        try {
+            nu.pattern.OpenCV.loadShared();
+        } catch (Throwable e) {
+            // Assume library already loaded, and ignore the error
+        }
+    }
+
     /**
      * Creates a profile detector.
      * <p>
@@ -48,51 +48,68 @@ public class ProfileDetector {
         Mat imageIn = new Mat(input.width, input.height, CvType.CV_8UC3);
         imageIn.put(0, 0, input.data);
 
+        return threshold(imageIn);
+
         // Raw image, but resized to given diameter.
-        Mat rawImage = standardiseInput(imageIn, diameter);
+        // Mat rawImage = standardiseInput(imageIn, diameter);
 
-        // Compute a mask by using adaptivate thresholding.
-        Mat imageStep;
-        imageStep = rawImage;
-        imageStep = blur(imageStep, blurDiameter, sigma, sigma);
-        imageStep = minGrayscale(imageStep);
-        imageStep = invert(imageStep);
-        imageStep = fade(imageStep);
+        // // Compute a mask by using adaptivate thresholding.
+        // Mat imageStep;
+        // imageStep = rawImage;
+        // imageStep = blur(imageStep, blurDiameter, sigma, sigma);
+        // imageStep = minGrayscale(imageStep);
+        // imageStep = invert(imageStep);
+        // imageStep = fade(imageStep);
 
-        GrayscaleImageData thresholded = threshold(imageStep);
-        imageStep.put(0, 0, thresholded.data);
+        // GrayscaleImageData thresholded = threshold(imageStep);
+        // imageStep.put(0, 0, thresholded.data);
 
-        // Calculate the contours using the threshold mask.
-        Mat contourMask = largestContourMask(imageStep);
+        // // Calculate the contours using the threshold mask.
+        // Mat contourMask = largestContourMask(imageStep);
 
-        // Extract profile from original standardised image, using masks.
-        Mat profile = avgGrayscale(rawImage);
-        profile = applyBinaryMask(profile, contourMask);
+        // // Extract profile from original standardised image, using masks.
+        // Mat profile = avgGrayscale(rawImage);
+        // profile = applyBinaryMask(profile, contourMask);
 
-        // TODO: Add histogram equalisation.
+        // // TODO: Add histogram equalisation.
 
-        Mat imageOut = profile;
+        // Mat imageOut = profile;
 
-        byte[] outData = new byte[imageOut.rows() * imageOut.cols()];
-        imageOut.get(0, 0, outData);
-        return new GrayscaleImageData(outData, imageOut.rows(), imageOut.cols());
+        // byte[] outData = new byte[imageOut.rows() * imageOut.cols()];
+        // imageOut.get(0, 0, outData);
+        // return new GrayscaleImageData(outData, imageOut.cols(), imageOut.rows());
     }
 
     /**
      * Returns a standardised version of the input image.
      * <p>
      * The returned image has both width and height equal equal to specified diameter.
+     * The image will be cropped to a square and then scaled.
      */
     private static Mat standardiseInput(Mat input, int diameter) {
+        int oldWidth = input.cols();
+        int oldHeight = input.rows();
+
+        Mat cropped;
+        if (oldWidth > oldHeight) {
+            int cropAmount = (oldWidth - oldHeight) / 2;
+            Rect region = new Rect(cropAmount, 0, oldHeight, oldHeight);
+            cropped = new Mat(input, region);
+        } else if (oldWidth < oldHeight) {
+            int cropAmount = (oldHeight - oldWidth) / 2;
+            Rect region = new Rect(0, cropAmount, oldWidth, oldWidth);
+            // region = new Rect(0, 0, oldWidth, oldHeight - 1);
+            cropped = new Mat(input, region);
+        } else {
+            cropped = input;
+        }
+
         Mat imageResized = new Mat();
-        Mat output = new Mat();
         Size newSize = new Size(diameter, diameter);
-        Imgproc.resize(input, imageResized, newSize);
+        Imgproc.resize(cropped, imageResized, newSize);
 
         // Assuming RGB image already.
-        output = imageResized;
-
-        return output;
+        return imageResized;
     }
 
     /**
@@ -119,8 +136,8 @@ public class ProfileDetector {
         Mat c1 = new Mat(input.rows(), input.cols(), CvType.CV_8UC1);
         Mat c2 = new Mat(input.rows(), input.cols(), CvType.CV_8UC1);
         Mat c3 = new Mat(input.rows(), input.cols(), CvType.CV_8UC1);
-        List<Mat> matSrc = new ArrayList<Mat>(3);
-        List<Mat> matDst = new ArrayList<Mat>(3);
+        List<Mat> matSrc = new ArrayList<>(3);
+        List<Mat> matDst = new ArrayList<>(3);
         MatOfInt fromTo = new MatOfInt(0, 0, 1, 1, 2, 2);
         matSrc.add(input);
         matDst.add(c1);
@@ -156,11 +173,11 @@ public class ProfileDetector {
      * the diameter.
      */
     private static Mat fade(Mat input) {
-        int width = input.rows();
-        int height = input.cols();
+        int width = input.cols();
+        int height = input.rows();
         double diameter = input.rows();
         byte[] bytes = new byte[width * height];
-        Mat mask = new Mat(width, height, CvType.CV_8UC1);
+        Mat mask = new Mat(height, width, CvType.CV_8UC1);
 
         double r = diameter / 2.0;
         int i = 0;
@@ -171,7 +188,7 @@ public class ProfileDetector {
                 // How much of the pixel (fraction) to keep.
                 double keep = maximum - (Math.hypot(x-r, y-r) / diameter);
                 // How much of the pixel (fraction*255) to keep.
-                bytes[i] = (byte)(keep < 0 ? 0 : (byte)(keep * 255.0));
+                bytes[i] = keep < 0 ? 0 : (byte)(keep * 255.0);
             }
         }
 
@@ -215,7 +232,7 @@ public class ProfileDetector {
      */
     private static Mat largestContourMask(Mat input) {
         Mat output = new Mat(input.rows(), input.cols(), CvType.CV_8UC1);
-        List<MatOfPoint> contours = new LinkedList<MatOfPoint>();
+        List<MatOfPoint> contours = new LinkedList<>();
         Mat hierarchy = new Mat();
         Imgproc.findContours(
             input.clone(),
@@ -237,7 +254,7 @@ public class ProfileDetector {
         output.setTo(new Scalar(0));
         if (largestContour != null) {
             // Could be done using the original list and an index.
-            List<MatOfPoint> list = new ArrayList<MatOfPoint>(1);
+            List<MatOfPoint> list = new ArrayList<>(1);
             list.add(largestContour);
             Imgproc.drawContours(output, list, 0, new Scalar(255), -1);
         }

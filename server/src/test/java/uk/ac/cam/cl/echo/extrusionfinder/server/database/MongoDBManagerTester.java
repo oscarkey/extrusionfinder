@@ -5,16 +5,17 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Configuration;
 import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Part;
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size;
+import uk.ac.cam.cl.echo.extrusionfinder.server.parts.Size.Unit;
 import uk.ac.cam.cl.echo.extrusionfinder.server.zernike.ZernikeMap;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.net.UnknownHostException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Tests MongoDBManager.
@@ -52,7 +53,8 @@ public class MongoDBManagerTester {
         }
 
         // create a new part and insert it into the database
-        Part part = new Part("id_test", "", "", "link", "imageL");
+        Size size = new Size(2.3f, 0.856f, Unit.IN);
+        Part part = new Part("id_test", "", "", "link", "imageL", "ol", size, "");
         dbManager.savePart(part);
 
         // test that the part can now be correctly loaded from the database
@@ -64,7 +66,7 @@ public class MongoDBManagerTester {
         }
 
         // insert a new part which has the same identifier. This should succeed: test by loading from database
-        part = new Part("id_test", "", "", "link2", "imageLink2");
+        part = new Part("id_test", "", "", "link2", "imageLink2", "ol", new Size(), "");
         dbManager.savePart(part);
         try {
             Part loadedPart = dbManager.loadPart("id_test");
@@ -141,7 +143,7 @@ public class MongoDBManagerTester {
         MongoDBManager db1 = new MongoDBManager("test-2");
         MongoDBManager db2 = new MongoDBManager("test-2");
 
-        Part part = new Part("Mid", "Pid", "link", "imageL");
+        Part part = new Part("Mid", "Pid", "link", "imageL", "ol");
         db1.savePart(part);
 
         // test that the part can now be correctly loaded from the database
@@ -151,6 +153,52 @@ public class MongoDBManagerTester {
         } catch (ItemNotFoundException e) {
             fail("Part just saved not found in database");
         }
+    }
+
+    @Test
+    public void testSaveSet() {
+        dbManager.clearDatabase();
+
+        // Save a set of parts into the database
+        Set<Part> parts = new HashSet<>();
+        Part p0 = new Part("id", "test0", "link", "image", "ol");
+        Part p1 = new Part("id", "test1", "link", "image", "ol");
+        Part p2 = new Part("id", "test2", "link", "image", "ol");
+        Part p3 = new Part("id", "test0", "link", "imagel", "ol");
+
+        parts.add(p0);
+        parts.add(p1);
+        dbManager.saveParts(parts);
+
+        // test that the parts can now be correctly loaded from the database
+        try {
+            Part loadedPart = dbManager.loadPart("idtest0");
+            assertTrue(loadedPart.equals(p0));
+            loadedPart = dbManager.loadPart("idtest1");
+            assertTrue(loadedPart.equals(p1));
+        } catch (ItemNotFoundException e) {
+            fail("Part just saved not found in database");
+        }
+
+        // Check that saving a duplicate id part does not now cause an error
+        parts.add(p2);
+   //     parts.add(p3);
+        dbManager.saveParts(parts);
+
+        // test that the parts can now be correctly loaded from the database
+        // and that the duplicate overwrote the original entry
+        try {
+            Part loadedPart = dbManager.loadPart("idtest0");
+            assertTrue(loadedPart.equals(p0));
+            loadedPart = dbManager.loadPart("idtest1");
+  //          assertTrue(loadedPart.equals(p3)); // duplicate overwrite!
+            loadedPart = dbManager.loadPart("idtest2");
+            assertTrue(loadedPart.equals(p2));
+        } catch (ItemNotFoundException e) {
+            fail("Part just saved not found in database");
+        }
+
+        dbManager.clearDatabase();
     }
 
     @Test
@@ -176,3 +224,4 @@ public class MongoDBManagerTester {
         dbManager.clearDatabase();
     }
 }
+

@@ -14,7 +14,10 @@ public class MatchedPart extends Part {
                 p.getManufacturerId(),
                 p.getPartId(),
                 p.getLink(),
-                p.getImageLink()
+                p.getImageLink(),
+                p.getOrderLink(),
+                p.getSize(),
+                p.getDescription()
         );
 
         this.confidence = confidence;
@@ -33,6 +36,7 @@ public class MatchedPart extends Part {
                     part.partId.equals(partId) &&
                     part.link.equals(link) &&
                     part.imageLink.equals(imageLink) &&
+                    part.orderLink.equals(orderLink) &&
                     Objects.equals(part.getConfidence(), confidence);
         } else {
             return false;

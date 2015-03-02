@@ -1,16 +1,16 @@
 package uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor;
 
-import java.util.Arrays;
-
-import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.LabImageData;
+import org.junit.Test;
 import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
 import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.XYZImageData;
 import static uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor.ColorSpaceConversion.toLab;
 import static uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor.ColorSpaceConversion.toRGB;
 import static uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor.ColorSpaceConversion.toXYZ;
 
-import org.junit.Test;
+import java.util.Arrays;
+
 import static org.junit.Assert.assertTrue;
+import static uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor.ColorSpaceConversion.*;
 
 public class ColorSpaceConversionTester {
     @Test

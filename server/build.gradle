@@ -8,17 +8,29 @@ repositories {
     mavenCentral()
 }
 
+jar {
+    archiveName = "crawler.jar"
+    from {configurations.compile.collect {it.isDirectory() ? it : zipTree(it) }}
+
+    manifest {
+        attributes 'Main-Class' : 'uk.ac.cam.cl.echo.extrusionfinder.server.sourcer.PartSourcer'
+    }
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
+}
+
 dependencies {
+
     // JUnit, EasyMock and PowerMock (used for testing)
     testCompile 'junit:junit:4.11'
     testCompile 'org.easymock:easymock:3.3.1'
     testCompile 'org.powermock:powermock-module-junit4:1.6.1'
     testCompile 'org.powermock:powermock-api-easymock:1.6.1'
+    testCompile 'org.mockito:mockito-core:1.+'
 
     // RESTEasy with Jackson auto-serialization
-    compile 'org.jboss.resteasy:resteasy-jaxrs:3.0.6.Final'
-    compile 'org.jboss.resteasy:resteasy-jackson2-provider:3.0.6.Final'
-    compile 'org.jboss.resteasy:resteasy-multipart-provider:3.0.6.Final'
+    compile 'org.jboss.resteasy:resteasy-jaxrs:3.0.8.Final'
+    compile 'org.jboss.resteasy:resteasy-jackson2-provider:3.0.8.Final'
+    compile 'org.jboss.resteasy:resteasy-multipart-provider:3.0.8.Final'
 
     // MongoDB driver (used for interfacing with MongoDB)
     compile 'org.mongodb:mongo-java-driver:2.12.2'
@@ -26,6 +38,31 @@ dependencies {
     // MongoJack (used for converting Java objects into MongoDB's format)
     compile 'org.mongojack:mongojack:2.0.0'
 
-    // OpenCV, (used for image preprocessing)
-    compile 'nu.pattern:opencv:2.4.9-5'
+    // OpenCV (used for image preprocessing)
+    compile 'nu.pattern:opencv:2.4.9-7'
+
+    // Batik (SVG manipulation library)
+    compile 'batik:batik:1.5'
+    compile 'batik:batik-svg-dom:1.6-1'
+    compile 'batik:batik-svggen:1.6-1'
+    compile('batik:batik-transcoder:1.6-1') {
+        exclude group: 'fop', module: 'fop' // Program crashes if this dependency is included
+    }
+
+    // web crawler for part sourcing + simple logger (for debugging)
+    compile 'edu.uci.ics:crawler4j:4.1'
+    compile 'org.slf4j:slf4j-simple:1.7.9'
+
+    // jsoup for html parsing in the crawler
+    compile 'org.jsoup:jsoup:1.7.2'
+}
+
+test {
+    maxParallelForks = 2;
+    exclude "**/SourcerIntegrationTester.class"
+}
+
+task integrationTest(type: Test) {
+    maxParallelForks = 2;
+    include "**/SourcerIntegrationTester.class"
 }

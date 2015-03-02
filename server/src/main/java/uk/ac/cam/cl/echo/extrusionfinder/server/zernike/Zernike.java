@@ -6,16 +6,21 @@ import java.awt.image.DataBufferByte;
 
 public class Zernike {
 
+    private Zernike(){}
+
     /**
      * Computes the sum n*(n-1)*...2*1
      *
      * @param n a number
      * @return n!
      */
-    private static double factorial(int n) {
-        double x = 1;
+    static double factorial(int n) throws IllegalArgumentException {
+        if (n < 0) {
+            throw new IllegalArgumentException("Cannot calculate factorial of a negative number");
+        }
+        int x = 1;
         for (int i = 2; i <= n; i++) {
-            x *= i;
+            x *= (double) i;
         }
         return x;
     }
@@ -25,7 +30,7 @@ public class Zernike {
      *
      * @param zps     the points to use to compute the Zernike moment
      * @param zpsSize the number of points in zps
-     * @param n       a value
+     * @param n       a positive value
      * @param m       the exponent to raise the position of each ZernikePoint to
      * @return a Zernike moment
      */
