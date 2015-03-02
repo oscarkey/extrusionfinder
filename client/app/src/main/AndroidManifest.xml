@@ -16,7 +16,7 @@
         <activity
             android:name="uk.ac.cam.cl.echo.extrusionfinder.client.ImageCaptureActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar" >
+            android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

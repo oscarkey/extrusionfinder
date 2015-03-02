@@ -36,7 +36,7 @@ Prerequisites
 -  Inkscape ([https://inkscape.org/en/](https://inkscape.org/en/]))
 -  Java server e.g. Jetty ([http://eclipse.org/jetty/](http://eclipse.org/jetty/))
 
-Gradle will automatically download all other dependencies. Note that the OpenCV dependency only supports OSX and Linux
+Gradle will automatically download all other dependencies. Note that the OpenCV dependency only supports OSX and Linux.
 
 To do a complete build of the server and run unit tests, run the following command in folder extrusionfinder/server. This places a web archive at build/libs/extrusionFinder-1.0.war.
 
