@@ -96,7 +96,7 @@ We are grateful for the following following libraries:
 - JUnit - http://junit.org/
 - EasyMock - http://easymock.org/
 - PowerMock - https://code.google.com/p/powermock/
-- Mokito - https://code.google.com/p/mockito/
+- Mockito - https://code.google.com/p/mockito/
 - RestEasy - http://resteasy.jboss.org/
 - mongo-java-driver - https://github.com/mongodb/mongo-java-driver
 - MongoJack - http://mongojack.org/
