@@ -54,13 +54,11 @@ To run the integration tests (might take a while), run
 
 	gradle integration
 
-To compile and run the Part Sourcer, which populates the database:
+To run on a server, the web archive needs the name "extrusionFinder.war". The address the client code makes requests to will have to be modified to match the domain name of your server.
+Before the server can be run, the database must first populated with extrusions crawled from the internet. To do this:
 
 	gradle jar
     java -jar build/libs/crawler.jar
-
-To run on a server, the web archive needs the name "extrusionFinder.war". The address the client code makes requests to will have to be modified to match the domain name of your server.
-
 
 Configuration settings, such as the address of the Mongo server and the path to Inkscape can be set in Configuration.java
 
