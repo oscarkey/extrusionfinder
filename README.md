@@ -107,6 +107,8 @@ We are grateful for the following following libraries:
 
 The associated licenses can be found in LIBRARIES
 
+---
+
 License
 --------
 The project is licensed under the MIT License. See LICENSE.
