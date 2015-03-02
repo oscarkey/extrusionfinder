@@ -59,7 +59,7 @@ To compile and run the Part Sourcer, which populates the database:
 	gradle jar
     java -jar build/libs/crawler.jar
 
-To run on a server, the web archive needs the name "extrusionFinder.war"
+To run on a server, the web archive needs the name "extrusionFinder.war". The address the client code makes requests to will have to be modified to match the domain name of your server.
 
 
 Configuration settings, such as the address of the Mongo server and the path to Inkscape can be set in Configuration.java
