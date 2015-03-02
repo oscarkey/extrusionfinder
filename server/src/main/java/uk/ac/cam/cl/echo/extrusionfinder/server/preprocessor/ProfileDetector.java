@@ -18,6 +18,8 @@ import uk.ac.cam.cl.echo.extrusionfinder.server.configuration.Configuration;
 import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
 import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.GrayscaleImageData;
 
+import static uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor.LabSpaceThresholder.labSpaceThreshold;
+
 /**
  * Extracts extrusion cross-section profile.
  */
@@ -33,17 +35,15 @@ public class ProfileDetector {
     }
 
     /**
-     * Produces a grey scale image of only the extrusion's profile.
+     * Produces a gray scale image of only the extrusion's profile.
      *
      * @param input An input photograph or scan containing extrusion.
-     * @return A newly allocated greyscale image of the extrusion profile.
+     * @return A newly allocated grayscale image of the extrusion profile.
      */
     public GrayscaleImageData process(RGBImageData input) {
         int diameter = Configuration.PROFILE_DETECTION_STANDARD_IMAGE_SIZE;
         int blurDiameter = Configuration.PROFILE_DETECTION_STANDARD_BILATERAL_FILTER_BLUR_DIAMETER;
         int sigma = Configuration.PROFILE_DETECTION_STANDARD_BILATERAL_FILTER_SIGMA;
-
-        Mat imageStep;
 
         Mat imageIn = new Mat(input.width, input.height, CvType.CV_8UC3);
         imageIn.put(0, 0, input.data);
@@ -52,29 +52,22 @@ public class ProfileDetector {
         Mat rawImage = standardiseInput(imageIn, diameter);
 
         // Compute a mask by using adaptivate thresholding.
-        Mat thresholdMask;
+        Mat imageStep;
         imageStep = rawImage;
         imageStep = blur(imageStep, blurDiameter, sigma, sigma);
-        imageStep = minGreyscale(imageStep);
+        imageStep = minGrayscale(imageStep);
         imageStep = invert(imageStep);
         imageStep = fade(imageStep);
-        imageStep = threshold(imageStep);
-        thresholdMask = imageStep;
+
+        GrayscaleImageData thresholded = threshold(imageStep);
+        imageStep.put(0, 0, thresholded.data);
 
         // Calculate the contours using the threshold mask.
-        Mat contourMask;
-        imageStep = thresholdMask;
-        imageStep = largestContourMask(imageStep);
-        contourMask = imageStep;
+        Mat contourMask = largestContourMask(imageStep);
 
         // Extract profile from original standardised image, using masks.
-        Mat profile;
-        imageStep = rawImage;
-        imageStep = avgGreyscale(imageStep);
-        // Does the threshold mask need to be applied? Isn't this a subset of the contour mask?
-        imageStep = applyBinaryMask(imageStep, thresholdMask);
-        imageStep = applyBinaryMask(imageStep, contourMask);
-        profile = imageStep;
+        Mat profile = avgGrayscale(rawImage);
+        profile = applyBinaryMask(profile, contourMask);
 
         // TODO: Add histogram equalisation.
 
@@ -117,11 +110,11 @@ public class ProfileDetector {
     }
 
     /**
-     * Converts the input image to greyscale using the minimum component per pixel.
+     * Converts the input image to grayscale using the minimum component per pixel.
      * <p>
-     * For each pixel, the greyscale value is given as min(pixel.red, pixel.green, pixel.blue).
+     * For each pixel, the grayscale value is given as min(pixel.red, pixel.green, pixel.blue).
      */
-    private static Mat minGreyscale(Mat input) {
+    private static Mat minGrayscale(Mat input) {
         // Extract individual channels.
         Mat c1 = new Mat(input.rows(), input.cols(), CvType.CV_8UC1);
         Mat c2 = new Mat(input.rows(), input.cols(), CvType.CV_8UC1);
@@ -145,11 +138,11 @@ public class ProfileDetector {
     }
 
     /**
-     * Converts the input image to greyscale using the averaging of all components per pixel.
+     * Converts the input image to grayscale using the averaging of all components per pixel.
      * <p>
-     * For each pixel, the greyscale value is given as (pixel.red + pixel.green + pixel.blue) / 3.
+     * For each pixel, the grayscale value is given as (pixel.red + pixel.green + pixel.blue) / 3.
      */
-    private static Mat avgGreyscale(Mat input) {
+    private static Mat avgGrayscale(Mat input) {
         Mat output = new Mat();
         Imgproc.cvtColor(input, output, Imgproc.COLOR_RGB2GRAY);
         return output;
@@ -190,18 +183,27 @@ public class ProfileDetector {
     /**
      * Applies an adaptive threshold to the given image.
      */
-    private static Mat threshold(Mat input) {
-        Mat output = new Mat();
-        Imgproc.adaptiveThreshold(
-            input, 
-            output, 
-            255,
-            Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C,
-            Imgproc.THRESH_BINARY_INV,
-            11,
-            2);
+    private static GrayscaleImageData threshold(Mat input) {
+        // Mat output = new Mat();
+        // Imgproc.adaptiveThreshold(
+        //     input, 
+        //     output, 
+        //     255,
+        //     Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C,
+        //     Imgproc.THRESH_BINARY_INV,
+        //     11,
+        //     2);
+        //
+        // return output;
 
-        return output;
+        RGBImageData rgb = new RGBImageData(
+            new byte[3 * input.width() * input.height()],
+            input.width(),
+            input.height()
+        );
+        input.get(0, 0, rgb.data);
+
+        return labSpaceThreshold(rgb, 10);
     }
 
     /**

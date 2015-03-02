@@ -16,4 +16,12 @@ public class GrayscaleImageData extends ImageData<byte[]> {
     public GrayscaleImageData(byte[] data, int width, int height) {
         super(data, width, height);
     }
+
+    /**
+     * Get the position in data holding the value of pixel (x, y).
+     */
+    @Override
+    public int index(int x, int y) {
+        return y * width + x;
+    }
 }

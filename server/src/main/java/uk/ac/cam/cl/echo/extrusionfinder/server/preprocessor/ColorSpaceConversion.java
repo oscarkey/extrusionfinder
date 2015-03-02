@@ -1,4 +1,4 @@
-package uk.ac.cam.echo.extrusionfinder.preprocessor;
+package uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor;
 
 import java.lang.Math;
 
@@ -80,7 +80,7 @@ public class ColorSpaceConversion {
 
         for (int i = 0; i < xyz.width; i++) {
             for (int j = 0; j < xyz.height; j++) {
-                int index = 3 * (j * xyz.width + i);
+                int index = xyz.index(i, j);
 
                 double x = xyz.data[index + 0];
                 double y = xyz.data[index + 1];
@@ -112,7 +112,7 @@ public class ColorSpaceConversion {
 
         for (int i = 0; i < lab.width; i++) {
             for (int j = 0; j < lab.height; j++) {
-                int index = 3 * (j * lab.width + i);
+                int index = lab.index(i, j);
 
                 double l = lab.data[index + 0];
                 double a = lab.data[index + 1];
@@ -169,7 +169,7 @@ public class ColorSpaceConversion {
 
         for (int i = 0; i < xyz.width; i++) {
             for (int j = 0; j < xyz.height; j++) {
-                int index = 3 * (j * xyz.width + i);
+                int index = xyz.index(i, j);
 
                 double x = xyz.data[index + 0];
                 double y = xyz.data[index + 1];
@@ -203,7 +203,7 @@ public class ColorSpaceConversion {
 
         for (int i = 0; i < rgb.width; i++) {
             for (int j = 0; j < rgb.height; j++) {
-                int index = 3 * (j * rgb.width + i);
+                int index = rgb.index(i, j);
 
                 byte r = rgb.data[index + 0];
                 byte g = rgb.data[index + 1];

@@ -18,4 +18,12 @@ public class RGBImageData extends ImageData<byte[]> {
     public RGBImageData(byte[] data, int width, int height) {
         super(data, width, height);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int index(int x, int y) {
+        return 3 * (y * width + x);
+    }
 }

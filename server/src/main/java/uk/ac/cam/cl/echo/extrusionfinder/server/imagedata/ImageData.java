@@ -25,4 +25,9 @@ public abstract class ImageData<T> {
         this.width = width;
         this.height = height;
     }
+
+    /**
+     * Get the position in data holding the value of the first component of pixel (x, y).
+     */
+    public abstract int index(int x, int y);
 }

@@ -5,9 +5,9 @@ import java.util.Arrays;
 import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.LabImageData;
 import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.RGBImageData;
 import uk.ac.cam.cl.echo.extrusionfinder.server.imagedata.XYZImageData;
-import static uk.ac.cam.echo.extrusionfinder.preprocessor.ColorSpaceConversion.toLab;
-import static uk.ac.cam.echo.extrusionfinder.preprocessor.ColorSpaceConversion.toRGB;
-import static uk.ac.cam.echo.extrusionfinder.preprocessor.ColorSpaceConversion.toXYZ;
+import static uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor.ColorSpaceConversion.toLab;
+import static uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor.ColorSpaceConversion.toRGB;
+import static uk.ac.cam.cl.echo.extrusionfinder.server.preprocessor.ColorSpaceConversion.toXYZ;
 
 import org.junit.Test;
 import static org.junit.Assert.assertTrue;

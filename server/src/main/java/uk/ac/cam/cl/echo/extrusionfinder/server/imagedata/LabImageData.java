@@ -18,4 +18,12 @@ public class LabImageData extends ImageData<double[]> {
     public LabImageData(double[] data, int width, int height) {
         super(data, width, height);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int index(int x, int y) {
+        return 3 * (y * width + x);
+    }
 }
