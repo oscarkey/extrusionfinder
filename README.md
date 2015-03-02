@@ -82,3 +82,31 @@ Contents
    -  *sourcer*: standalone crawler for finding information about extrusion parts online.
    -  *zernike*: classes that compute the Zernike Moment representation of images.
 -  **server/src/test/java** contains all the unit tests and integration tests of the server code
+
+---
+
+Libaries
+---------
+We are grateful for the following following libraries:
+
+- Retrofit - http://square.github.io/retrofit/
+- Picasso - http://square.github.io/picasso/
+- OpenCV - http://opencv.org/
+- android-circlebutton - https://github.com/markushi/android-circlebutton
+- JUnit - http://junit.org/
+- EasyMock - http://easymock.org/
+- PowerMock - https://code.google.com/p/powermock/
+- Mokito - https://code.google.com/p/mockito/
+- RestEasy - http://resteasy.jboss.org/
+- mongo-java-driver - https://github.com/mongodb/mongo-java-driver
+- MongoJack - http://mongojack.org/
+- Pattern OpenCV - https://github.com/PatternConsulting/opencv
+- Batik - http://xmlgraphics.apache.org/batik/
+- Crawler4J - https://code.google.com/p/crawler4j/
+- jsoup - http://jsoup.org/
+
+The associated licenses can be found in LIBRARIES
+
+License
+--------
+The project is licensed under the MIT License. See LICENSE.
