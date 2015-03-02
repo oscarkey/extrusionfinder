@@ -35,7 +35,8 @@ Prerequisites
 -  MongoDB ([http://www.mongodb.org/](http://www.mongodb.org/))
 -  Inkscape ([https://inkscape.org/en/](https://inkscape.org/en/])
 -  Java server e.g. Jetty ([http://eclipse.org/jetty/](http://eclipse.org/jetty/))
--  OpenCV native libraries. This does not need to be installed as it will handle by gradle dependences, but it is **not supported on Windows**. ([http://opencv.org/](http://opencv.org/))
+-  OpenCV native libraries. This does not need to be installed as it will handle by gradle dependences, but it is **not supported on Windows**. ([http://opencv.org/](http://opencv.org/))  
+
 Gradle will automatically download all other dependencies.
 
 To do a complete build of the server and run unit tests, run the following command in folder extrusionfinder/server. This places a web archive at build/libs/extrusionFinder-1.0.war.
