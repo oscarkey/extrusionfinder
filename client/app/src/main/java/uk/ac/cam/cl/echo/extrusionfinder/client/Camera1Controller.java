@@ -70,6 +70,7 @@ public class Camera1Controller implements CameraController {
         Dimension size = getBestPreviewSize(previewAspectRatio, parameters.getSupportedPreviewSizes());
         previewSize = size;
         parameters.setPreviewSize(size.getWidth(), size.getHeight());
+        callback.onPreviewAspectRatioCalculated(size);
         parameters.setPreviewFormat(ImageFormat.NV21);
 
         camera.setParameters(parameters);
@@ -178,27 +179,32 @@ public class Camera1Controller implements CameraController {
      */
     private Dimension getBestPreviewSize(Dimension aspectRatio, List<Camera.Size> options) {
         // pick the smallest preview size that maintains the aspect ratio
-        // initially sort by size ascending
+        // sort is asc then reverse to get in desc
         Collections.sort(options, new Comparator<Camera.Size>() {
             @Override
             public int compare(Camera.Size lhs, Camera.Size rhs) {
                 return (lhs.width * lhs.height) - (rhs.width * rhs.height);
             }
         });
+        Collections.reverse(options);
 
-        // pick the first that matches the aspect ratio given
-        // have to swap width and height
+        // pick the smallest, closest size, bigger than the min
+        // smallest will be last happened upon
         double targetRatio = (double) aspectRatio.getHeight() / (double) aspectRatio.getWidth();
+        Camera.Size closestSize = null;
+        double closestRatioDiff = Double.MAX_VALUE;
         for(Camera.Size size : options) {
             double sizeRatio = (double) size.width / (double) size.height;
-            if(targetRatio == sizeRatio) {
-                return new Dimension(size.width, size.height);
+            double diff = Math.abs(targetRatio - sizeRatio);
+            if(diff <= closestRatioDiff) {
+                if(size.width >= PICTURE_MIN_WIDTH && size.height >= PICTURE_MIN_HEIGHT) {
+                    closestSize = size;
+                    closestRatioDiff = diff;
+                }
             }
         }
 
-        // if we didn't find a size print an error and return null
-        // TODO handle this gracefully
-        throw new NoSupportedPreviewSizeException();
+        return new Dimension(closestSize.width, closestSize.height);
     }
 
     /**
