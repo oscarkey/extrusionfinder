@@ -58,6 +58,13 @@ public interface CameraController {
         public void onPreviewFrame(NV21ImageData image);
 
         /**
+         * Called when the aspect ratio of the preview has been calculated.
+         * Allows the UI to set the drawing surface aspect ratio
+         * @param ratio Dimension representing the chosen aspect ratio
+         */
+        public void onPreviewAspectRatioCalculated(Dimension ratio);
+
+        /**
          * Called when an error occurred with the camera
          * @param errorType A constant representing the error that occurred
          */

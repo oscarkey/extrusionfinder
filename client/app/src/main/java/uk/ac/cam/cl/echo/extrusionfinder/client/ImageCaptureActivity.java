@@ -23,6 +23,7 @@ import android.view.Display;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.OpenCVLoader;
@@ -134,11 +135,43 @@ public class ImageCaptureActivity extends Activity {
         }
 
         @Override
+        public void onPreviewAspectRatioCalculated(Dimension ratio) {
+            setPreviewAspectRatio(ratio);
+        }
+
+        @Override
         public void onError(int errorType) {
             // show the error to the user
             showErrorDialog(errorType);
         }
     };
+
+    /**
+     * Set the size of the camera and processed preview surfaces to match what's produced by
+     * the camera.
+     * @param ratio Dimension representing the ratio
+     */
+    private void setPreviewAspectRatio(Dimension ratio) {
+        // adjust the size of the surfaces to match the aspect ratio of the preview
+        ViewGroup.LayoutParams previewLayout =
+                findViewById(R.id.cameraPreviewSurface).getLayoutParams();
+        ViewGroup.LayoutParams processedLayout =
+                findViewById(R.id.processedImageSurface).getLayoutParams();
+
+        // get the screen size
+        Display display = getWindowManager().getDefaultDisplay();
+        Point screenSize = new Point();
+        display.getSize(screenSize);
+
+        // set the width to that of the screen
+        previewLayout.width = screenSize.x;
+        processedLayout.width = screenSize.x;
+
+        // set the height to match the width
+        double height = ((double)ratio.getWidth() / (double)ratio.getHeight()) * (double)screenSize.x;
+        previewLayout.height = (int) height;
+        processedLayout.height = (int) height;
+    }
 
     private void showErrorDialog(int errorType) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
