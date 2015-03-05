@@ -30,55 +30,64 @@ public class FileUtility {
     public static String downloadFile(String fileURL, String saveDir)
         throws IOException {
 
+        // TODO: make this a little bit more robust
         fileURL = fileURL.replace(" ", "%20");
 
         URL url = new URL(fileURL);
-        HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
-        int responseCode = httpConn.getResponseCode();
+        HttpURLConnection httpConn = null;
+        InputStream inputStream = null;
+        FileOutputStream outputStream = null;
+
+        try {
+            httpConn = (HttpURLConnection) url.openConnection();
+            int responseCode = httpConn.getResponseCode();
+
+            // always check HTTP response code first
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                String disposition = httpConn.getHeaderField("Content-Disposition");
+                String fileName = "";
  
-        // always check HTTP response code first
-        if (responseCode == HttpURLConnection.HTTP_OK) {
-            String disposition = httpConn.getHeaderField("Content-Disposition");
-            String fileName = "";
- 
-            if (disposition != null) {
-                // extracts file name from header field
-                int index = disposition.indexOf("filename=");
-                if (index > 0) {
-                    fileName = disposition.substring(index + 10,
+                if (disposition != null) {
+                    // extracts file name from header field
+                    int index = disposition.indexOf("filename=");
+                    if (index > 0) {
+                        fileName = disposition.substring(index + 10,
                             disposition.length() - 1);
-                }
-            } else {
-                // extracts file name from URL
-                fileName = fileURL.substring(fileURL.lastIndexOf("/") + 1,
+                    }
+                } else {
+                    // extracts file name from URL
+                    fileName = fileURL.substring(fileURL.lastIndexOf("/") + 1
                         fileURL.length());
+                }
+
+                // opens input stream from the HTTP connection
+                inputStream = httpConn.getInputStream();
+                String saveFilePath = FileUtility.createPath(saveDir, fileName);
+
+                // opens an output stream to save into file
+                outputStream = new FileOutputStream(saveFilePath);
+
+                int bytesRead = -1;
+                byte[] buffer = new byte[BUFFER_SIZE];
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+
+                return saveFilePath;
+
+            } else {
+
+                String msg = "No file to download. Server replied HTTP code: " +
+                    responseCode + " on url " + fileURL;
+                throw new ConnectException(msg);
+
             }
 
-            // opens input stream from the HTTP connection
-            InputStream inputStream = httpConn.getInputStream();
-            String saveFilePath = FileUtility.createPath(saveDir, fileName);
+        } finally {
 
-            // opens an output stream to save into file
-            FileOutputStream outputStream = new FileOutputStream(saveFilePath);
- 
-            int bytesRead = -1;
-            byte[] buffer = new byte[BUFFER_SIZE];
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
-            }
- 
-            outputStream.close();
-            inputStream.close();
-
-            httpConn.disconnect();
-            return saveFilePath;
-
-        } else {
-
-            String msg = "No file to download. Server replied HTTP code: " +
-                responseCode + " on url " + fileURL;
-            httpConn.disconnect();
-            throw new ConnectException(msg);
+            if (outputStream != null) outputStream.close();
+            if (inputStream != null) inputStream.close();
+            if (httpConn != null) httpConn.disconnect();
 
         }
     }
