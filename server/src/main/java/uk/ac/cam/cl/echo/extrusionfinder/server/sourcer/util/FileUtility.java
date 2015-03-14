@@ -30,7 +30,7 @@ public class FileUtility {
     public static String downloadFile(String fileURL, String saveDir)
         throws IOException {
 
-        // TODO: make this a little bit more robust
+        // TODO: robust encoding
         fileURL = fileURL.replace(" ", "%20");
 
         URL url = new URL(fileURL);
@@ -56,7 +56,7 @@ public class FileUtility {
                     }
                 } else {
                     // extracts file name from URL
-                    fileName = fileURL.substring(fileURL.lastIndexOf("/") + 1
+                    fileName = fileURL.substring(fileURL.lastIndexOf("/") + 1,
                         fileURL.length());
                 }
 
